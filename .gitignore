@@ -32,6 +32,8 @@ xcuserdata
 *.opensdf
 *.suo
 ipch/
+.vscode
+*.code-workspace
  
 #Eclipse
 .metadata
