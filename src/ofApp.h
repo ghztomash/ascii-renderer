@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ofColor.h"
 #include "ofMain.h"
 #include "ofTrueTypeFont.h"
 #include "ofxButton.h"
@@ -30,10 +31,16 @@ public:
     void gotMessage(ofMessage msg);
     void dpiChanged(int &d);
 
+    bool drawGui = true;
+
     float grid[GRID_W][GRID_H];
     string charset[255] = {" ", "∵", "∶", "/", ":", "_", "◜", "◞", "◠", "+",
                            "*", "`", "=", "?", "!", "¬", "░", "█", "▄", "▀"};
     ofTrueTypeFont myfont;
+
+    ofColor foregroundColor = ofColor::fromHex(0xc6d0f5);
+    ofColor backgroundColor = ofColor::fromHex(0x303446);
+    ofColor debugColor = ofColor::fromHex(0xe5c890);
 
     float charHeight;
     float charWidth;

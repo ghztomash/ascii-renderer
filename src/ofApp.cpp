@@ -12,8 +12,8 @@ void ofApp::setup() {
     ofEnableAntiAliasing();
     // ofDisableAntiAliasing();
     ofSetVerticalSync(true);
-
     ofSetCircleResolution(64);
+    ofBackground(backgroundColor);
 
     // dpi.addListener(this, &ofApp::dpiChanged);
     // size.addListener(this, &ofApp::dpiChanged);
@@ -83,15 +83,14 @@ void ofApp::draw() {
 
             if ((mouseX >= cX) && (mouseX <= cX + charWidth) &&
                 (mouseY <= cY) && (mouseY >= cY - ascenderH)) {
-                ofSetColor(127);
+                ofSetHexColor(0xa5adce);
                 ofDrawRectangle(cX, cY - ascenderH, charWidth, charHeight);
                 myfont.drawString(ofToString(cX) + ", " + ofToString(cY), 0,
                                   ofGetHeight() - charHeight);
             }
 
-            ofSetColor(255);
-
-            if (debugGrid) {
+            if (debugGrid) { // draw debug test pattern
+                ofSetColor(debugColor);
                 if (y == 0) {
                     if (x == 0) {
                         myfont.drawString(u8"╔", cX, cY);
@@ -114,8 +113,9 @@ void ofApp::draw() {
                     myfont.drawString(u8"▒", cX, cY);
                 }
             } else {
-                ofSetColor(
-                    ofNoise(x / 100.0, y / 100.0, ofGetFrameNum() / 400.0));
+                //ofSetColor(
+                //    ofNoise(x / 100.0, y / 100.0, ofGetFrameNum() / 400.0));
+                ofSetColor(foregroundColor);
                 myfont.drawString(
                     ofToString(charset[(int)(ofNoise(x / 100.0, y / 100.0,
                                                      ofGetFrameNum() / 200.0) *
@@ -138,7 +138,9 @@ void ofApp::draw() {
     sprintf(fpsStr, u8"%s│ ├──┬──┤           │▒", fpsStr);
     // myfont.drawString(fpsStr, charWidth*2.0 , charHeight*2.0 );
     // myfont.drawString(fpsStr, 10,ofGetHeight()-charHeight*5);
-    gui.draw();
+    if (drawGui){
+        gui.draw();
+    }
     // ofEnableAntiAliasing(); //to get precise lines
 }
 
@@ -146,7 +148,22 @@ void ofApp::draw() {
 void ofApp::keyPressed(int key) {}
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key) {}
+void ofApp::keyReleased(int key) {
+    switch (key){
+        // draw gui
+        case 'g':
+        case 'G':
+            drawGui=!drawGui;
+            break;
+        // draw test pattern
+        case 'd':
+        case 'D':
+            debugGrid=!debugGrid;
+            break;
+        default:
+            break;
+    }
+}
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y) {}
