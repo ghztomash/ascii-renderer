@@ -8,6 +8,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+    ofSetWindowTitle("ascii");
     ofEnableSmoothing();
     ofEnableAntiAliasing();
     // ofDisableAntiAliasing();
@@ -17,6 +18,7 @@ void ofApp::setup() {
 
     // dpi.addListener(this, &ofApp::dpiChanged);
     // size.addListener(this, &ofApp::dpiChanged);
+    marginSize.addListener(this, &ofApp::marginChanged);
     reload.addListener(this, &ofApp::loadFont);
     gui.setup();
     gui.add(dpi.setup("dpi", 200, 1, 400));
@@ -24,7 +26,9 @@ void ofApp::setup() {
     gui.add(reload.setup("reload font"));
     gui.add(offsetV.setup("offsetV", 1, -5.0, 5.0));
     gui.add(offsetH.setup("offsetH", 1, -5.0, 5.0));
-    gui.add(debugGrid.setup("debugGrid", false));
+    gui.add(marginSize.setup("margin", 0, 0, 8));
+    gui.add(debugGrid.setup("debugGrid", true));
+    gui.add(debugLines.setup("debugLines", true));
 
     loadFont();
 
@@ -40,24 +44,24 @@ void ofApp::setup() {
     ofLog() << "│ ├──┬──┤           │▒";
     ofLog() << "Characters Loaded: " << myfont.getNumCharacters()
             << " full set: " << myfont.hasFullCharacterSet();
-    ofLog() << "Valid Gliph: " << myfont.isValidGlyph(0);
 
 #ifdef TARGET_LINUX
-    ofLog() << "Linux";
+    ofLog() << "OS: Linux";
 #endif
 #ifdef TARGET_OSX
-    ofLog() << "Mac";
+    ofLog() << "OS: Mac";
 #endif
 #ifdef TARGET_WIN32
-    ofLog() << "Win";
+    ofLog() << "OS: Win";
 #endif
 #ifdef TARGET_ANDROID
-    ofLog() << "Droid";
+    ofLog() << "OS: Droid";
 #endif
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {}
+void ofApp::update() {
+}
 
 //--------------------------------------------------------------
 void ofApp::draw() {
@@ -78,18 +82,27 @@ void ofApp::draw() {
             // ofGetFrameNum()/200.0)*20)].c_str(),  charWidth*2.0 +
             // x*charHeight, charHeight*2.0 + y*charHeight);
 
-            cX = charWidth + x * (charWidth + offsetH);
-            cY = charHeight + y * (charHeight + offsetV);
-
-            if ((mouseX >= cX) && (mouseX <= cX + charWidth) &&
-                (mouseY <= cY) && (mouseY >= cY - ascenderH)) {
-                ofSetHexColor(0xa5adce);
-                ofDrawRectangle(cX, cY - ascenderH, charWidth, charHeight);
-                myfont.drawString(ofToString(cX) + ", " + ofToString(cY), 0,
-                                  ofGetHeight() - charHeight);
-            }
+            cX = charWidth*marginSize*2 + x * (charWidth + offsetH);
+            cY = ascenderH + charHeight*marginSize + y * (charHeight + offsetV);
 
             if (debugGrid) { // draw debug test pattern
+                ofSetHexColor(0xa5adce);
+                if ((mouseX >= cX) && (mouseX <= cX + charWidth) &&
+                        (mouseY <= cY - descenderH) && (mouseY >= cY - ascenderH)) {
+                    ofDrawRectangle(cX, cY - ascenderH, charWidth, charHeight);
+                    myfont.drawString( " cX: " + ofToString(cX) + ", cY: " + ofToString(cY) + 
+                            "\tx: " + ofToString(mouseX) + ", y: " + ofToString(mouseY) +
+                            "\tfps: " + ofToString(ofGetFrameRate()),
+                            0, ofGetHeight()+descenderH);
+                }
+
+                // draw gridlines
+                if (debugLines){
+                    ofSetHexColor(0x626880);
+                    ofDrawLine(cX, 0, cX, ofGetHeight());
+                    ofDrawLine(0, cY-ascenderH, ofGetWidth(), cY-ascenderH);
+                }
+
                 ofSetColor(debugColor);
                 if (y == 0) {
                     if (x == 0) {
@@ -98,6 +111,7 @@ void ofApp::draw() {
                         myfont.drawString(u8"╗", cX, cY);
                     } else {
                         myfont.drawString(u8"═", cX, cY);
+                        //myfont.drawString(u8"▒", cX, cY);
                     }
                 } else if (y == gridH - 1) {
                     if (x == 0) {
@@ -127,6 +141,15 @@ void ofApp::draw() {
             // charset[(int)(ofNoise(x/100.0,y/100.0,
             // ofGetFrameNum()/200.0)*20)].c_str() );
         }
+    }           
+
+    // draw last gridline
+    if (debugGrid && debugLines){
+        cX = charWidth*marginSize*2 + gridW * (charWidth + offsetH);
+        cY = ascenderH + charHeight*marginSize + gridH * (charHeight + offsetV);
+        ofSetHexColor(0x626880);
+        ofDrawLine(cX, 0, cX, ofGetHeight());
+        ofDrawLine(0, cY-ascenderH, ofGetWidth(), cY-ascenderH);
     }
 
     // myfont.drawString(gridStr, charWidth*2.0 , charHeight*2.0 );
@@ -160,6 +183,11 @@ void ofApp::keyReleased(int key) {
         case 'D':
             debugGrid=!debugGrid;
             break;
+        // draw grid lines
+        case 'l':
+        case 'L':
+            debugLines=!debugLines;
+            break;
         default:
             break;
     }
@@ -185,8 +213,7 @@ void ofApp::mouseExited(int x, int y) {}
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h) {
-    gridW = (ofGetWidth() / (charWidth + offsetH)) - 2;
-    gridH = (ofGetHeight() / (charHeight + offsetV)) - 1;
+    calculateGridSize();
 }
 
 //--------------------------------------------------------------
@@ -195,7 +222,19 @@ void ofApp::gotMessage(ofMessage msg) {}
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo) {}
 
+//--------------------------------------------------------------
 void ofApp::dpiChanged(int &d) { loadFont(); }
+
+//--------------------------------------------------------------
+void ofApp::marginChanged(int &d) { 
+    calculateGridSize();
+}
+
+//--------------------------------------------------------------
+void ofApp::calculateGridSize() { 
+    gridW = (ofGetWidth() / (charWidth + offsetH)) - (marginSize*4);
+    gridH = (ofGetHeight() / (charHeight + offsetV)) - (marginSize*2);
+}
 
 //--------------------------------------------------------------
 void ofApp::loadFont() {
@@ -229,9 +268,9 @@ void ofApp::loadFont() {
     charHeight = (int)myfont.getLineHeight();
     charWidth = (int)charHeight / 2.0;
     ascenderH = myfont.getAscenderHeight();
+    descenderH = myfont.getDescenderHeight();
 
-    gridW = (ofGetWidth() / (charWidth + offsetH)) - 2;
-    gridH = (ofGetHeight() / (charHeight + offsetV)) - 1;
+    calculateGridSize();
 
     ofLog() << "height: " << charHeight << " width: " << charWidth
             << " spacing: " << myfont.getLetterSpacing()

@@ -30,6 +30,8 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     void dpiChanged(int &d);
+    void marginChanged(int &d);
+    void calculateGridSize();
 
     bool drawGui = true;
 
@@ -45,6 +47,7 @@ public:
     float charHeight;
     float charWidth;
     float ascenderH;
+    float descenderH;
     float cX, cY;
 
     char fpsStr[255];
@@ -55,7 +58,9 @@ public:
     ofxButton reload;
     ofxFloatSlider offsetH;
     ofxFloatSlider offsetV;
+    ofxIntSlider marginSize;
     ofxToggle debugGrid;
+    ofxToggle debugLines;
 
     int gridW, gridH;
 };
