@@ -6,9 +6,7 @@
 #include "ofxButton.h"
 #include "ofxGui.h"
 #include "ofxToggle.h"
-
-#define GRID_W 64
-#define GRID_H 32
+#include <cstddef>
 
 class ofApp : public ofBaseApp {
 public:
@@ -32,12 +30,15 @@ public:
     void dpiChanged(int &d);
     void marginChanged(int &d);
     void calculateGridSize();
+    string getCharacter(size_t i);
 
     bool drawGui = true;
 
-    float grid[GRID_W][GRID_H];
-    string charset[255] = {" ", "∵", "∶", "/", ":", "_", "◜", "◞", "◠", "+",
-                           "*", "`", "=", "?", "!", "¬", "░", "█", "▄", "▀"};
+    string characterSet = "∴∵∶∷/:_◜◞◠+*`=?!¬░▒█▄▀";
+    size_t characterSetSize;
+
+    size_t index;
+
     ofTrueTypeFont myfont;
 
     ofColor foregroundColor = ofColor::fromHex(0xc6d0f5);
@@ -50,7 +51,8 @@ public:
     float descenderH;
     float cX, cY;
 
-    char fpsStr[255];
+    ofImage pixelBuffer;
+    ofImage bufferPreview;
 
     ofxPanel gui;
     ofxIntSlider dpi;
@@ -61,6 +63,7 @@ public:
     ofxIntSlider marginSize;
     ofxToggle debugGrid;
     ofxToggle debugLines;
+    ofxToggle debugBuffer;
 
     int gridW, gridH;
 };

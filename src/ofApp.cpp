@@ -2,9 +2,12 @@
 
 #include "ofAppRunner.h"
 #include "ofGraphics.h"
+#include "ofGraphicsBaseTypes.h"
+#include "ofGraphicsConstants.h"
 #include "ofRectangle.h"
 #include "ofTrueTypeFont.h"
 #include "ofUtils.h"
+#include <cstddef>
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -29,14 +32,10 @@ void ofApp::setup() {
     gui.add(marginSize.setup("margin", 0, 0, 8));
     gui.add(debugGrid.setup("debugGrid", true));
     gui.add(debugLines.setup("debugLines", true));
+    gui.add(debugBuffer.setup("debugBuffer", true));
 
     loadFont();
 
-    for (int x = 0; x < GRID_W; x++) {
-        for (int y = 0; y < GRID_H; y++) {
-            grid[x][y] = ofNoise(x, y);
-        }
-    }
     ofLog() << "∴∵∶∷/:_◜◞◠+*`=?!¬░▒█▄▀";
     ofLog() << "│  ╔═══╗ Some Text  │▒";
     ofLog() << "│  ╚═╦═╝ in the box │▒";
@@ -44,6 +43,14 @@ void ofApp::setup() {
     ofLog() << "│ ├──┬──┤           │▒";
     ofLog() << "Characters Loaded: " << myfont.getNumCharacters()
             << " full set: " << myfont.hasFullCharacterSet();
+
+    characterSetSize = ofUTF8Length(characterSet);
+    // useful to take out single UTF8 characters out of a string
+    ofLog() << "charset: " << characterSet << " len:" << characterSetSize;
+    for (size_t i = 0; i < ofUTF8Length(characterSet); i++) {
+        //ofLog() << ofUTF8Substring(characterSet, i, 1);
+        //ofLog() << getCharacter(i);
+    }
 
 #ifdef TARGET_LINUX
     ofLog() << "OS: Linux";
@@ -61,26 +68,28 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+    for (int y = 0; y < pixelBuffer.getHeight(); y++) {
+        for (int x = 0; x < pixelBuffer.getWidth(); x++) {
+            pixelBuffer.setColor(x,y, ofColor(ofNoise(x / 100.0, y / 100.0, ofGetFrameNum() / 200.0)*255.0));
+        }
+    }
+    pixelBuffer.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
     // ofDisableAntiAliasing(); //to get precise lines
 
-    /*
-    ofSetColor(127);
-    ofDrawRectangle(100, 100-ascenderH, charWidth, charHeight);
-    ofSetColor(255);
-    myfont.drawString(u8"a", 100, 100);
-    */
+    // draw debug buffer
+    if(pixelBuffer.isAllocated() && debugBuffer){
+        ofSetColor(ofColor::white);
+        bufferPreview = pixelBuffer;
+        bufferPreview.resize(gridW*10/2,gridH*10);
+        bufferPreview.draw(0,0);
+    }
 
     for (int y = 0; y < gridH; y++) {
         for (int x = 0; x < gridW; x++) {
-            // ofDrawCircle(10 + x*20, 10 + y*20,ofNoise(x/100.0,y/100.0,
-            // ofGetFrameNum()/100.0)*10);
-            // myfont.drawString(charset[(int)(ofNoise(x/100.0,y/100.0,
-            // ofGetFrameNum()/200.0)*20)].c_str(),  charWidth*2.0 +
-            // x*charHeight, charHeight*2.0 + y*charHeight);
 
             cX = charWidth*marginSize*2 + x * (charWidth + offsetH);
             cY = ascenderH + charHeight*marginSize + y * (charHeight + offsetV);
@@ -127,19 +136,10 @@ void ofApp::draw() {
                     myfont.drawString(u8"▒", cX, cY);
                 }
             } else {
-                //ofSetColor(
-                //    ofNoise(x / 100.0, y / 100.0, ofGetFrameNum() / 400.0));
                 ofSetColor(foregroundColor);
-                myfont.drawString(
-                    ofToString(charset[(int)(ofNoise(x / 100.0, y / 100.0,
-                                                     ofGetFrameNum() / 200.0) *
-                                             20)]),
-                    cX, cY);
+                index = (pixelBuffer.getColor(x,y).getBrightness()/255.0)*characterSetSize; // convert brightness to character index
+                myfont.drawString(ofToString(getCharacter(index)),cX, cY);
             }
-
-            // sprintf(gridStr, u8"%s%s", gridStr,
-            // charset[(int)(ofNoise(x/100.0,y/100.0,
-            // ofGetFrameNum()/200.0)*20)].c_str() );
         }
     }           
 
@@ -152,15 +152,6 @@ void ofApp::draw() {
         ofDrawLine(0, cY-ascenderH, ofGetWidth(), cY-ascenderH);
     }
 
-    // myfont.drawString(gridStr, charWidth*2.0 , charHeight*2.0 );
-
-    sprintf(fpsStr, u8"∴∵∶∷/:_◜◞◠+*`=?!¬░█▄▀\n");
-    sprintf(fpsStr, u8"%s│  ╔═══╗ Some Text  │▒\n", fpsStr);
-    sprintf(fpsStr, u8"%s│  ╚═╦═╝ in the box │▒\n", fpsStr);
-    sprintf(fpsStr, u8"%s╞═╤══╩══╤═══════════╡▒\n", fpsStr);
-    sprintf(fpsStr, u8"%s│ ├──┬──┤           │▒", fpsStr);
-    // myfont.drawString(fpsStr, charWidth*2.0 , charHeight*2.0 );
-    // myfont.drawString(fpsStr, 10,ofGetHeight()-charHeight*5);
     if (drawGui){
         gui.draw();
     }
@@ -187,6 +178,11 @@ void ofApp::keyReleased(int key) {
         case 'l':
         case 'L':
             debugLines=!debugLines;
+            break;
+        // draw buffer preview
+        case 'b':
+        case 'B':
+            debugBuffer=!debugBuffer;
             break;
         default:
             break;
@@ -234,6 +230,10 @@ void ofApp::marginChanged(int &d) {
 void ofApp::calculateGridSize() { 
     gridW = (ofGetWidth() / (charWidth + offsetH)) - (marginSize*4);
     gridH = (ofGetHeight() / (charHeight + offsetV)) - (marginSize*2);
+
+    // resize the buffer pixels to new size
+    pixelBuffer.allocate(gridW, gridH, OF_IMAGE_COLOR);
+    pixelBuffer.update();
 }
 
 //--------------------------------------------------------------
@@ -280,4 +280,13 @@ void ofApp::loadFont() {
             << " size: " << myfont.getSize();
 
     ofLog() << " glyph w: " << r.getWidth() << " glyph h: " << r.getHeight();
+}
+
+//--------------------------------------------------------------
+// retrieve single utf8 character from string
+string ofApp::getCharacter(size_t i) {
+    if (i < 0 && i >= characterSetSize){
+        return "";
+    }
+    return ofUTF8Substring(characterSet, i, 1);
 }
