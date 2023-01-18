@@ -4,6 +4,8 @@
 #include "ofGraphics.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofGraphicsConstants.h"
+#include "ofImage.h"
+#include "ofLog.h"
 #include "ofRectangle.h"
 #include "ofTrueTypeFont.h"
 #include "ofUtils.h"
@@ -86,6 +88,15 @@ void ofApp::draw() {
         bufferPreview = pixelBuffer;
         bufferPreview.resize(gridW*10/2,gridH*10);
         bufferPreview.draw(0,0);
+        bufferPreview.save("buffer.png");
+    }
+
+    if (fbo.isAllocated()) {
+        ofSetColor(255);
+        fbo.draw(0,0);
+
+        fbo.readToPixels(fboPixels);
+        ofSaveImage(fboPixels, "fbo.png");
     }
 
     for (int y = 0; y < gridH; y++) {
@@ -271,6 +282,7 @@ void ofApp::loadFont() {
     descenderH = myfont.getDescenderHeight();
 
     calculateGridSize();
+    allocate_fbo();
 
     ofLog() << "height: " << charHeight << " width: " << charWidth
             << " spacing: " << myfont.getLetterSpacing()
@@ -290,3 +302,20 @@ string ofApp::getCharacter(size_t i) {
     }
     return ofUTF8Substring(characterSet, i, 1);
 }
+
+//--------------------------------------------------------------
+// allocate and size the fbo buffer
+void ofApp::allocate_fbo() {
+
+
+    fbo.allocate(400, 400);
+    ofLog() << "allocating fbo:" << fbo.isAllocated();
+
+    fbo.begin();
+    ofClear(255,255,255);
+    ofSetColor(0);
+    ofDrawRectangle(100, 100, 100, 100);
+    fbo.end();
+
+}
+

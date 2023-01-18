@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofColor.h"
+#include "ofFbo.h"
 #include "ofMain.h"
 #include "ofTrueTypeFont.h"
 #include "ofxButton.h"
@@ -31,6 +32,7 @@ public:
     void marginChanged(int &d);
     void calculateGridSize();
     string getCharacter(size_t i);
+    void allocate_fbo();
 
     bool drawGui = true;
 
@@ -53,6 +55,8 @@ public:
 
     ofImage pixelBuffer;
     ofImage bufferPreview;
+    ofFbo fbo;
+    ofPixels fboPixels;
 
     ofxPanel gui;
     ofxIntSlider dpi;
