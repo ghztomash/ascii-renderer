@@ -1,11 +1,13 @@
 #include "ofApp.h"
 
 #include "ofAppRunner.h"
+#include "ofColor.h"
 #include "ofGraphics.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofGraphicsConstants.h"
 #include "ofImage.h"
 #include "ofLog.h"
+#include "ofPixels.h"
 #include "ofRectangle.h"
 #include "ofTrueTypeFont.h"
 #include "ofUtils.h"
@@ -18,8 +20,9 @@ void ofApp::setup() {
     ofEnableAntiAliasing();
     // ofDisableAntiAliasing();
     ofSetVerticalSync(true);
+    ofSetFrameRate(60);
     ofSetCircleResolution(64);
-    ofBackground(backgroundColor);
+    ofBackground(crustColor);
 
     // dpi.addListener(this, &ofApp::dpiChanged);
     // size.addListener(this, &ofApp::dpiChanged);
@@ -70,100 +73,68 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+    /*
     for (int y = 0; y < pixelBuffer.getHeight(); y++) {
         for (int x = 0; x < pixelBuffer.getWidth(); x++) {
             pixelBuffer.setColor(x,y, ofColor(ofNoise(x / 100.0, y / 100.0, ofGetFrameNum() / 200.0)*255.0));
         }
     }
     pixelBuffer.update();
+    */
+
+    for (int y = 0; y < pixelBuffer.getHeight(); y++) {
+        for (int x = 0; x < pixelBuffer.getWidth(); x++) {
+            pixelBuffer.setColor(x,y, ofColor(ofNoise(x / 100.0, y / 100.0, ofGetFrameNum() / 200.0)*255.0));
+        }
+    }
+    pixelBuffer.update();
+    bufferPreview = pixelBuffer;
+
+    fboCanvas.begin();
+    ofSetColor(ofColor::white);
+    bufferPreview.resize(fboCanvasWidth,fboCanvasHeight);
+    bufferPreview.draw(0,0);
+    ofSetColor(ofColor::black,255);
+    ofDrawCircle(fboCanvasWidth/2,fboCanvasHeight/2, 100, 100);
+    fboCanvas.end();
+
+    convertFboToAscii();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
     // ofDisableAntiAliasing(); //to get precise lines
 
-    // draw debug buffer
-    if(pixelBuffer.isAllocated() && debugBuffer){
+    if (fboAscii.isAllocated()) {
         ofSetColor(ofColor::white);
-        bufferPreview = pixelBuffer;
-        bufferPreview.resize(gridW*10/2,gridH*10);
-        bufferPreview.draw(0,0);
-        bufferPreview.save("buffer.png");
+        fboAscii.draw(0,0);
+
+        fboAscii.readToPixels(fboAsciiPixels);
+        //ofSaveImage(fboAsciiPixels, "fbo.png");
     }
 
-    if (fbo.isAllocated()) {
-        ofSetColor(255);
-        fbo.draw(0,0);
-
-        fbo.readToPixels(fboPixels);
-        ofSaveImage(fboPixels, "fbo.png");
+    // draw debug buffer
+    if(pixelBuffer.isAllocated() && debugBuffer) {
+        ofSetColor(ofColor::white);
+        //bufferPreviewPixels = pixelBuffer.getPixels();
+        //bufferPreviewPixels.resize(pixelBuffer.getWidth()*20, pixelBuffer.getHeight()*20);
+        //bufferPreview = pixelBuffer;
+        //bufferPreview = bufferPreviewPixels;
+        //bufferPreview.resize(gridWidth*20/2,gridHeight*20);
+        //bufferPreview.draw(0,0);
+        //bufferPreview.save("buffer.png");
+        
+        fboCanvas.draw(fboAscii.getWidth(), 0);
+        bufferPreview = canvasPixels;
+        bufferPreview.resize(gridWidth*10/2,gridHeight*10);
+        bufferPreview.draw(fboAscii.getWidth(),fboCanvas.getHeight());
     }
 
-    for (int y = 0; y < gridH; y++) {
-        for (int x = 0; x < gridW; x++) {
-
-            cX = charWidth*marginSize*2 + x * (charWidth + offsetH);
-            cY = ascenderH + charHeight*marginSize + y * (charHeight + offsetV);
-
-            if (debugGrid) { // draw debug test pattern
-                ofSetHexColor(0xa5adce);
-                if ((mouseX >= cX) && (mouseX <= cX + charWidth) &&
-                        (mouseY <= cY - descenderH) && (mouseY >= cY - ascenderH)) {
-                    ofDrawRectangle(cX, cY - ascenderH, charWidth, charHeight);
-                    myfont.drawString( " cX: " + ofToString(cX) + ", cY: " + ofToString(cY) + 
-                            "\tx: " + ofToString(mouseX) + ", y: " + ofToString(mouseY) +
-                            "\tfps: " + ofToString(ofGetFrameRate()),
-                            0, ofGetHeight()+descenderH);
-                }
-
-                // draw gridlines
-                if (debugLines){
-                    ofSetHexColor(0x626880);
-                    ofDrawLine(cX, 0, cX, ofGetHeight());
-                    ofDrawLine(0, cY-ascenderH, ofGetWidth(), cY-ascenderH);
-                }
-
-                ofSetColor(debugColor);
-                if (y == 0) {
-                    if (x == 0) {
-                        myfont.drawString(u8"╔", cX, cY);
-                    } else if (x == gridW - 1) {
-                        myfont.drawString(u8"╗", cX, cY);
-                    } else {
-                        myfont.drawString(u8"═", cX, cY);
-                        //myfont.drawString(u8"▒", cX, cY);
-                    }
-                } else if (y == gridH - 1) {
-                    if (x == 0) {
-                        myfont.drawString(u8"╚", cX, cY);
-                    } else if (x == gridW - 1) {
-                        myfont.drawString(u8"╝", cX, cY);
-                    } else {
-                        myfont.drawString(u8"═", cX, cY);
-                    }
-                } else if ((x == 0) || (x == gridW - 1)) {
-                    myfont.drawString(u8"║", cX, cY);
-                } else {
-                    myfont.drawString(u8"▒", cX, cY);
-                }
-            } else {
-                ofSetColor(foregroundColor);
-                index = (pixelBuffer.getColor(x,y).getBrightness()/255.0)*characterSetSize; // convert brightness to character index
-                myfont.drawString(ofToString(getCharacter(index)),cX, cY);
-            }
-        }
-    }           
-
-    // draw last gridline
-    if (debugGrid && debugLines){
-        cX = charWidth*marginSize*2 + gridW * (charWidth + offsetH);
-        cY = ascenderH + charHeight*marginSize + gridH * (charHeight + offsetV);
-        ofSetHexColor(0x626880);
-        ofDrawLine(cX, 0, cX, ofGetHeight());
-        ofDrawLine(0, cY-ascenderH, ofGetWidth(), cY-ascenderH);
+    if (debugBuffer) {
+        myfont.drawString("fps: " + ofToString(ofGetFrameRate()), 0, ofGetHeight() + descenderH);
     }
 
-    if (drawGui){
+    if (drawGui) {
         gui.draw();
     }
     // ofEnableAntiAliasing(); //to get precise lines
@@ -174,7 +145,7 @@ void ofApp::keyPressed(int key) {}
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
-    switch (key){
+    switch (key) {
         // draw gui
         case 'g':
         case 'G':
@@ -239,11 +210,14 @@ void ofApp::marginChanged(int &d) {
 
 //--------------------------------------------------------------
 void ofApp::calculateGridSize() { 
-    gridW = (ofGetWidth() / (charWidth + offsetH)) - (marginSize*4);
-    gridH = (ofGetHeight() / (charHeight + offsetV)) - (marginSize*2);
+    gridWidth = (fboWidth / (charWidth + offsetH)) - (marginSize*4);
+    gridHeight = (fboHeight / (charHeight + offsetV)) - (marginSize*2);
+
+
+    ofLog() << "grid : " << gridWidth << "x" << gridHeight;
 
     // resize the buffer pixels to new size
-    pixelBuffer.allocate(gridW, gridH, OF_IMAGE_COLOR);
+    pixelBuffer.allocate(gridWidth, gridHeight, OF_IMAGE_COLOR);
     pixelBuffer.update();
 }
 
@@ -282,7 +256,7 @@ void ofApp::loadFont() {
     descenderH = myfont.getDescenderHeight();
 
     calculateGridSize();
-    allocate_fbo();
+    allocateFbo();
 
     ofLog() << "height: " << charHeight << " width: " << charWidth
             << " spacing: " << myfont.getLetterSpacing()
@@ -297,7 +271,7 @@ void ofApp::loadFont() {
 //--------------------------------------------------------------
 // retrieve single utf8 character from string
 string ofApp::getCharacter(size_t i) {
-    if (i < 0 && i >= characterSetSize){
+    if (i < 0 && i >= characterSetSize) {
         return "";
     }
     return ofUTF8Substring(characterSet, i, 1);
@@ -305,17 +279,100 @@ string ofApp::getCharacter(size_t i) {
 
 //--------------------------------------------------------------
 // allocate and size the fbo buffer
-void ofApp::allocate_fbo() {
+void ofApp::allocateFbo() {
 
 
-    fbo.allocate(400, 400);
-    ofLog() << "allocating fbo:" << fbo.isAllocated();
+    fboAscii.allocate(fboWidth, fboHeight);
+    ofLog() << "allocating fbo: " << fboAscii.isAllocated() << " " << fboWidth << "x" << fboHeight;
 
-    fbo.begin();
-    ofClear(255,255,255);
-    ofSetColor(0);
-    ofDrawRectangle(100, 100, 100, 100);
-    fbo.end();
+    fboAscii.begin();
+    ofClear(255,255,255, 255);
+    fboAscii.end();
 
+    fboCanvas.allocate(fboCanvasWidth, fboCanvasHeight);
+    ofLog() << "allocating canvas: " << fboCanvas.isAllocated() << " " << fboCanvasWidth << "x" << fboCanvasHeight;
+
+    fboCanvas.begin();
+    ofClear(255,255,255, 255);
+    fboCanvas.end();
 }
 
+//--------------------------------------------------------------
+// draw the ascii characters into the fbo
+void ofApp::convertFboToAscii() {
+
+    fboCanvas.readToPixels(canvasPixels);
+    canvasPixels.resize(gridWidth, gridHeight);
+
+    fboAscii.begin();
+
+    ofBackground(backgroundColor); // clear last buffer
+
+    for (int y = 0; y < gridHeight; y++) {
+        for (int x = 0; x < gridWidth; x++) {
+
+            cX = charWidth*marginSize*2 + x * (charWidth + offsetH);
+            cY = ascenderH + charHeight*marginSize + y * (charHeight + offsetV);
+
+            if (debugGrid) { // draw debug test pattern
+                ofSetHexColor(0xa5adce);
+                if ((mouseX >= cX) && (mouseX <= cX + charWidth) &&
+                        (mouseY <= cY - descenderH) && (mouseY >= cY - ascenderH)) {
+                    //fboAscii.end();
+                    ofDrawRectangle(cX, cY - ascenderH, charWidth, charHeight);
+                    myfont.drawString( " cX: " + ofToString(cX) + ", cY: " + ofToString(cY) + 
+                            "\tx: " + ofToString(mouseX) + ", y: " + ofToString(mouseY) +
+                            "\tfps: " + ofToString(ofGetFrameRate()),
+                            0, fboHeight+descenderH);
+                    //fboAscii.begin();
+                }
+
+                // draw gridlines
+                if (debugLines) {
+                    ofSetHexColor(0x626880);
+                    ofDrawLine(cX, 0, cX, fboHeight);
+                    ofDrawLine(0, cY-ascenderH, fboWidth, cY-ascenderH);
+                }
+
+                ofSetColor(debugColor);
+                if (y == 0) {
+                    if (x == 0) {
+                        myfont.drawString(u8"╔", cX, cY);
+                    } else if (x == gridWidth - 1) {
+                        myfont.drawString(u8"╗", cX, cY);
+                    } else {
+                        myfont.drawString(u8"═", cX, cY);
+                        //myfont.drawString(u8"▒", cX, cY);
+                    }
+                } else if (y == gridHeight - 1) {
+                    if (x == 0) {
+                        myfont.drawString(u8"╚", cX, cY);
+                    } else if (x == gridWidth - 1) {
+                        myfont.drawString(u8"╝", cX, cY);
+                    } else {
+                        myfont.drawString(u8"═", cX, cY);
+                    }
+                } else if ((x == 0) || (x == gridWidth - 1)) {
+                    myfont.drawString(u8"║", cX, cY);
+                } else {
+                    myfont.drawString(u8"▒", cX, cY);
+                }
+            } else {
+                ofSetColor(foregroundColor);
+                index = (canvasPixels.getColor(x,y).getBrightness()/255.0)*characterSetSize; // convert brightness to character index
+                myfont.drawString(ofToString(getCharacter(index)),cX, cY);
+            }
+        }
+    }           
+
+    // draw last gridline
+    if (debugGrid && debugLines) {
+        cX = charWidth*marginSize*2 + gridWidth * (charWidth + offsetH);
+        cY = ascenderH + charHeight*marginSize + gridHeight * (charHeight + offsetV);
+        ofSetHexColor(0x626880);
+        ofDrawLine(cX, 0, cX, fboHeight);
+        ofDrawLine(0, cY-ascenderH, fboWidth, cY-ascenderH);
+    }
+    fboAscii.end();
+
+}

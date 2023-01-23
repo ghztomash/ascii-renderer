@@ -2,7 +2,9 @@
 
 #include "ofColor.h"
 #include "ofFbo.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofMain.h"
+#include "ofTexture.h"
 #include "ofTrueTypeFont.h"
 #include "ofxButton.h"
 #include "ofxGui.h"
@@ -32,19 +34,25 @@ public:
     void marginChanged(int &d);
     void calculateGridSize();
     string getCharacter(size_t i);
-    void allocate_fbo();
+
+    void allocateFbo();
+    void convertFboToAscii();
 
     bool drawGui = true;
 
-    string characterSet = "∴∵∶∷/:_◜◞◠+*`=?!¬░▒█▄▀";
+    string characterSet = " ∴∵∶∷/:_◜◞◠+*`=?!¬░▒▄▀█";
     size_t characterSetSize;
 
     size_t index;
 
     ofTrueTypeFont myfont;
 
+    // color themes from catpuccin
+    // https://github.com/catppuccin/catppuccin/blob/main/docs/style-guide.md
+    // https://github.com/catppuccin/catppuccin
     ofColor foregroundColor = ofColor::fromHex(0xc6d0f5);
     ofColor backgroundColor = ofColor::fromHex(0x303446);
+    ofColor crustColor = ofColor::fromHex(0x232634);
     ofColor debugColor = ofColor::fromHex(0xe5c890);
 
     float charHeight;
@@ -55,8 +63,18 @@ public:
 
     ofImage pixelBuffer;
     ofImage bufferPreview;
-    ofFbo fbo;
-    ofPixels fboPixels;
+    ofPixels bufferPreviewPixels;
+
+    float fboWidth = 800;
+    float fboHeight = 800;
+    ofFbo fboAscii;
+    ofPixels fboAsciiPixels;
+
+    float fboCanvasWidth = 400;
+    float fboCanvasHeight = 400;
+    ofFbo fboCanvas;
+    ofTexture canvasTexture;
+    ofPixels canvasPixels;
 
     ofxPanel gui;
     ofxIntSlider dpi;
@@ -69,5 +87,5 @@ public:
     ofxToggle debugLines;
     ofxToggle debugBuffer;
 
-    int gridW, gridH;
+    int gridWidth, gridHeight;
 };
