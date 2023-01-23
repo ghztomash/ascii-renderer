@@ -8,8 +8,10 @@
 #include "ofTrueTypeFont.h"
 #include "ofxButton.h"
 #include "ofxGui.h"
+#include "ofxPanel.h"
 #include "ofxToggle.h"
 #include <cstddef>
+#include <time.h>
 
 class ofApp : public ofBaseApp {
 public:
@@ -35,6 +37,7 @@ public:
     void calculateGridSize();
     string getCharacter(size_t i);
 
+    void startRecording();
     void allocateFbo();
     void convertFboToAscii();
 
@@ -86,6 +89,22 @@ public:
     ofxToggle debugGrid;
     ofxToggle debugLines;
     ofxToggle debugBuffer;
+
+    string projectName = "test";
+    ofxIntSlider recordFramesNumber;
+    ofxButton record;
+    int recordedFramesCount;
+    bool recording = false;
+
+    ofxPanel canvasGui;
+    ofxFloatSlider noiseX;
+    ofxFloatSlider noiseY;
+    ofxFloatSlider noiseZ;
+
+    time_t t;
+    struct tm *tm;
+    char st[64];
+
 
     int gridWidth, gridHeight;
 };

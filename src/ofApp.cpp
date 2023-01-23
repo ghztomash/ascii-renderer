@@ -20,7 +20,7 @@ void ofApp::setup() {
     ofEnableAntiAliasing();
     // ofDisableAntiAliasing();
     ofSetVerticalSync(true);
-    ofSetFrameRate(60);
+    ofSetFrameRate(30);
     ofSetCircleResolution(64);
     ofBackground(crustColor);
 
@@ -28,6 +28,7 @@ void ofApp::setup() {
     // size.addListener(this, &ofApp::dpiChanged);
     marginSize.addListener(this, &ofApp::marginChanged);
     reload.addListener(this, &ofApp::loadFont);
+    record.addListener(this, &ofApp::startRecording);
     gui.setup();
     gui.add(dpi.setup("dpi", 200, 1, 400));
     gui.add(size.setup("size", 15, 1, 100));
@@ -38,6 +39,14 @@ void ofApp::setup() {
     gui.add(debugGrid.setup("debugGrid", true));
     gui.add(debugLines.setup("debugLines", true));
     gui.add(debugBuffer.setup("debugBuffer", true));
+    gui.add(recordFramesNumber.setup("rec frame count", 60, 1, 600));
+    gui.add(record.setup("record frames"));
+
+    // noise gui
+    canvasGui.setup();
+    canvasGui.add(noiseX.setup("x multiplier", 100.0, 0.001, 500.0));
+    canvasGui.add(noiseY.setup("y multiplier", 100.0, 0.001, 500.0));
+    canvasGui.add(noiseZ.setup("z multiplier", 200.0, 0.001, 500.0));
 
     loadFont();
 
@@ -84,7 +93,7 @@ void ofApp::update() {
 
     for (int y = 0; y < pixelBuffer.getHeight(); y++) {
         for (int x = 0; x < pixelBuffer.getWidth(); x++) {
-            pixelBuffer.setColor(x,y, ofColor(ofNoise(x / 100.0, y / 100.0, ofGetFrameNum() / 200.0)*255.0));
+            pixelBuffer.setColor(x, y, ofColor(ofNoise(x/noiseX, y/noiseY, ofGetFrameNum()/noiseZ)*255.0));
         }
     }
     pixelBuffer.update();
@@ -109,8 +118,19 @@ void ofApp::draw() {
         ofSetColor(ofColor::white);
         fboAscii.draw(0,0);
 
-        fboAscii.readToPixels(fboAsciiPixels);
-        //ofSaveImage(fboAsciiPixels, "fbo.png");
+        if (recording) {
+            fboAscii.readToPixels(fboAsciiPixels);
+            // folder per capture
+            //ofSaveImage(fboAsciiPixels, "capture_"+ projectName +"/"+ ofToString(st) +"/fbo_"+ ofToString(recordedFramesCount) +".png");
+            // folder per project
+            ofSaveImage(fboAsciiPixels, "capture_"+ projectName +"/fbo_"+ ofToString(recordedFramesCount) +".png");
+            recordedFramesCount++;
+
+            if (recordedFramesCount >= recordFramesNumber) {
+                recordedFramesCount = 0;
+                recording = false;
+            }
+        }
     }
 
     // draw debug buffer
@@ -126,16 +146,17 @@ void ofApp::draw() {
         
         fboCanvas.draw(fboAscii.getWidth(), 0);
         bufferPreview = canvasPixels;
-        bufferPreview.resize(gridWidth*10/2,gridHeight*10);
+        bufferPreview.resize(fboCanvasWidth,fboCanvasHeight);
         bufferPreview.draw(fboAscii.getWidth(),fboCanvas.getHeight());
     }
 
     if (debugBuffer) {
-        myfont.drawString("fps: " + ofToString(ofGetFrameRate()), 0, ofGetHeight() + descenderH);
+        ofDrawBitmapString(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + (recording? " recording" : "" ) + " fps: " + ofToString(ofGetFrameRate()), 0, ofGetHeight() + descenderH);
     }
 
     if (drawGui) {
         gui.draw();
+        canvasGui.draw();
     }
     // ofEnableAntiAliasing(); //to get precise lines
 }
@@ -165,6 +186,11 @@ void ofApp::keyReleased(int key) {
         case 'b':
         case 'B':
             debugBuffer=!debugBuffer;
+            break;
+        // record fbo frames
+        case 'r':
+        case 'R':
+            startRecording();
             break;
         default:
             break;
@@ -212,9 +238,6 @@ void ofApp::marginChanged(int &d) {
 void ofApp::calculateGridSize() { 
     gridWidth = (fboWidth / (charWidth + offsetH)) - (marginSize*4);
     gridHeight = (fboHeight / (charHeight + offsetV)) - (marginSize*2);
-
-
-    ofLog() << "grid : " << gridWidth << "x" << gridHeight;
 
     // resize the buffer pixels to new size
     pixelBuffer.allocate(gridWidth, gridHeight, OF_IMAGE_COLOR);
@@ -375,4 +398,16 @@ void ofApp::convertFboToAscii() {
     }
     fboAscii.end();
 
+}
+
+//--------------------------------------------------------------
+// start recording frames
+void ofApp::startRecording() {
+    // get current time
+    t = time(NULL);
+    tm = localtime(&t);
+    strftime(st, sizeof(st), "%b%d-%H%M%S", tm);
+
+    recordedFramesCount = 0;
+    recording = true;
 }
