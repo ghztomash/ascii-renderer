@@ -62,6 +62,8 @@ public:
     float charWidth;
     float ascenderH;
     float descenderH;
+    float marginOffsetH;
+    float marginOffsetV;
     float cX, cY;
 
     ofImage pixelBuffer;

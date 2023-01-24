@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<group>
+	<dpi>200</dpi>
+	<size>13</size>
+	<offsetV>1</offsetV>
+	<offsetH>1</offsetH>
+	<margin>0</margin>
+	<debugGrid>1</debugGrid>
+	<debugLines>1</debugLines>
+	<debugBuffer>1</debugBuffer>
+	<rec_frame_count>1</rec_frame_count>
+</group>

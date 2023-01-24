@@ -11,7 +11,9 @@
 #include "ofRectangle.h"
 #include "ofTrueTypeFont.h"
 #include "ofUtils.h"
+#include <cassert>
 #include <cstddef>
+#include <cstdlib>
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -50,11 +52,6 @@ void ofApp::setup() {
 
     loadFont();
 
-    ofLog() << "∴∵∶∷/:_◜◞◠+*`=?!¬░▒█▄▀";
-    ofLog() << "│  ╔═══╗ Some Text  │▒";
-    ofLog() << "│  ╚═╦═╝ in the box │▒";
-    ofLog() << "╞═╤══╩══╤═══════════╡▒";
-    ofLog() << "│ ├──┬──┤           │▒";
     ofLog() << "Characters Loaded: " << myfont.getNumCharacters()
             << " full set: " << myfont.hasFullCharacterSet();
 
@@ -151,7 +148,9 @@ void ofApp::draw() {
     }
 
     if (debugBuffer) {
-        ofDrawBitmapString(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + (recording? " recording" : "" ) + " fps: " + ofToString(ofGetFrameRate()), 0, ofGetHeight() + descenderH);
+        ofDrawBitmapString(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + " fps: " + ofToString((int)ofGetFrameRate()) + (recording? " recording" : "" )
+                + " x: " + ofToString(mouseX) + " y:" + ofToString(mouseY)
+                , 0, ofGetHeight() + descenderH);
     }
 
     if (drawGui) {
@@ -216,9 +215,7 @@ void ofApp::mouseEntered(int x, int y) {}
 void ofApp::mouseExited(int x, int y) {}
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h) {
-    calculateGridSize();
-}
+void ofApp::windowResized(int w, int h) {}
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg) {}
@@ -236,20 +233,24 @@ void ofApp::marginChanged(int &d) {
 
 //--------------------------------------------------------------
 void ofApp::calculateGridSize() { 
-    gridWidth = (fboWidth / (charWidth + offsetH)) - (marginSize*4);
-    gridHeight = (fboHeight / (charHeight + offsetV)) - (marginSize*2);
+    // TODO: potential for divide by zero before font is loaded
+    gridWidth = (fboWidth / (charWidth + offsetH)) - (marginSize * 4);
+    gridHeight = (fboHeight / (charHeight + offsetV)) - (marginSize * 2);
 
-    // resize the buffer pixels to new size
-    pixelBuffer.allocate(gridWidth, gridHeight, OF_IMAGE_COLOR);
-    pixelBuffer.update();
+    marginOffsetH = (fboWidth - (gridWidth + marginSize * 4) * (charWidth + offsetH)) / 2.0;
+    marginOffsetV = (fboHeight - (gridHeight + marginSize * 2)* (charHeight + offsetV)) / 2.0;
+
+    if (gridWidth <= 0)
+        gridWidth = 2;
+    if (gridHeight <= 0)
+        gridHeight = 2;
+
 }
 
 //--------------------------------------------------------------
 void ofApp::loadFont() {
-    // ofTrueTypeFontSettings settings("PetMe64.ttf", 40); // 40  30
-    // ofTrueTypeFontSettings settings("DejaVu.ttf", 15);
-    ofTrueTypeFontSettings settings("DejaVu.ttf", size);
-    // settings.dpi = 178; // 72
+    //ofTrueTypeFontSettings settings("fonts/PetMe64.ttf", size);
+    ofTrueTypeFontSettings settings("fonts/DejaVu.ttf", size);
     settings.dpi = dpi;  // 74 82 110 120 178
     settings.antialiased = false;
     settings.contours = false;
@@ -318,6 +319,11 @@ void ofApp::allocateFbo() {
     fboCanvas.begin();
     ofClear(255,255,255, 255);
     fboCanvas.end();
+
+    // resize the buffer pixels to new size
+    pixelBuffer.allocate(fboCanvasWidth, fboCanvasHeight, OF_IMAGE_COLOR);
+    pixelBuffer.update();
+
 }
 
 //--------------------------------------------------------------
@@ -334,20 +340,17 @@ void ofApp::convertFboToAscii() {
     for (int y = 0; y < gridHeight; y++) {
         for (int x = 0; x < gridWidth; x++) {
 
-            cX = charWidth*marginSize*2 + x * (charWidth + offsetH);
-            cY = ascenderH + charHeight*marginSize + y * (charHeight + offsetV);
+            cX = marginOffsetH + charWidth * marginSize * 2 + x * (charWidth + offsetH);
+            cY = marginOffsetV + ascenderH + charHeight * marginSize + y * (charHeight + offsetV);
 
             if (debugGrid) { // draw debug test pattern
                 ofSetHexColor(0xa5adce);
                 if ((mouseX >= cX) && (mouseX <= cX + charWidth) &&
                         (mouseY <= cY - descenderH) && (mouseY >= cY - ascenderH)) {
-                    //fboAscii.end();
-                    ofDrawRectangle(cX, cY - ascenderH, charWidth, charHeight);
-                    myfont.drawString( " cX: " + ofToString(cX) + ", cY: " + ofToString(cY) + 
-                            "\tx: " + ofToString(mouseX) + ", y: " + ofToString(mouseY) +
-                            "\tfps: " + ofToString(ofGetFrameRate()),
+                    ofDrawRectangle(cX, cY - ascenderH, charWidth + offsetH, charHeight + offsetV);
+                    myfont.drawString( "cX: " + ofToString(cX) + ", cY: " + ofToString(cY) + 
+                            "\tx: " + ofToString(mouseX) + ", y: " + ofToString(mouseY),
                             0, fboHeight+descenderH);
-                    //fboAscii.begin();
                 }
 
                 // draw gridlines
@@ -390,8 +393,8 @@ void ofApp::convertFboToAscii() {
 
     // draw last gridline
     if (debugGrid && debugLines) {
-        cX = charWidth*marginSize*2 + gridWidth * (charWidth + offsetH);
-        cY = ascenderH + charHeight*marginSize + gridHeight * (charHeight + offsetV);
+        cX = marginOffsetH + charWidth * marginSize * 2 + gridWidth * (charWidth + offsetH);
+        cY = marginOffsetV + ascenderH + charHeight * marginSize + gridHeight * (charHeight + offsetV);
         ofSetHexColor(0x626880);
         ofDrawLine(cX, 0, cX, fboHeight);
         ofDrawLine(0, cY-ascenderH, fboWidth, cY-ascenderH);
@@ -403,6 +406,7 @@ void ofApp::convertFboToAscii() {
 //--------------------------------------------------------------
 // start recording frames
 void ofApp::startRecording() {
+    // TODO: add time timestamp to files
     // get current time
     t = time(NULL);
     tm = localtime(&t);
