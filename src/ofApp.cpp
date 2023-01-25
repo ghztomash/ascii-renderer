@@ -88,21 +88,28 @@ void ofApp::update() {
     pixelBuffer.update();
     */
 
-    for (int y = 0; y < pixelBuffer.getHeight(); y++) {
-        for (int x = 0; x < pixelBuffer.getWidth(); x++) {
-            pixelBuffer.setColor(x, y, ofColor(ofNoise(x/noiseX, y/noiseY, ofGetFrameNum()/noiseZ)*255.0));
+    for (int y = 0; y < noiseBuffer.getHeight(); y++) {
+        for (int x = 0; x < noiseBuffer.getWidth(); x++) {
+            noiseBuffer.setColor(x, y, ofColor(ofNoise(x/noiseX, y/noiseY, ofGetFrameNum()/noiseZ)*255.0));
         }
     }
-    pixelBuffer.update();
-    bufferPreview = pixelBuffer;
+    noiseBuffer.update();
+    //bufferPreview = noiseBuffer;
+
+    noiseBuffer.getTexture().setAlphaMask(fboCanvasMask.getTexture());
 
     fboCanvas.begin();
     ofSetColor(ofColor::white);
-    bufferPreview.resize(fboCanvasWidth,fboCanvasHeight);
-    bufferPreview.draw(0,0);
-    ofSetColor(ofColor::black,255);
-    ofDrawCircle(fboCanvasWidth/2,fboCanvasHeight/2, 100, 100);
+    //bufferPreview.resize(fboCanvasWidth,fboCanvasHeight);
+    noiseBuffer.draw(0,0);
+    //fboCanvasMask.draw(0,0);
+    //ofSetColor(ofColor::white,255);
+    //ofDrawCircle(fboCanvasWidth/2,fboCanvasHeight/2, 100, 100);
     fboCanvas.end();
+
+    //fboCanvas.getTexture().setAlphaMask(noiseBuffer.getTexture());
+    
+    
 
     convertFboToAscii();
 }
@@ -311,19 +318,33 @@ void ofApp::allocateFbo() {
 
     fboAscii.begin();
     ofClear(255,255,255, 255);
+    //ofClear(0);
     fboAscii.end();
 
     fboCanvas.allocate(fboCanvasWidth, fboCanvasHeight);
     ofLog() << "allocating canvas: " << fboCanvas.isAllocated() << " " << fboCanvasWidth << "x" << fboCanvasHeight;
 
     fboCanvas.begin();
-    ofClear(255,255,255, 255);
+    ofClear(0, 255);
     fboCanvas.end();
 
-    // resize the buffer pixels to new size
-    pixelBuffer.allocate(fboCanvasWidth, fboCanvasHeight, OF_IMAGE_COLOR);
-    pixelBuffer.update();
+    fboCanvasMask.allocate(fboCanvasWidth, fboCanvasHeight);
+    fboCanvasMask.begin();
+    ofClear(0, 0);
+    ofSetColor(ofColor::white,255);
+    ofDrawCircle(fboCanvasWidth/2,fboCanvasHeight/2, 100, 100);
+    ofSetColor(ofColor::white,100);
+    ofDrawCircle(fboCanvasWidth/2,fboCanvasHeight/2, 110, 110);
+    ofSetColor(ofColor::white,16);
+    ofDrawCircle(fboCanvasWidth/2,fboCanvasHeight/2, 120, 120);
+    fboCanvasMask.end();
 
+    // resize the buffer pixels to new size
+    pixelBuffer.allocate(fboCanvasWidth, fboCanvasHeight, OF_IMAGE_COLOR_ALPHA);
+    pixelBuffer.update();
+    
+    noiseBuffer.allocate(fboCanvasWidth, fboCanvasHeight, OF_IMAGE_COLOR_ALPHA);
+    noiseBuffer.update();
 }
 
 //--------------------------------------------------------------
@@ -385,7 +406,7 @@ void ofApp::convertFboToAscii() {
                 }
             } else {
                 ofSetColor(foregroundColor);
-                index = (canvasPixels.getColor(x,y).getBrightness()/255.0)*characterSetSize; // convert brightness to character index
+                index = (canvasPixels.getColor(x,y).getBrightness()/255.0) * (characterSetSize-1); // convert brightness to character index
                 myfont.drawString(ofToString(getCharacter(index)),cX, cY);
             }
         }

@@ -75,9 +75,10 @@ public:
     ofFbo fboAscii;
     ofPixels fboAsciiPixels;
 
-    float fboCanvasWidth = 400;
-    float fboCanvasHeight = 400;
+    float fboCanvasWidth = fboWidth / 2.0;
+    float fboCanvasHeight = fboHeight / 2.0;
     ofFbo fboCanvas;
+    ofFbo fboCanvasMask;
     ofTexture canvasTexture;
     ofPixels canvasPixels;
 
@@ -102,6 +103,8 @@ public:
     ofxFloatSlider noiseX;
     ofxFloatSlider noiseY;
     ofxFloatSlider noiseZ;
+
+    ofImage noiseBuffer;
 
     time_t t;
     struct tm *tm;
