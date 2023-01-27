@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<draw_parameters>
+	<rect>
+		<enabled>1</enabled>
+		<color>184, 255, 0, 255</color>
+		<x>-0.336735</x>
+		<y>0.5</y>
+		<width>0.5</width>
+		<height>0.5</height>
+	</rect>
+	<noiseRect>
+		<enabled>1</enabled>
+		<color>255, 255, 255, 255</color>
+		<x_multiplier>100</x_multiplier>
+		<y_multiplier>100</y_multiplier>
+		<z_multiplier>364.796</z_multiplier>
+	</noiseRect>
+	<circ>
+		<enabled>1</enabled>
+		<color>255, 27, 0, 223</color>
+		<x>0.5</x>
+		<y>0.5</y>
+		<radius>0.520408</radius>
+	</circ>
+	<noiseCirc>
+		<enabled>1</enabled>
+		<color>255, 255, 255, 255</color>
+		<x_multiplier>482.143</x_multiplier>
+		<y_multiplier>446.429</y_multiplier>
+		<z_multiplier>127.552</z_multiplier>
+	</noiseCirc>
+</draw_parameters>

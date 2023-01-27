@@ -57,11 +57,17 @@ void ofApp::setup() {
         //ofLog() << getCharacter(i);
     }
 
-    rect.setup("rect", 430, 810);
-    circ.setup("circ", 10, 810);
-    noise.setup(fboCanvasWidth, fboCanvasHeight, "noiseCirc", 220, 810);
-    noise2.setup(fboCanvasWidth, fboCanvasHeight, "noiseRect", 640, 810);
+    rect.setup("rect");
+    circ.setup("circ");
+    noise.setup(fboCanvasWidth, fboCanvasHeight, "noiseCirc");
+    noise2.setup(fboCanvasWidth, fboCanvasHeight, "noiseRect");
     noise.setAlphaMask(fboCanvasMask.getTexture());
+
+    guiDrw.setup("draw parameters", "draw_params.xml", 220, 810);
+    guiDrw.add(rect.parameters);
+    guiDrw.add(noise2.parameters);
+    guiDrw.add(circ.parameters);
+    guiDrw.add(noise.parameters);
 
 #ifdef TARGET_LINUX
     ofLog() << "OS: Linux";
@@ -160,10 +166,7 @@ void ofApp::draw() {
 
     if (drawGui) {
         gui.draw();
-        rect.gui.draw();
-        noise.gui.draw();
-        noise2.gui.draw();
-        circ.gui.draw();
+        guiDrw.draw();
     }
     // ofEnableAntiAliasing(); //to get precise lines
 }

@@ -108,6 +108,7 @@ public:
 
     int gridWidth, gridHeight;
 
+    ofxPanel guiDrw;
     rectDrw rect;
     circDrw circ;
     noiseDrw noise;

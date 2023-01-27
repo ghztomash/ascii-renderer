@@ -7,13 +7,13 @@
 // test draw rectangle:
 class rectDrw: public baseDrw {
     public:
-        void setup (string name = "rect", float guiX = 40, float guiY = 40) {
-            baseDrw::setup(name, guiX, guiY);
+        void setup (string name = "rect") {
+            baseDrw::setup(name);
 
-            gui.add(X.set("x", 0.5, -1.0, 1.0));
-            gui.add(Y.set("y", 0.5, -1.0, 1.0));
-            gui.add(W.set("width", 0.5, -1.0, 1.0));
-            gui.add(H.set("height", 0.5, -1.0, 1.0));
+            parameters.add(X.set("x", 0.5, -1.0, 1.0));
+            parameters.add(Y.set("y", 0.5, -1.0, 1.0));
+            parameters.add(W.set("width", 0.5, -1.0, 1.0));
+            parameters.add(H.set("height", 0.5, -1.0, 1.0));
         }
 
         void update (ofFbo &fbo) {
@@ -47,12 +47,12 @@ class rectDrw: public baseDrw {
 // test draw circle:
 class circDrw: public baseDrw {
     public:
-        void setup (string name = "circ", float guiX = 40, float guiY = 40) {
-            baseDrw::setup(name, guiX, guiY);
+        void setup (string name = "circ") {
+            baseDrw::setup(name);
 
-            gui.add(X.set("x", 0.5, -1.0, 1.0));
-            gui.add(Y.set("y", 0.5, -1.0, 1.0));
-            gui.add(R.set("radius", 0.5, -1.0, 1.0));
+            parameters.add(X.set("x", 0.5, -1.0, 1.0));
+            parameters.add(Y.set("y", 0.5, -1.0, 1.0));
+            parameters.add(R.set("radius", 0.5, -1.0, 1.0));
         }
 
         void update (ofFbo &fbo) {
@@ -85,14 +85,14 @@ class circDrw: public baseDrw {
 class noiseDrw: public baseDrw {
     public:
 
-        void setup (float w = 10, float h = 10, string name = "noise", float guiX = 40, float guiY = 40) {
+        void setup (float w = 10, float h = 10, string name = "noise") {
             noiseCanvasWidth = w;
             noiseCanvasHeight = h;
-            baseDrw::setup(name, guiX, guiY);
+            baseDrw::setup(name);
 
-            gui.add(noiseX.set("x multiplier", 100.0, 0.001, 500.0));
-            gui.add(noiseY.set("y multiplier", 100.0, 0.001, 500.0));
-            gui.add(noiseZ.set("z multiplier", 200.0, 0.001, 500.0));
+            parameters.add(noiseX.set("x multiplier", 100.0, 0.001, 500.0));
+            parameters.add(noiseY.set("y multiplier", 100.0, 0.001, 500.0));
+            parameters.add(noiseZ.set("z multiplier", 200.0, 0.001, 500.0));
 
             noiseBuffer.allocate(noiseCanvasWidth, noiseCanvasHeight, OF_IMAGE_COLOR_ALPHA);
             noiseBuffer.update();
