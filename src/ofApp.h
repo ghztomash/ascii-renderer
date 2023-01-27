@@ -10,6 +10,8 @@
 #include "ofxGui.h"
 #include "ofxPanel.h"
 #include "ofxToggle.h"
+#include "baseDrw.h"
+#include "implDrw.h"
 #include <cstddef>
 #include <time.h>
 
@@ -79,6 +81,7 @@ public:
     float fboCanvasHeight = fboHeight / 2.0;
     ofFbo fboCanvas;
     ofFbo fboCanvasMask;
+    ofFbo fboCanvasMask2;
     ofTexture canvasTexture;
     ofPixels canvasPixels;
 
@@ -99,17 +102,14 @@ public:
     int recordedFramesCount;
     bool recording = false;
 
-    ofxPanel canvasGui;
-    ofxFloatSlider noiseX;
-    ofxFloatSlider noiseY;
-    ofxFloatSlider noiseZ;
-
-    ofImage noiseBuffer;
-
     time_t t;
     struct tm *tm;
     char st[64];
 
-
     int gridWidth, gridHeight;
+
+    rectDrw rect;
+    circDrw circ;
+    noiseDrw noise;
+    noiseDrw noise2;
 };

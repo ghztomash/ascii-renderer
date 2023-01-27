@@ -2,11 +2,14 @@
 <group>
 	<dpi>200</dpi>
 	<size>13</size>
-	<offsetV>1</offsetV>
+	<offsetV>0</offsetV>
 	<offsetH>1</offsetH>
 	<margin>0</margin>
-	<debugGrid>1</debugGrid>
-	<debugLines>1</debugLines>
+	<debugGrid>0</debugGrid>
+	<debugLines>0</debugLines>
 	<debugBuffer>1</debugBuffer>
 	<rec_frame_count>1</rec_frame_count>
+	<x_multiplier>307.5</x_multiplier>
+	<y_multiplier>100</y_multiplier>
+	<z_multiplier>200</z_multiplier>
 </group>

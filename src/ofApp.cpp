@@ -44,12 +44,6 @@ void ofApp::setup() {
     gui.add(recordFramesNumber.setup("rec frame count", 60, 1, 600));
     gui.add(record.setup("record frames"));
 
-    // noise gui
-    canvasGui.setup();
-    canvasGui.add(noiseX.setup("x multiplier", 100.0, 0.001, 500.0));
-    canvasGui.add(noiseY.setup("y multiplier", 100.0, 0.001, 500.0));
-    canvasGui.add(noiseZ.setup("z multiplier", 200.0, 0.001, 500.0));
-
     loadFont();
 
     ofLog() << "Characters Loaded: " << myfont.getNumCharacters()
@@ -62,6 +56,12 @@ void ofApp::setup() {
         //ofLog() << ofUTF8Substring(characterSet, i, 1);
         //ofLog() << getCharacter(i);
     }
+
+    rect.setup();
+    circ.setup();
+    noise.setup(fboCanvasWidth, fboCanvasHeight);
+    noise2.setup(fboCanvasWidth, fboCanvasHeight);
+    noise.setAlphaMask(fboCanvasMask.getTexture());
 
 #ifdef TARGET_LINUX
     ofLog() << "OS: Linux";
@@ -79,37 +79,35 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
-    /*
-    for (int y = 0; y < pixelBuffer.getHeight(); y++) {
-        for (int x = 0; x < pixelBuffer.getWidth(); x++) {
-            pixelBuffer.setColor(x,y, ofColor(ofNoise(x / 100.0, y / 100.0, ofGetFrameNum() / 200.0)*255.0));
-        }
-    }
-    pixelBuffer.update();
-    */
 
-    for (int y = 0; y < noiseBuffer.getHeight(); y++) {
-        for (int x = 0; x < noiseBuffer.getWidth(); x++) {
-            noiseBuffer.setColor(x, y, ofColor(ofNoise(x/noiseX, y/noiseY, ofGetFrameNum()/noiseZ)*255.0));
-        }
-    }
-    noiseBuffer.update();
-    //bufferPreview = noiseBuffer;
-
-    noiseBuffer.getTexture().setAlphaMask(fboCanvasMask.getTexture());
+    //noise.setAlphaMask(fboCanvasMask.getTexture());
 
     fboCanvas.begin();
-    ofSetColor(ofColor::white);
+    ofClear(0, 255);
+    //ofSetColor(ofColor::white);
     //bufferPreview.resize(fboCanvasWidth,fboCanvasHeight);
-    noiseBuffer.draw(0,0);
+    //noiseBuffer.draw(0,0);
     //fboCanvasMask.draw(0,0);
     //ofSetColor(ofColor::white,255);
     //ofDrawCircle(fboCanvasWidth/2,fboCanvasHeight/2, 100, 100);
     fboCanvas.end();
 
+    fboCanvasMask.begin();
+    ofClear(0, 0);
+    fboCanvasMask.end();
+
+    fboCanvasMask2.begin();
+    ofClear(0, 0);
+    fboCanvasMask2.end();
     //fboCanvas.getTexture().setAlphaMask(noiseBuffer.getTexture());
     
-    
+    circ.update(fboCanvasMask);
+    rect.update(fboCanvasMask2);
+    noise.setAlphaMask(fboCanvasMask.getTexture());
+    noise2.setAlphaMask(fboCanvasMask2.getTexture());
+
+    noise2.update(fboCanvas);
+    noise.update(fboCanvas);
 
     convertFboToAscii();
 }
@@ -162,7 +160,10 @@ void ofApp::draw() {
 
     if (drawGui) {
         gui.draw();
-        canvasGui.draw();
+        rect.gui.draw();
+        noise.gui.draw();
+        noise2.gui.draw();
+        circ.gui.draw();
     }
     // ofEnableAntiAliasing(); //to get precise lines
 }
@@ -317,8 +318,7 @@ void ofApp::allocateFbo() {
     ofLog() << "allocating fbo: " << fboAscii.isAllocated() << " " << fboWidth << "x" << fboHeight;
 
     fboAscii.begin();
-    ofClear(255,255,255, 255);
-    //ofClear(0);
+    ofClear(0, 255);
     fboAscii.end();
 
     fboCanvas.allocate(fboCanvasWidth, fboCanvasHeight);
@@ -331,20 +331,17 @@ void ofApp::allocateFbo() {
     fboCanvasMask.allocate(fboCanvasWidth, fboCanvasHeight);
     fboCanvasMask.begin();
     ofClear(0, 0);
-    ofSetColor(ofColor::white,255);
-    ofDrawCircle(fboCanvasWidth/2,fboCanvasHeight/2, 100, 100);
-    ofSetColor(ofColor::white,100);
-    ofDrawCircle(fboCanvasWidth/2,fboCanvasHeight/2, 110, 110);
-    ofSetColor(ofColor::white,16);
-    ofDrawCircle(fboCanvasWidth/2,fboCanvasHeight/2, 120, 120);
     fboCanvasMask.end();
 
+    fboCanvasMask2.allocate(fboCanvasWidth, fboCanvasHeight);
+    fboCanvasMask2.begin();
+    ofClear(0, 0);
+    fboCanvasMask2.end();
+    
     // resize the buffer pixels to new size
     pixelBuffer.allocate(fboCanvasWidth, fboCanvasHeight, OF_IMAGE_COLOR_ALPHA);
     pixelBuffer.update();
     
-    noiseBuffer.allocate(fboCanvasWidth, fboCanvasHeight, OF_IMAGE_COLOR_ALPHA);
-    noiseBuffer.update();
 }
 
 //--------------------------------------------------------------
