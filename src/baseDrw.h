@@ -15,15 +15,15 @@ class baseDrw {
             guiy = guiY;
 
             gui.setup(moduleName + " draw", moduleName + "_settings.xml", guix, guiy);
-            gui.add(enabled.setup("enabled", true));
-            gui.add(color.setup("color", ofColor(255,255, 255), ofColor(0, 0), ofColor(255, 255)));
+            gui.add(enabled.set("enabled", true));
+            gui.add(color.set("color", ofColor(255,255, 255), ofColor(0, 0), ofColor(255, 255)));
         }
         virtual void update (ofFbo &fbo) {};
 
         ofxPanel gui;
     protected:
-        ofxToggle enabled;
-        ofxColorSlider color;
+        ofParameter<bool> enabled;
+        ofParameter<ofColor> color;
         std::string moduleName = "base";
         float guix = 20;
         float guiy = 20;

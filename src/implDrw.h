@@ -10,10 +10,10 @@ class rectDrw: public baseDrw {
         void setup (string name = "rect", float guiX = 40, float guiY = 40) {
             baseDrw::setup(name, guiX, guiY);
 
-            gui.add(X.setup("x", 0.5, -1.0, 1.0));
-            gui.add(Y.setup("y", 0.5, -1.0, 1.0));
-            gui.add(W.setup("width", 0.5, -1.0, 1.0));
-            gui.add(H.setup("height", 0.5, -1.0, 1.0));
+            gui.add(X.set("x", 0.5, -1.0, 1.0));
+            gui.add(Y.set("y", 0.5, -1.0, 1.0));
+            gui.add(W.set("width", 0.5, -1.0, 1.0));
+            gui.add(H.set("height", 0.5, -1.0, 1.0));
         }
 
         void update (ofFbo &fbo) {
@@ -37,10 +37,10 @@ class rectDrw: public baseDrw {
 
     protected:
     private:
-        ofxFloatSlider X;
-        ofxFloatSlider Y;
-        ofxFloatSlider W;
-        ofxFloatSlider H;
+        ofParameter<float> X;
+        ofParameter<float> Y;
+        ofParameter<float> W;
+        ofParameter<float> H;
         float x,y,w,h;
 };
 
@@ -50,9 +50,9 @@ class circDrw: public baseDrw {
         void setup (string name = "circ", float guiX = 40, float guiY = 40) {
             baseDrw::setup(name, guiX, guiY);
 
-            gui.add(X.setup("x", 0.5, -1.0, 1.0));
-            gui.add(Y.setup("y", 0.5, -1.0, 1.0));
-            gui.add(R.setup("radius", 0.5, -1.0, 1.0));
+            gui.add(X.set("x", 0.5, -1.0, 1.0));
+            gui.add(Y.set("y", 0.5, -1.0, 1.0));
+            gui.add(R.set("radius", 0.5, -1.0, 1.0));
         }
 
         void update (ofFbo &fbo) {
@@ -75,9 +75,9 @@ class circDrw: public baseDrw {
 
     protected:
     private:
-        ofxFloatSlider X;
-        ofxFloatSlider Y;
-        ofxFloatSlider R;
+        ofParameter<float> X;
+        ofParameter<float> Y;
+        ofParameter<float> R;
         float x,y,r;
 };
 
@@ -90,9 +90,9 @@ class noiseDrw: public baseDrw {
             noiseCanvasHeight = h;
             baseDrw::setup(name, guiX, guiY);
 
-            gui.add(noiseX.setup("x multiplier", 100.0, 0.001, 500.0));
-            gui.add(noiseY.setup("y multiplier", 100.0, 0.001, 500.0));
-            gui.add(noiseZ.setup("z multiplier", 200.0, 0.001, 500.0));
+            gui.add(noiseX.set("x multiplier", 100.0, 0.001, 500.0));
+            gui.add(noiseY.set("y multiplier", 100.0, 0.001, 500.0));
+            gui.add(noiseZ.set("z multiplier", 200.0, 0.001, 500.0));
 
             noiseBuffer.allocate(noiseCanvasWidth, noiseCanvasHeight, OF_IMAGE_COLOR_ALPHA);
             noiseBuffer.update();
@@ -128,9 +128,9 @@ class noiseDrw: public baseDrw {
         float noiseCanvasWidth = 10;
         float noiseCanvasHeight = 10;
 
-        ofxFloatSlider noiseX;
-        ofxFloatSlider noiseY;
-        ofxFloatSlider noiseZ;
+        ofParameter<float> noiseX;
+        ofParameter<float> noiseY;
+        ofParameter<float> noiseZ;
 
         ofImage noiseBuffer;
 };
