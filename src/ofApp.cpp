@@ -57,10 +57,10 @@ void ofApp::setup() {
         //ofLog() << getCharacter(i);
     }
 
-    rect.setup();
-    circ.setup();
-    noise.setup(fboCanvasWidth, fboCanvasHeight);
-    noise2.setup(fboCanvasWidth, fboCanvasHeight);
+    rect.setup("rect", 430, 810);
+    circ.setup("circ", 10, 810);
+    noise.setup(fboCanvasWidth, fboCanvasHeight, "noiseCirc", 220, 810);
+    noise2.setup(fboCanvasWidth, fboCanvasHeight, "noiseRect", 640, 810);
     noise.setAlphaMask(fboCanvasMask.getTexture());
 
 #ifdef TARGET_LINUX

@@ -7,11 +7,8 @@
 // test draw rectangle:
 class rectDrw: public baseDrw {
     public:
-        void setup() {
-            name = "rectDrw";
-            guiX = 40;
-            guiY = 40;
-            baseDrw::setup();
+        void setup (string name = "rect", float guiX = 40, float guiY = 40) {
+            baseDrw::setup(name, guiX, guiY);
 
             gui.add(X.setup("x", 0.5, -1.0, 1.0));
             gui.add(Y.setup("y", 0.5, -1.0, 1.0));
@@ -19,7 +16,7 @@ class rectDrw: public baseDrw {
             gui.add(H.setup("height", 0.5, -1.0, 1.0));
         }
 
-        void update(ofFbo &fbo) {
+        void update (ofFbo &fbo) {
 
             if ((!fbo.isAllocated()) || (!enabled)) {
                 return;
@@ -32,7 +29,7 @@ class rectDrw: public baseDrw {
 
             fbo.begin();
 
-            ofSetColor(ofColor::white, alpha);
+            ofSetColor(color);
             ofDrawRectangle(x, y, w, h);
             
             fbo.end();
@@ -50,18 +47,15 @@ class rectDrw: public baseDrw {
 // test draw circle:
 class circDrw: public baseDrw {
     public:
-        void setup() {
-            name = "circDrw";
-            guiX = 80;
-            guiY = 40;
-            baseDrw::setup();
+        void setup (string name = "circ", float guiX = 40, float guiY = 40) {
+            baseDrw::setup(name, guiX, guiY);
 
             gui.add(X.setup("x", 0.5, -1.0, 1.0));
             gui.add(Y.setup("y", 0.5, -1.0, 1.0));
             gui.add(R.setup("radius", 0.5, -1.0, 1.0));
         }
 
-        void update(ofFbo &fbo) {
+        void update (ofFbo &fbo) {
 
             if ((!fbo.isAllocated()) || (!enabled)) {
                 return;
@@ -73,7 +67,7 @@ class circDrw: public baseDrw {
 
             fbo.begin();
 
-            ofSetColor(ofColor::white, alpha);
+            ofSetColor(color);
             ofDrawCircle(x, y, r);
             
             fbo.end();
@@ -91,17 +85,10 @@ class circDrw: public baseDrw {
 class noiseDrw: public baseDrw {
     public:
 
-        void setup(float w, float h) {
+        void setup (float w = 10, float h = 10, string name = "noise", float guiX = 40, float guiY = 40) {
             noiseCanvasWidth = w;
             noiseCanvasHeight = h;
-            setup();
-        }
-
-        void setup() {
-            name = "noiseDrw";
-            guiX = 40;
-            guiY = 40;
-            baseDrw::setup();
+            baseDrw::setup(name, guiX, guiY);
 
             gui.add(noiseX.setup("x multiplier", 100.0, 0.001, 500.0));
             gui.add(noiseY.setup("y multiplier", 100.0, 0.001, 500.0));
@@ -111,11 +98,11 @@ class noiseDrw: public baseDrw {
             noiseBuffer.update();
         }
 
-        void setAlphaMask(ofTexture &tex) {
+        void setAlphaMask (ofTexture &tex) {
             noiseBuffer.getTexture().setAlphaMask(tex);
         }
 
-        void update(ofFbo &fbo) {
+        void update (ofFbo &fbo) {
 
             if ((!fbo.isAllocated()) || (!enabled)) {
                 return;
@@ -130,7 +117,7 @@ class noiseDrw: public baseDrw {
             
             fbo.begin();
 
-            ofSetColor(ofColor::white, alpha);
+            ofSetColor(color);
             noiseBuffer.draw(0,0);
 
             fbo.end();
