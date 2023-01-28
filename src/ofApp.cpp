@@ -23,8 +23,11 @@ void ofApp::setup() {
     // ofDisableAntiAliasing();
     ofSetVerticalSync(true);
     ofSetFrameRate(30);
-    ofSetCircleResolution(64);
     ofBackground(crustColor);
+
+    // be able to load textures on shapes
+    // this disables alpha channel
+    ofDisableArbTex();
 
     // dpi.addListener(this, &ofApp::dpiChanged);
     // size.addListener(this, &ofApp::dpiChanged);
@@ -57,19 +60,25 @@ void ofApp::setup() {
         //ofLog() << getCharacter(i);
     }
 
+    ofLoadImage(texture, "textures/of.png");
+    texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
+    texture.generateMipmap();
+    texture.setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
 
     rect.setup();
     circ.setup();
     cube.setup();
     //cube.loadTexture("textures/box.jpg");
+    cube.setTexture(texture);
     sphere.setup();
     cylinder.setup();
     //sphere.loadTexture("textures/earth.jpg");
-    cylinder.loadTexture("textures/earth.jpg");
+    //cylinder.loadTexture("textures/earth.jpg");
 
     noise.setup(fboCanvasWidth, fboCanvasHeight, "noiseCirc");
     noise2.setup(fboCanvasWidth, fboCanvasHeight, "noiseRect");
-    noise.setAlphaMask(fboCanvasMask.getTexture());
+    //noise.setAlphaMask(fboCanvasMask.getTexture());
+    cube.setTexture(fboCanvasMask.getTexture());
 
     guiDrw.setup("draw parameters", "draw_params.xml", 1210, 10);
     guiDrw.add(rect.parameters);
@@ -101,12 +110,6 @@ void ofApp::update() {
 
     fboCanvas.begin();
     ofClear(0, 255);
-    //ofSetColor(ofColor::white);
-    //bufferPreview.resize(fboCanvasWidth,fboCanvasHeight);
-    //noiseBuffer.draw(0,0);
-    //fboCanvasMask.draw(0,0);
-    //ofSetColor(ofColor::white,255);
-    //ofDrawCircle(fboCanvasWidth/2,fboCanvasHeight/2, 100, 100);
     fboCanvas.end();
 
     fboCanvasMask.begin();
@@ -118,13 +121,12 @@ void ofApp::update() {
     fboCanvasMask2.end();
     //fboCanvas.getTexture().setAlphaMask(noiseBuffer.getTexture());
     
-    circ.update(fboCanvasMask);
-    rect.update(fboCanvasMask2);
-    noise.setAlphaMask(fboCanvasMask.getTexture());
-    noise2.setAlphaMask(fboCanvasMask2.getTexture());
+    noise.update(fboCanvasMask);
+    cube.setTexture(fboCanvasMask.getTexture());
 
     noise2.update(fboCanvas);
-    noise.update(fboCanvas);
+    circ.update(fboCanvas);
+    rect.update(fboCanvas);
     cube.update(fboCanvas);
     sphere.update(fboCanvas);
     cylinder.update(fboCanvas);

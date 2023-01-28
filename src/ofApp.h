@@ -116,4 +116,6 @@ public:
     cubeDrw cube;
     sphereDrw sphere;
     cylinderDrw cylinder;
+
+    ofTexture texture;
 };

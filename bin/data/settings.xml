@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <group>
 	<dpi>200</dpi>
-	<size>13</size>
-	<offsetV>0</offsetV>
-	<offsetH>1</offsetH>
-	<margin>0</margin>
-	<debugGrid>0</debugGrid>
+	<size>6</size>
+	<offsetV>1</offsetV>
+	<offsetH>0.5</offsetH>
+	<margin>2</margin>
+	<debugGrid>1</debugGrid>
 	<debugLines>0</debugLines>
 	<debugBuffer>1</debugBuffer>
 	<rec_frame_count>1</rec_frame_count>
