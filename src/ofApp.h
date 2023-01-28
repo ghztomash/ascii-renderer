@@ -10,8 +10,8 @@
 #include "ofxGui.h"
 #include "ofxPanel.h"
 #include "ofxToggle.h"
-#include "baseDrw.h"
-#include "implDrw.h"
+#include "baseRenderer.h"
+#include "implRenderer.h"
 #include <cstddef>
 #include <time.h>
 
@@ -79,11 +79,10 @@ public:
 
     float fboCanvasWidth = fboWidth / 2.0;
     float fboCanvasHeight = fboHeight / 2.0;
+
     ofFbo fboCanvas;
-    ofFbo fboCanvasMask;
-    ofFbo fboCanvasMask2;
-    ofTexture canvasTexture;
     ofPixels canvasPixels;
+    ofFbo fboNoiseTexture;
 
     ofxPanel gui;
     ofxIntSlider dpi;
@@ -108,14 +107,14 @@ public:
 
     int gridWidth, gridHeight;
 
-    ofxPanel guiDrw;
-    rectDrw rect;
-    circDrw circ;
-    noiseDrw noise;
-    noiseDrw noise2;
-    cubeDrw cube;
-    sphereDrw sphere;
-    cylinderDrw cylinder;
+    ofxPanel guiRenderer;
+    rectRenderer rect;
+    circRenderer circ;
+    noiseRenderer noise;
+    noiseRenderer noise2;
+    cubeRenderer cube;
+    sphereRenderer sphere;
+    cylinderRenderer cylinder;
 
     ofTexture texture;
 };

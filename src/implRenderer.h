@@ -1,6 +1,6 @@
 #pragma once
 
-#include "baseDrw.h"
+#include "baseRenderer.h"
 #include "of3dGraphics.h"
 #include "ofEasyCam.h"
 #include "ofGraphics.h"
@@ -12,20 +12,41 @@
 #include "vector_float3.hpp"
 
 // test draw rectangle:
-class rectDrw: public baseDrw {
+class rectRenderer: public baseRenderer {
     public:
         void setup (string name = "rect") {
-            baseDrw::setup(name);
+            baseRenderer::setup(name);
             parameters.remove("resolution");
             lighting = false;
         }
 
         void update (ofFbo &fbo) {
-            baseDrw::preUpdate(fbo);
+            baseRenderer::preUpdate(fbo);
             ofSetRectMode(OF_RECTMODE_CENTER);
             ofDrawRectangle(0, 0, dimensions.get().x *fbo.getWidth(), dimensions.get().y * fbo.getHeight());
             ofSetRectMode(OF_RECTMODE_CORNER);
-            baseDrw::postUpdate(fbo);
+            baseRenderer::postUpdate(fbo);
+        }
+
+    protected:
+    private:
+};
+
+// test draw circle:
+class circRenderer: public baseRenderer {
+    public:
+        void setup (string name = "circ") {
+            baseRenderer::setup(name);
+            lighting = false;
+        }
+
+        void update (ofFbo &fbo) {
+            baseRenderer::preUpdate(fbo);
+
+            ofSetCircleResolution(resolution);
+            ofDrawCircle(0, 0, dimensions.get().x * fbo.getWidth());
+            
+            baseRenderer::postUpdate(fbo);
         }
 
     protected:
@@ -33,16 +54,16 @@ class rectDrw: public baseDrw {
 };
 
 // test draw cube:
-class cubeDrw: public baseDrw {
+class cubeRenderer: public baseRenderer {
     public:
         void setup (string name = "cube") {
-            baseDrw::setup(name);
+            baseRenderer::setup(name);
             parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
             resolution = 1;
         }
 
         void update (ofFbo &fbo) {
-            baseDrw::preUpdate(fbo);
+            baseRenderer::preUpdate(fbo);
 
             ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum()/30.0);
             ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum()/30.0);
@@ -51,7 +72,7 @@ class cubeDrw: public baseDrw {
             ofSetBoxResolution(resolution);
             ofDrawBox(dimensions.get().x *fbo.getWidth(), dimensions.get().y * fbo.getHeight(), dimensions.get().z *fbo.getWidth());
             
-            baseDrw::postUpdate(fbo);
+            baseRenderer::postUpdate(fbo);
         }
 
     protected:
@@ -60,15 +81,15 @@ class cubeDrw: public baseDrw {
 };
 
 // test draw sphere:
-class sphereDrw: public baseDrw {
+class sphereRenderer: public baseRenderer {
     public:
         void setup (string name = "sphere") {
-            baseDrw::setup(name);
+            baseRenderer::setup(name);
             parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
         }
 
         void update (ofFbo &fbo) {
-            baseDrw::preUpdate(fbo);
+            baseRenderer::preUpdate(fbo);
 
             ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum()/30.0);
             ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum()/30.0);
@@ -77,7 +98,7 @@ class sphereDrw: public baseDrw {
             ofSetSphereResolution(resolution);
             ofDrawSphere(dimensions.get().x * fbo.getWidth());
             
-            baseDrw::postUpdate(fbo);
+            baseRenderer::postUpdate(fbo);
         }
 
     protected:
@@ -87,15 +108,15 @@ class sphereDrw: public baseDrw {
 };
 
 // test draw cylinder:
-class cylinderDrw: public baseDrw {
+class cylinderRenderer: public baseRenderer {
     public:
         void setup (string name = "cylinder") {
-            baseDrw::setup(name);
+            baseRenderer::setup(name);
             parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
         }
 
         void update (ofFbo &fbo) {
-            baseDrw::preUpdate(fbo);
+            baseRenderer::preUpdate(fbo);
 
             ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum()/30.0);
             ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum()/30.0);
@@ -104,7 +125,7 @@ class cylinderDrw: public baseDrw {
             ofSetCylinderResolution(resolution, 1);
             ofDrawCylinder(dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight());
             
-            baseDrw::postUpdate(fbo);
+            baseRenderer::postUpdate(fbo);
         }
 
     protected:
@@ -112,35 +133,14 @@ class cylinderDrw: public baseDrw {
         ofParameter<glm::vec3> rotationSpeed;
 };
 
-// test draw circle:
-class circDrw: public baseDrw {
-    public:
-        void setup (string name = "circ") {
-            baseDrw::setup(name);
-            lighting = false;
-        }
-
-        void update (ofFbo &fbo) {
-            baseDrw::preUpdate(fbo);
-
-            ofSetCircleResolution(resolution);
-            ofDrawCircle(0, 0, dimensions.get().x * fbo.getWidth());
-            
-            baseDrw::postUpdate(fbo);
-        }
-
-    protected:
-    private:
-};
-
 // test draw noise:
-class noiseDrw: public baseDrw {
+class noiseRenderer: public baseRenderer {
     public:
 
         void setup (float w = 10, float h = 10, string name = "noise") {
             noiseCanvasWidth = w;
             noiseCanvasHeight = h;
-            baseDrw::setup(name);
+            baseRenderer::setup(name);
 
             parameters.remove("dimensions");
             parameters.remove("fill");
@@ -155,10 +155,6 @@ class noiseDrw: public baseDrw {
 
             noiseBuffer.allocate(noiseCanvasWidth, noiseCanvasHeight, OF_IMAGE_COLOR_ALPHA);
             noiseBuffer.update();
-        }
-
-        void setAlphaMask (ofTexture &tex) {
-            noiseBuffer.getTexture().setAlphaMask(tex);
         }
 
         void update (ofFbo &fbo) {

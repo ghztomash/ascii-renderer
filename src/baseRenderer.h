@@ -6,10 +6,10 @@
 #include "ofxGui.h"
 #include "ofxSliderGroup.h"
 
-class baseDrw {
+class baseRenderer {
     public:
-        baseDrw() {};
-        ~baseDrw() {};
+        baseRenderer() {};
+        ~baseRenderer() {};
 
         void setup (string name = "base") {
             moduleName = name;
@@ -61,7 +61,20 @@ class baseDrw {
             }
         }
 
+        string* getName() {
+            return &moduleName;
+        }
+
         ofParameterGroup parameters;
+        ofParameter<bool> enabled;
+        ofParameter<ofColor> color;
+        ofParameter<glm::vec3> position;
+        ofParameter<glm::vec3> dimensions;
+        ofParameter<glm::vec3> rotation;
+        ofParameter<bool> filled;
+        ofParameter<float> lineWidth;
+        ofParameter<int> resolution;
+        ofParameter<bool> lighting;
     protected:
 
         inline void preUpdate (ofFbo &fbo) {
@@ -125,16 +138,6 @@ class baseDrw {
             fbo.end();
         };
 
-        ofParameter<bool> enabled;
-        ofParameter<ofColor> color;
-        ofParameter<glm::vec3> position;
-        ofParameter<glm::vec3> dimensions;
-        ofParameter<glm::vec3> rotation;
-        ofParameter<bool> filled;
-        ofParameter<float> lineWidth;
-        ofParameter<int> resolution;
-        ofParameter<bool> lighting;
-        
         std::string moduleName = "base";
         ofLight light;
         ofEasyCam cam;

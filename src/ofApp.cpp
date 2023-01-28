@@ -34,6 +34,7 @@ void ofApp::setup() {
     marginSize.addListener(this, &ofApp::marginChanged);
     reload.addListener(this, &ofApp::loadFont);
     record.addListener(this, &ofApp::startRecording);
+
     gui.setup();
     gui.add(dpi.setup("dpi", 200, 1, 400));
     gui.add(size.setup("size", 15, 1, 100));
@@ -77,17 +78,16 @@ void ofApp::setup() {
 
     noise.setup(fboCanvasWidth, fboCanvasHeight, "noiseCirc");
     noise2.setup(fboCanvasWidth, fboCanvasHeight, "noiseRect");
-    //noise.setAlphaMask(fboCanvasMask.getTexture());
-    cube.setTexture(fboCanvasMask.getTexture());
+    cube.setTexture(fboNoiseTexture.getTexture());
 
-    guiDrw.setup("draw parameters", "draw_params.xml", 1210, 10);
-    guiDrw.add(rect.parameters);
-    guiDrw.add(noise2.parameters);
-    guiDrw.add(circ.parameters);
-    guiDrw.add(noise.parameters);
-    guiDrw.add(cube.parameters);
-    guiDrw.add(sphere.parameters);
-    guiDrw.add(cylinder.parameters);
+    guiRenderer.setup("draw parameters", "draw_params.xml", 1210, 10);
+    guiRenderer.add(rect.parameters);
+    guiRenderer.add(noise2.parameters);
+    guiRenderer.add(circ.parameters);
+    guiRenderer.add(noise.parameters);
+    guiRenderer.add(cube.parameters);
+    guiRenderer.add(sphere.parameters);
+    guiRenderer.add(cylinder.parameters);
 
 #ifdef TARGET_LINUX
     ofLog() << "OS: Linux";
@@ -106,23 +106,16 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::update() {
 
-    //noise.setAlphaMask(fboCanvasMask.getTexture());
-
     fboCanvas.begin();
     ofClear(0, 255);
     fboCanvas.end();
 
-    fboCanvasMask.begin();
+    fboNoiseTexture.begin();
     ofClear(0, 0);
-    fboCanvasMask.end();
+    fboNoiseTexture.end();
 
-    fboCanvasMask2.begin();
-    ofClear(0, 0);
-    fboCanvasMask2.end();
-    //fboCanvas.getTexture().setAlphaMask(noiseBuffer.getTexture());
-    
-    noise.update(fboCanvasMask);
-    cube.setTexture(fboCanvasMask.getTexture());
+    noise.update(fboNoiseTexture);
+    cube.setTexture(fboNoiseTexture.getTexture());
 
     noise2.update(fboCanvas);
     circ.update(fboCanvas);
@@ -182,7 +175,7 @@ void ofApp::draw() {
 
     if (drawGui) {
         gui.draw();
-        guiDrw.draw();
+        guiRenderer.draw();
     }
     // ofEnableAntiAliasing(); //to get precise lines
 }
@@ -347,15 +340,10 @@ void ofApp::allocateFbo() {
     ofClear(0, 255);
     fboCanvas.end();
 
-    fboCanvasMask.allocate(fboCanvasWidth, fboCanvasHeight);
-    fboCanvasMask.begin();
+    fboNoiseTexture.allocate(fboCanvasWidth, fboCanvasHeight);
+    fboNoiseTexture.begin();
     ofClear(0, 0);
-    fboCanvasMask.end();
-
-    fboCanvasMask2.allocate(fboCanvasWidth, fboCanvasHeight);
-    fboCanvasMask2.begin();
-    ofClear(0, 0);
-    fboCanvasMask2.end();
+    fboNoiseTexture.end();
     
     // resize the buffer pixels to new size
     pixelBuffer.allocate(fboCanvasWidth, fboCanvasHeight, OF_IMAGE_COLOR_ALPHA);
