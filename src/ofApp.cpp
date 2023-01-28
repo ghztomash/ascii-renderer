@@ -57,17 +57,28 @@ void ofApp::setup() {
         //ofLog() << getCharacter(i);
     }
 
-    rect.setup("rect");
-    circ.setup("circ");
+
+    rect.setup();
+    circ.setup();
+    cube.setup();
+    //cube.loadTexture("textures/box.jpg");
+    sphere.setup();
+    cylinder.setup();
+    //sphere.loadTexture("textures/earth.jpg");
+    cylinder.loadTexture("textures/earth.jpg");
+
     noise.setup(fboCanvasWidth, fboCanvasHeight, "noiseCirc");
     noise2.setup(fboCanvasWidth, fboCanvasHeight, "noiseRect");
     noise.setAlphaMask(fboCanvasMask.getTexture());
 
-    guiDrw.setup("draw parameters", "draw_params.xml", 220, 810);
+    guiDrw.setup("draw parameters", "draw_params.xml", 1210, 10);
     guiDrw.add(rect.parameters);
     guiDrw.add(noise2.parameters);
     guiDrw.add(circ.parameters);
     guiDrw.add(noise.parameters);
+    guiDrw.add(cube.parameters);
+    guiDrw.add(sphere.parameters);
+    guiDrw.add(cylinder.parameters);
 
 #ifdef TARGET_LINUX
     ofLog() << "OS: Linux";
@@ -114,6 +125,9 @@ void ofApp::update() {
 
     noise2.update(fboCanvas);
     noise.update(fboCanvas);
+    cube.update(fboCanvas);
+    sphere.update(fboCanvas);
+    cylinder.update(fboCanvas);
 
     convertFboToAscii();
 }

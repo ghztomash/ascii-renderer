@@ -113,4 +113,7 @@ public:
     circDrw circ;
     noiseDrw noise;
     noiseDrw noise2;
+    cubeDrw cube;
+    sphereDrw sphere;
+    cylinderDrw cylinder;
 };

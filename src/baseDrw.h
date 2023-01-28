@@ -17,6 +17,12 @@ class baseDrw {
             parameters.add(enabled.set("enabled", true));
             parameters.add(color.set("color", ofColor(255,255, 255), ofColor(0, 0), ofColor(255, 255)));
         }
+        void enable() {
+            enabled = true;
+        }
+        void disable() {
+            enabled = false;
+        }
         virtual void update (ofFbo &fbo) {};
 
         ofParameterGroup parameters;
@@ -26,3 +32,8 @@ class baseDrw {
         std::string moduleName = "base";
     private:
 };
+
+
+// could add 3d draw class
+// or add textures to 2d shapes
+// make x, y, z public for automation

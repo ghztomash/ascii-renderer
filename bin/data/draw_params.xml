@@ -1,32 +1,52 @@
 <?xml version="1.0"?>
 <draw_parameters>
 	<rect>
-		<enabled>1</enabled>
-		<color>184, 255, 0, 255</color>
-		<x>-0.336735</x>
+		<enabled>0</enabled>
+		<color>255, 255, 255, 255</color>
+		<x>0.5</x>
 		<y>0.5</y>
 		<width>0.5</width>
 		<height>0.5</height>
 	</rect>
 	<noiseRect>
-		<enabled>1</enabled>
+		<enabled>0</enabled>
 		<color>255, 255, 255, 255</color>
 		<x_multiplier>100</x_multiplier>
 		<y_multiplier>100</y_multiplier>
-		<z_multiplier>364.796</z_multiplier>
+		<z_multiplier>200</z_multiplier>
 	</noiseRect>
 	<circ>
-		<enabled>1</enabled>
-		<color>255, 27, 0, 223</color>
+		<enabled>0</enabled>
+		<color>255, 255, 255, 255</color>
 		<x>0.5</x>
 		<y>0.5</y>
-		<radius>0.520408</radius>
+		<radius>0.5</radius>
 	</circ>
 	<noiseCirc>
+		<enabled>0</enabled>
+		<color>255, 255, 255, 255</color>
+		<x_multiplier>100</x_multiplier>
+		<y_multiplier>100</y_multiplier>
+		<z_multiplier>200</z_multiplier>
+	</noiseCirc>
+	<cube>
 		<enabled>1</enabled>
 		<color>255, 255, 255, 255</color>
-		<x_multiplier>482.143</x_multiplier>
-		<y_multiplier>446.429</y_multiplier>
-		<z_multiplier>127.552</z_multiplier>
-	</noiseCirc>
+		<pos>0, 0, -1.5</pos>
+		<dim>1, 1, 1</dim>
+		<rot>0, 0, 0</rot>
+		<fill>0</fill>
+		<rot_speed>0, 30, 0</rot_speed>
+		<lineWidth>28.7806</lineWidth>
+	</cube>
+	<sphere>
+		<enabled>1</enabled>
+		<color>255, 255, 255, 255</color>
+		<pos>0, 0, -1</pos>
+		<radius>0.25</radius>
+		<rot>0, 0, 0</rot>
+		<rot_speed>101.25, 0, -56.25</rot_speed>
+		<fill>1</fill>
+		<lineWidth>2</lineWidth>
+	</sphere>
 </draw_parameters>
