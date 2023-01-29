@@ -2,6 +2,7 @@
 
 #include "ofAppRunner.h"
 #include "ofColor.h"
+#include "ofEvents.h"
 #include "ofGraphics.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofGraphicsConstants.h"
@@ -45,6 +46,7 @@ void ofApp::setup() {
     gui.add(debugGrid.setup("debugGrid", true));
     gui.add(debugLines.setup("debugLines", true));
     gui.add(debugBuffer.setup("debugBuffer", true));
+    gui.add(blur.setup("blur", true));
     gui.add(recordFramesNumber.setup("rec frame count", 60, 1, 600));
     gui.add(record.setup("record frames"));
 
@@ -61,26 +63,21 @@ void ofApp::setup() {
         //ofLog() << getCharacter(i);
     }
 
-    ofLoadImage(texture, "textures/of.png");
-    texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
-    texture.generateMipmap();
-    texture.setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-
     rect.setup();
     circ.setup();
     cube.setup();
-    //cube.loadTexture("textures/box.jpg");
-    cube.setTexture(texture);
+    cube.loadTexture("textures/box.jpg");
     sphere.setup();
     cylinder.setup();
+    cmr.setup(fboWidth, 0);
     //sphere.loadTexture("textures/earth.jpg");
     //cylinder.loadTexture("textures/earth.jpg");
 
     noise.setup(fboCanvasWidth, fboCanvasHeight, "noiseCirc");
     noise2.setup(fboCanvasWidth, fboCanvasHeight, "noiseRect");
-    cube.setTexture(fboNoiseTexture.getTexture());
+    sphere.setTexture(fboNoiseTexture.getTexture());
 
-    guiRenderer.setup("draw parameters", "draw_params.xml", 1210, 10);
+    guiRenderer.setup("draw parameters", "draw_params.xml", fboWidth+fboCanvasWidth + 10, 10);
     guiRenderer.add(rect.parameters);
     guiRenderer.add(noise2.parameters);
     guiRenderer.add(circ.parameters);
@@ -88,6 +85,7 @@ void ofApp::setup() {
     guiRenderer.add(cube.parameters);
     guiRenderer.add(sphere.parameters);
     guiRenderer.add(cylinder.parameters);
+    guiRenderer.add(cmr.parameters);
 
 #ifdef TARGET_LINUX
     ofLog() << "OS: Linux";
@@ -106,23 +104,33 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::update() {
 
+    fboCanvas.readToPixels(canvasLastFrame);
+    bufferLastFrame = canvasLastFrame;
+
     fboCanvas.begin();
     ofClear(0, 255);
+    if (blur) {
+        ofSetColor(ofColor::white, 254);
+        bufferLastFrame.draw(0,0);
+    }
     fboCanvas.end();
 
     fboNoiseTexture.begin();
     ofClear(0, 0);
     fboNoiseTexture.end();
+    
+    // test live parameter update
+    // cube.dimensions.set(glm::vec3((float)ofGetMouseX()/ofGetWidth(), (float)ofGetMouseY()/ofGetHeight(), 1.0));
 
     noise.update(fboNoiseTexture);
-    cube.setTexture(fboNoiseTexture.getTexture());
 
     noise2.update(fboCanvas);
-    circ.update(fboCanvas);
     rect.update(fboCanvas);
+    circ.update(fboCanvas);
     cube.update(fboCanvas);
     sphere.update(fboCanvas);
     cylinder.update(fboCanvas);
+    cmr.update(fboCanvas);
 
     convertFboToAscii();
 }

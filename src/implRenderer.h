@@ -3,6 +3,7 @@
 #include "baseRenderer.h"
 #include "of3dGraphics.h"
 #include "ofEasyCam.h"
+#include "ofEvents.h"
 #include "ofGraphics.h"
 #include "ofImage.h"
 #include "ofLight.h"
@@ -51,6 +52,44 @@ class circRenderer: public baseRenderer {
 
     protected:
     private:
+};
+
+// test draw circle:
+class circMouseRenderer: public baseRenderer {
+    public:
+        void setup ( float offX = 0, float offY = 0, string name = "circ mouse") {
+            baseRenderer::setup(name);
+            lighting = false;
+            offsetX = offX;
+            offsetY = offY;
+        }
+
+        void update (ofFbo &fbo) {
+            if ((!fbo.isAllocated()) || (!enabled)) {
+                return;
+            }
+
+            fbo.begin();
+
+            //ofEnableDepthTest();
+            ofEnableAntiAliasing(); //to get precise lines
+            ofEnableSmoothing();
+            ofSetLineWidth(lineWidth);
+            ofEnableAlphaBlending();
+
+            ofSetCircleResolution(resolution);
+            
+            ofSetColor(color);
+            ofDrawCircle(ofGetMouseX() - offsetX, ofGetMouseY() - offsetY, dimensions.get().x * fbo.getWidth());
+
+            ofDisableDepthTest();
+            fbo.end();
+        }
+
+    protected:
+    private:
+        float offsetX;
+        float offsetY;
 };
 
 // test draw cube:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofColor.h"
+#include "ofGraphics.h"
 #include "ofMain.h"
 #include "ofParameter.h"
 #include "ofxGui.h"
@@ -93,7 +94,7 @@ class baseRenderer {
             ofEnableAntiAliasing(); //to get precise lines
             ofEnableSmoothing();
             ofSetLineWidth(lineWidth);
-            //ofDisableAlphaBlending();
+            ofEnableAlphaBlending();
             ofPushMatrix();
 
             ofTranslate(position.get()*fbo.getWidth());

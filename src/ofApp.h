@@ -72,8 +72,8 @@ public:
     ofImage bufferPreview;
     ofPixels bufferPreviewPixels;
 
-    float fboWidth = 800;
-    float fboHeight = 800;
+    float fboWidth = 1080;
+    float fboHeight = 1080;
     ofFbo fboAscii;
     ofPixels fboAsciiPixels;
 
@@ -82,6 +82,8 @@ public:
 
     ofFbo fboCanvas;
     ofPixels canvasPixels;
+    ofPixels canvasLastFrame;
+    ofImage bufferLastFrame;
     ofFbo fboNoiseTexture;
 
     ofxPanel gui;
@@ -94,6 +96,7 @@ public:
     ofxToggle debugGrid;
     ofxToggle debugLines;
     ofxToggle debugBuffer;
+    ofxToggle blur;
 
     string projectName = "test";
     ofxIntSlider recordFramesNumber;
@@ -115,6 +118,5 @@ public:
     cubeRenderer cube;
     sphereRenderer sphere;
     cylinderRenderer cylinder;
-
-    ofTexture texture;
+    circMouseRenderer cmr;
 };

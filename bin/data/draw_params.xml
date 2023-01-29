@@ -1,63 +1,63 @@
 <?xml version="1.0"?>
 <draw_parameters>
 	<rect>
-		<enabled>0</enabled>
-		<color>127, 198, 198, 255</color>
+		<enabled>1</enabled>
+		<color>255, 0, 31, 255</color>
 		<x>0.5</x>
 		<y>0.5</y>
 		<width>0.5</width>
 		<height>0.5</height>
 		<position>0, 0, -1.125</position>
-		<dimensions>0.5, 0.5, 0.5</dimensions>
-		<rotation>-127.5, -157.5, -3.75</rotation>
+		<dimensions>0.5, 1.08333, 0.166667</dimensions>
+		<rotation>0, 0, 26.25</rotation>
 		<fill>1</fill>
-		<lineWidth>1</lineWidth>
+		<lineWidth>10</lineWidth>
 		<lighting>0</lighting>
 	</rect>
 	<noiseRect>
 		<enabled>0</enabled>
-		<color>46, 46, 46, 255</color>
-		<x_multiplier>500</x_multiplier>
-		<y_multiplier>216.837</y_multiplier>
-		<z_multiplier>500</z_multiplier>
-		<position>0.0208333, 2, -2.3125</position>
+		<color>255, 255, 255, 255</color>
+		<x_multiplier>100</x_multiplier>
+		<y_multiplier>100</y_multiplier>
+		<z_multiplier>200</z_multiplier>
+		<position>0, 0, -0.375</position>
 	</noiseRect>
 	<circ>
-		<enabled>0</enabled>
-		<color>255, 0, 0, 255</color>
+		<enabled>1</enabled>
+		<color>0, 255, 0, 155</color>
 		<x>0.5</x>
 		<y>0.5</y>
 		<radius>0.5</radius>
-		<position>0, 0, -1</position>
-		<dimensions>0.229167, -1.20833, -0.229167</dimensions>
-		<rotation>131.25, 41.25, 135</rotation>
+		<position>0, 0, -0.875</position>
+		<dimensions>0.5, 0.5, 0.5</dimensions>
+		<rotation>0, 0, 0</rotation>
 		<fill>1</fill>
 		<lineWidth>10</lineWidth>
-		<resolution>27</resolution>
+		<resolution>20</resolution>
 		<lighting>0</lighting>
 	</circ>
 	<noiseCirc>
-		<enabled>1</enabled>
+		<enabled>0</enabled>
 		<color>255, 255, 255, 255</color>
-		<x_multiplier>500</x_multiplier>
-		<y_multiplier>500</y_multiplier>
-		<z_multiplier>40.8172</z_multiplier>
-		<position>2, 2, 2</position>
+		<x_multiplier>100</x_multiplier>
+		<y_multiplier>100</y_multiplier>
+		<z_multiplier>200</z_multiplier>
+		<position>0, 0, -1</position>
 	</noiseCirc>
 	<cube>
-		<enabled>1</enabled>
+		<enabled>0</enabled>
 		<color>255, 255, 255, 255</color>
 		<pos>0, 0, -1.5</pos>
 		<dim>1, 1, 1</dim>
 		<rot>0, 0, 0</rot>
-		<fill>0</fill>
+		<fill>1</fill>
 		<rot_speed>0, 30, 0</rot_speed>
 		<lineWidth>10</lineWidth>
-		<position>0, 0, -0.875</position>
+		<position>0, 0, -1</position>
 		<dimensions>0.5, 0.5, 0.5</dimensions>
 		<rotation>0, 0, 0</rotation>
 		<resolution>1</resolution>
-		<lighting>0</lighting>
+		<lighting>1</lighting>
 	</cube>
 	<sphere>
 		<enabled>0</enabled>
@@ -69,21 +69,32 @@
 		<fill>1</fill>
 		<lineWidth>10</lineWidth>
 		<position>0, 0, -1</position>
-		<dimensions>0.395833, -1.97917, 0.5</dimensions>
-		<rotation>-172.5, 30, 0</rotation>
-		<resolution>2</resolution>
+		<dimensions>0.5, 0.5, 0.5</dimensions>
+		<rotation>0, 0, 0</rotation>
+		<resolution>20</resolution>
 		<lighting>1</lighting>
 	</sphere>
 	<cylinder>
-		<enabled>1</enabled>
+		<enabled>0</enabled>
 		<color>255, 255, 255, 255</color>
 		<position>0, 0, -1</position>
-		<dimensions>0.25, 0.1875, 0.125</dimensions>
-		<rotation>60, 60, 0</rotation>
+		<dimensions>0.5, 0.5, 0.5</dimensions>
+		<rotation>0, 0, 0</rotation>
 		<fill>1</fill>
 		<lineWidth>10</lineWidth>
-		<resolution>3</resolution>
+		<resolution>20</resolution>
 		<lighting>1</lighting>
-		<rot_speed>0, 0, 172.5</rot_speed>
+		<rot_speed>0, 30, 0</rot_speed>
 	</cylinder>
+	<circ_mouse>
+		<enabled>1</enabled>
+		<color>255, 255, 255, 255</color>
+		<position>0, 0, -10</position>
+		<dimensions>0.0625, 0.395833, 0.395833</dimensions>
+		<rotation>0, 0, 0</rotation>
+		<fill>1</fill>
+		<lineWidth>10</lineWidth>
+		<resolution>6</resolution>
+		<lighting>0</lighting>
+	</circ_mouse>
 </draw_parameters>
