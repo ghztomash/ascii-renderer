@@ -5,8 +5,10 @@
 #include "ofEasyCam.h"
 #include "ofEvents.h"
 #include "ofGraphics.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofImage.h"
 #include "ofLight.h"
+#include "ofMath.h"
 #include "ofTexture.h"
 #include "ofUtils.h"
 #include "ofVec3f.h"
@@ -194,6 +196,9 @@ class noiseRenderer: public baseRenderer {
 
             noiseBuffer.allocate(noiseCanvasWidth, noiseCanvasHeight, OF_IMAGE_COLOR_ALPHA);
             noiseBuffer.update();
+            
+            bufferPixels = noiseBuffer.getPixels().getData();
+            size = noiseBuffer.getPixels().size();
         }
 
         void update (ofFbo &fbo) {
@@ -202,17 +207,34 @@ class noiseRenderer: public baseRenderer {
                 return;
             }
 
+            // new optimized(?) code
+            for (i = 0, i_n = 0; i < size; i++) {
+                x = i_n % (size_t)noiseCanvasWidth;
+                y = i_n / (size_t)noiseCanvasWidth;
+                noiseValue = ofNoise( x/noiseX + position.get().x, y/noiseY + position.get().y, ofGetFrameNum()/noiseZ + position.get().z)*255.0;
+                bufferPixels[i++]= 255; // r
+                bufferPixels[i++]= 255; // g
+                bufferPixels[i++]= 255; // b
+                bufferPixels[i]= noiseValue; // a
+                i_n++;
+            }
+            noiseBuffer.update();
+            noiseImage = noiseBuffer;
+            noiseImage.resize(fbo.getWidth(), fbo.getHeight());
+            
+            /* old code for reference
             for (int y = 0; y < noiseBuffer.getHeight(); y++) {
                 for (int x = 0; x < noiseBuffer.getWidth(); x++) {
-                    noiseBuffer.setColor(x, y, ofColor(ofNoise(x/noiseX+ position.get().x, y/noiseY + position.get().y, ofGetFrameNum()/noiseZ + position.get().z)*255.0));
+                    //noiseBuffer.setColor(x, y, ofColor(ofNoise(x/noiseX+ position.get().x, y/noiseY + position.get().y, ofGetFrameNum()/noiseZ + position.get().z)*255.0));
                 }
             }
             noiseBuffer.update();
+            */
             
             fbo.begin();
             ofSetColor(color);
             ofSetRectMode(OF_RECTMODE_CORNER);
-            noiseBuffer.draw(0,0);
+            noiseImage.draw(0,0);
             fbo.end();
         }
 
@@ -226,4 +248,10 @@ class noiseRenderer: public baseRenderer {
         ofParameter<float> noiseZ;
 
         ofImage noiseBuffer;
+        ofImage noiseImage;
+        unsigned char* bufferPixels;
+        unsigned char noiseValue;
+        size_t i, i_n; 
+        size_t size;
+        int x, y;
 };

@@ -23,7 +23,7 @@ void ofApp::setup() {
     ofEnableAntiAliasing();
     // ofDisableAntiAliasing();
     ofSetVerticalSync(true);
-    ofSetFrameRate(30);
+    ofSetFrameRate(frameRate);
     ofBackground(crustColor);
 
     // be able to load textures on shapes
@@ -73,8 +73,8 @@ void ofApp::setup() {
     //sphere.loadTexture("textures/earth.jpg");
     //cylinder.loadTexture("textures/earth.jpg");
 
-    noise.setup(fboCanvasWidth, fboCanvasHeight, "noiseCirc");
-    noise2.setup(fboCanvasWidth, fboCanvasHeight, "noiseRect");
+    noise.setup(fboCanvasWidth/4, fboCanvasHeight/4, "noiseCirc");
+    noise2.setup(fboCanvasWidth/4, fboCanvasHeight/4, "noiseRect");
     sphere.setTexture(fboNoiseTexture.getTexture());
 
     guiRenderer.setup("draw parameters", "draw_params.xml", fboWidth+fboCanvasWidth + 10, 10);
@@ -126,12 +126,12 @@ void ofApp::update() {
     sphere.setTexture(fboNoiseTexture.getTexture());
 
     noise2.update(fboCanvas);
-    rect.update(fboCanvas);
-    circ.update(fboCanvas);
-    cube.update(fboCanvas);
+    //rect.update(fboCanvas);
+    //circ.update(fboCanvas);
+    //cube.update(fboCanvas);
     sphere.update(fboCanvas);
-    cylinder.update(fboCanvas);
-    cmr.update(fboCanvas);
+    //cylinder.update(fboCanvas);
+    //cmr.update(fboCanvas);
 
     convertFboToAscii();
 }

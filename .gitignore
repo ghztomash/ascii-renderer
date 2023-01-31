@@ -102,4 +102,3 @@ compile_commands.json
 *.png
 *.mp4
 .clangd
-bin/data/*.xml

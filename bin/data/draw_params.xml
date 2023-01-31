@@ -1,34 +1,34 @@
 <?xml version="1.0"?>
 <draw_parameters>
 	<rect>
-		<enabled>1</enabled>
-		<color>255, 0, 31, 255</color>
+		<enabled>0</enabled>
+		<color>0, 0, 0, 255</color>
 		<x>0.5</x>
 		<y>0.5</y>
 		<width>0.5</width>
 		<height>0.5</height>
-		<position>0, 0, -1.125</position>
-		<dimensions>0.5, 1.08333, 0.166667</dimensions>
-		<rotation>0, 0, 26.25</rotation>
+		<position>0, 0, -0.5625</position>
+		<dimensions>0.5, 0.5, 0.5</dimensions>
+		<rotation>0, 0, 0</rotation>
 		<fill>1</fill>
 		<lineWidth>10</lineWidth>
 		<lighting>0</lighting>
 	</rect>
 	<noiseRect>
-		<enabled>0</enabled>
+		<enabled>1</enabled>
 		<color>255, 255, 255, 255</color>
 		<x_multiplier>100</x_multiplier>
 		<y_multiplier>100</y_multiplier>
-		<z_multiplier>200</z_multiplier>
-		<position>0, 0, -0.375</position>
+		<z_multiplier>237.245</z_multiplier>
+		<position>0, 0, -1</position>
 	</noiseRect>
 	<circ>
 		<enabled>1</enabled>
-		<color>0, 255, 0, 155</color>
+		<color>255, 255, 255, 255</color>
 		<x>0.5</x>
 		<y>0.5</y>
 		<radius>0.5</radius>
-		<position>0, 0, -0.875</position>
+		<position>0, 0, -1</position>
 		<dimensions>0.5, 0.5, 0.5</dimensions>
 		<rotation>0, 0, 0</rotation>
 		<fill>1</fill>
@@ -37,7 +37,7 @@
 		<lighting>0</lighting>
 	</circ>
 	<noiseCirc>
-		<enabled>0</enabled>
+		<enabled>1</enabled>
 		<color>255, 255, 255, 255</color>
 		<x_multiplier>100</x_multiplier>
 		<y_multiplier>100</y_multiplier>
@@ -45,7 +45,7 @@
 		<position>0, 0, -1</position>
 	</noiseCirc>
 	<cube>
-		<enabled>0</enabled>
+		<enabled>1</enabled>
 		<color>255, 255, 255, 255</color>
 		<pos>0, 0, -1.5</pos>
 		<dim>1, 1, 1</dim>
@@ -60,7 +60,7 @@
 		<lighting>1</lighting>
 	</cube>
 	<sphere>
-		<enabled>0</enabled>
+		<enabled>1</enabled>
 		<color>255, 255, 255, 255</color>
 		<pos>0, 0, -1</pos>
 		<radius>0.25</radius>
@@ -75,7 +75,7 @@
 		<lighting>1</lighting>
 	</sphere>
 	<cylinder>
-		<enabled>0</enabled>
+		<enabled>1</enabled>
 		<color>255, 255, 255, 255</color>
 		<position>0, 0, -1</position>
 		<dimensions>0.5, 0.5, 0.5</dimensions>
@@ -89,12 +89,12 @@
 	<circ_mouse>
 		<enabled>1</enabled>
 		<color>255, 255, 255, 255</color>
-		<position>0, 0, -10</position>
-		<dimensions>0.0625, 0.395833, 0.395833</dimensions>
+		<position>0, 0, -1</position>
+		<dimensions>0.5, 0.5, 0.5</dimensions>
 		<rotation>0, 0, 0</rotation>
 		<fill>1</fill>
 		<lineWidth>10</lineWidth>
-		<resolution>6</resolution>
+		<resolution>20</resolution>
 		<lighting>0</lighting>
 	</circ_mouse>
 </draw_parameters>
