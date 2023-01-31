@@ -126,7 +126,7 @@ class sphereRenderer: public baseRenderer {
     public:
         void setup (string name = "sphere") {
             baseRenderer::setup(name);
-            parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
+            parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 0.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
         }
 
         void update (ofFbo &fbo) {
@@ -193,6 +193,7 @@ class noiseRenderer: public baseRenderer {
             parameters.add(noiseX.set("x multiplier", 100.0, 0.001, 500.0));
             parameters.add(noiseY.set("y multiplier", 100.0, 0.001, 500.0));
             parameters.add(noiseZ.set("z multiplier", 200.0, 0.001, 500.0));
+            parameters.add(alpha.set("alpha noise", false));
 
             noiseBuffer.allocate(noiseCanvasWidth, noiseCanvasHeight, OF_IMAGE_COLOR_ALPHA);
             noiseBuffer.update();
@@ -208,15 +209,28 @@ class noiseRenderer: public baseRenderer {
             }
 
             // new optimized(?) code
-            for (i = 0, i_n = 0; i < size; i++) {
-                x = i_n % (size_t)noiseCanvasWidth;
-                y = i_n / (size_t)noiseCanvasWidth;
-                noiseValue = ofNoise( x/noiseX + position.get().x, y/noiseY + position.get().y, ofGetFrameNum()/noiseZ + position.get().z)*255.0;
-                bufferPixels[i++]= 255; // r
-                bufferPixels[i++]= 255; // g
-                bufferPixels[i++]= 255; // b
-                bufferPixels[i]= noiseValue; // a
-                i_n++;
+            if (alpha) {
+                for (i = 0, i_n = 0; i < size; i++) {
+                    x = i_n % (size_t)noiseCanvasWidth;
+                    y = i_n / (size_t)noiseCanvasWidth;
+                    noiseValue = ofNoise( x/noiseX + position.get().x, y/noiseY + position.get().y, ofGetFrameNum()/noiseZ + position.get().z)*255.0;
+                    bufferPixels[i++]= 255; // r
+                    bufferPixels[i++]= 255; // g
+                    bufferPixels[i++]= 255; // b
+                    bufferPixels[i]= noiseValue; // a
+                    i_n++;
+                }
+            } else {
+                for (i = 0, i_n = 0; i < size; i++) {
+                    x = i_n % (size_t)noiseCanvasWidth;
+                    y = i_n / (size_t)noiseCanvasWidth;
+                    noiseValue = ofNoise( x/noiseX + position.get().x, y/noiseY + position.get().y, ofGetFrameNum()/noiseZ + position.get().z)*255.0;
+                    bufferPixels[i++]= noiseValue; // r
+                    bufferPixels[i++]= noiseValue; // g
+                    bufferPixels[i++]= noiseValue; // b
+                    bufferPixels[i]= 255; // a
+                    i_n++;
+                }
             }
             noiseBuffer.update();
             noiseImage = noiseBuffer;
@@ -246,6 +260,7 @@ class noiseRenderer: public baseRenderer {
         ofParameter<float> noiseX;
         ofParameter<float> noiseY;
         ofParameter<float> noiseZ;
+        ofParameter<bool> alpha = false;
 
         ofImage noiseBuffer;
         ofImage noiseImage;

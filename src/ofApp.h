@@ -72,8 +72,8 @@ public:
     ofImage bufferPreview;
     ofPixels bufferPreviewPixels;
 
-    float fboWidth = 720;
-    float fboHeight = 720;
+    float fboWidth = 1080;
+    float fboHeight = 1080;
     int frameRate = 30;
     ofFbo fboAscii;
     ofPixels fboAsciiPixels;

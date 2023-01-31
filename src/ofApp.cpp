@@ -82,10 +82,10 @@ void ofApp::setup() {
     guiRenderer.add(noise2.parameters);
     guiRenderer.add(circ.parameters);
     guiRenderer.add(noise.parameters);
-    guiRenderer.add(cube.parameters);
+    //guiRenderer.add(cube.parameters);
     guiRenderer.add(sphere.parameters);
-    guiRenderer.add(cylinder.parameters);
-    guiRenderer.add(cmr.parameters);
+    //guiRenderer.add(cylinder.parameters);
+    //guiRenderer.add(cmr.parameters);
 
 #ifdef TARGET_LINUX
     ofLog() << "OS: Linux";
@@ -126,8 +126,8 @@ void ofApp::update() {
     sphere.setTexture(fboNoiseTexture.getTexture());
 
     noise2.update(fboCanvas);
-    //rect.update(fboCanvas);
-    //circ.update(fboCanvas);
+    rect.update(fboCanvas);
+    circ.update(fboCanvas);
     //cube.update(fboCanvas);
     sphere.update(fboCanvas);
     //cylinder.update(fboCanvas);
