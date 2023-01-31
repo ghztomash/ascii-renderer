@@ -123,6 +123,7 @@ void ofApp::update() {
     // cube.dimensions.set(glm::vec3((float)ofGetMouseX()/ofGetWidth(), (float)ofGetMouseY()/ofGetHeight(), 1.0));
 
     noise.update(fboNoiseTexture);
+    sphere.setTexture(fboNoiseTexture.getTexture());
 
     noise2.update(fboCanvas);
     rect.update(fboCanvas);
