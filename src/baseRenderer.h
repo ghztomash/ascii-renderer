@@ -6,13 +6,14 @@
 #include "ofParameter.h"
 #include "ofxGui.h"
 #include "ofxSliderGroup.h"
+#include <memory>
 
 class baseRenderer {
     public:
         baseRenderer() {};
         ~baseRenderer() {};
 
-        void setup (string name = "base") {
+        void setup(string name = "base") {
             moduleName = name;
 
             parameters.setName(moduleName);
@@ -40,7 +41,7 @@ class baseRenderer {
         }
 
         
-        void update () {};
+        virtual void update(ofFbo &fbo) {};
 
         void loadTexture(string path) {
             ofLoadImage(texture, path);
@@ -78,7 +79,7 @@ class baseRenderer {
         ofParameter<bool> lighting;
     protected:
 
-        inline void preUpdate (ofFbo &fbo) {
+        inline void preUpdate(ofFbo &fbo) {
             if ((!fbo.isAllocated()) || (!enabled)) {
                 return;
             }
@@ -116,7 +117,7 @@ class baseRenderer {
                 ofNoFill();
         };
 
-        inline void postUpdate (ofFbo &fbo) {
+        inline void postUpdate(ofFbo &fbo) {
             if ((!fbo.isAllocated()) || (!enabled)) {
                 return;
             }
@@ -139,7 +140,7 @@ class baseRenderer {
             fbo.end();
         };
 
-        std::string moduleName = "base";
+        string moduleName = "base";
         ofLight light;
         ofEasyCam cam;
         ofTexture texture;

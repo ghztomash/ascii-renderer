@@ -1,5 +1,7 @@
 #include "ofApp.h"
 
+#include "baseRenderer.h"
+#include "implRenderer.h"
 #include "ofAppRunner.h"
 #include "ofColor.h"
 #include "ofEvents.h"
@@ -15,6 +17,7 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdlib>
+#include <memory>
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -63,29 +66,37 @@ void ofApp::setup() {
         //ofLog() << getCharacter(i);
     }
 
-    rect.setup();
-    circ.setup();
-    cube.setup();
-    cube.loadTexture("textures/box.jpg");
-    sphere.setup();
-    cylinder.setup();
-    cmr.setup(fboWidth, 0);
-    //sphere.loadTexture("textures/earth.jpg");
-    //cylinder.loadTexture("textures/earth.jpg");
-
-    noise.setup(fboCanvasWidth/4, fboCanvasHeight/4, "noiseCirc");
-    noise2.setup(fboCanvasWidth/4, fboCanvasHeight/4, "noiseRect");
-    sphere.setTexture(fboNoiseTexture.getTexture());
-
     guiRenderer.setup("draw parameters", "draw_params.xml", fboWidth+fboCanvasWidth + 10, 10);
-    guiRenderer.add(rect.parameters);
-    guiRenderer.add(noise2.parameters);
-    guiRenderer.add(circ.parameters);
+
+    shared_ptr<noiseRenderer> p(new noiseRenderer()); 
+    p->setup(fboCanvasWidth/4, fboCanvasHeight/4);
+    renderersVec.emplace_back(p);
+    guiRenderer.add(renderersVec.back()->parameters);
+
+    renderersVec.emplace_back(RendererFactory::newRenderer(RECT_RENDERER));
+    guiRenderer.add(renderersVec.back()->parameters);
+
+    renderersVec.emplace_back(RendererFactory::newRenderer(CIRCLE_RENDERER));
+    guiRenderer.add(renderersVec.back()->parameters);
+
+    shared_ptr<circMouseRenderer> c(new circMouseRenderer()); 
+    c->setup(fboWidth, 0);
+    renderersVec.emplace_back(c);
+    guiRenderer.add(renderersVec.back()->parameters);
+
+    renderersVec.emplace_back(RendererFactory::newRenderer(CUBE_RENDERER));
+    guiRenderer.add(renderersVec.back()->parameters);
+    renderersVec.back()->loadTexture("textures/box.jpg");
+
+    renderersVec.emplace_back(RendererFactory::newRenderer(SPHERE_RENDERER));
+    guiRenderer.add(renderersVec.back()->parameters);
+    renderersVec.back()->setTexture(fboNoiseTexture.getTexture());
+
+    renderersVec.emplace_back(RendererFactory::newRenderer(CYLINDER_RENDERER));
+    guiRenderer.add(renderersVec.back()->parameters);
+
+    noise.setup(fboCanvasWidth/4, fboCanvasHeight/4, "noiseSphere");
     guiRenderer.add(noise.parameters);
-    //guiRenderer.add(cube.parameters);
-    guiRenderer.add(sphere.parameters);
-    //guiRenderer.add(cylinder.parameters);
-    //guiRenderer.add(cmr.parameters);
 
 #ifdef TARGET_LINUX
     ofLog() << "OS: Linux";
@@ -118,20 +129,17 @@ void ofApp::update() {
     fboNoiseTexture.begin();
     ofClear(0, 0);
     fboNoiseTexture.end();
+
+    noise.update(fboNoiseTexture);
     
     // test live parameter update
     // cube.dimensions.set(glm::vec3((float)ofGetMouseX()/ofGetWidth(), (float)ofGetMouseY()/ofGetHeight(), 1.0));
 
-    noise.update(fboNoiseTexture);
-    sphere.setTexture(fboNoiseTexture.getTexture());
+    //sphere.setTexture(fboNoiseTexture.getTexture());
 
-    noise2.update(fboCanvas);
-    rect.update(fboCanvas);
-    circ.update(fboCanvas);
-    //cube.update(fboCanvas);
-    sphere.update(fboCanvas);
-    //cylinder.update(fboCanvas);
-    //cmr.update(fboCanvas);
+    for (size_t i = 0; i < renderersVec.size(); i++) {
+        renderersVec[i]->update(fboCanvas);
+    }
 
     convertFboToAscii();
 }

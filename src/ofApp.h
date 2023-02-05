@@ -12,6 +12,7 @@
 #include "ofxToggle.h"
 #include "baseRenderer.h"
 #include "implRenderer.h"
+#include "RendererFactory.h"
 #include <cstddef>
 #include <time.h>
 
@@ -112,12 +113,6 @@ public:
     int gridWidth, gridHeight;
 
     ofxPanel guiRenderer;
-    rectRenderer rect;
-    circRenderer circ;
     noiseRenderer noise;
-    noiseRenderer noise2;
-    cubeRenderer cube;
-    sphereRenderer sphere;
-    cylinderRenderer cylinder;
-    circMouseRenderer cmr;
+    vector<shared_ptr<baseRenderer>> renderersVec;
 };

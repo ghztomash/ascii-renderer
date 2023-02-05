@@ -14,6 +14,18 @@
 #include "ofVec3f.h"
 #include "vector_float3.hpp"
 
+const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "cube", "sphere", "cylinder", "noise"};
+
+enum RendererType {
+    RECT_RENDERER,
+    CIRCLE_RENDERER,
+    CIRC_MOUSE_RENDERER,
+    CUBE_RENDERER,
+    SPHERE_RENDERER,
+    CYLINDER_RENDERER,
+    NOISE_RENDERER
+};
+
 // test draw rectangle:
 class rectRenderer: public baseRenderer {
     public:
@@ -193,7 +205,7 @@ class noiseRenderer: public baseRenderer {
             parameters.add(noiseX.set("x multiplier", 100.0, 0.001, 500.0));
             parameters.add(noiseY.set("y multiplier", 100.0, 0.001, 500.0));
             parameters.add(noiseZ.set("z multiplier", 200.0, 0.001, 500.0));
-            parameters.add(alpha.set("alpha noise", false));
+            parameters.add(alpha.set("alpha blending", false));
 
             noiseBuffer.allocate(noiseCanvasWidth, noiseCanvasHeight, OF_IMAGE_COLOR_ALPHA);
             noiseBuffer.update();
