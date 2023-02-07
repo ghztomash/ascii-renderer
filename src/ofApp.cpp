@@ -1,5 +1,6 @@
 #include "ofApp.h"
 
+#include "ColorTheme.h"
 #include "baseRenderer.h"
 #include "implRenderer.h"
 #include "ofAppRunner.h"
@@ -45,6 +46,7 @@ void ofApp::setup() {
     gui.add(size.setup("size", 15, 1, 100));
     gui.add(reload.setup("reload font"));
     gui.add(currentCharacterSet.setup("char set", 0, 0, characterSets.size()-1));
+    gui.add(currentTheme.setup("color theme", 0, 0, ColorThemes::colorThemes.size()-1));
     gui.add(offsetV.setup("offsetV", 1, -5.0, 5.0));
     gui.add(offsetH.setup("offsetH", 1, -5.0, 5.0));
     gui.add(marginSize.setup("margin", 0, 0, 8));
@@ -187,6 +189,7 @@ void ofApp::draw() {
     }
 
     if (debugBuffer) {
+        drawTheme(fboAscii.getWidth(),fboCanvas.getHeight(), charWidth);
         ofDrawBitmapString(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + " fps: " + ofToString((int)ofGetFrameRate()) + (recording? " recording" : "" )
                 + " x: " + ofToString(mouseX) + " y:" + ofToString(mouseY)
                 , 0, ofGetHeight() + descenderH);
@@ -384,7 +387,8 @@ void ofApp::convertFboToAscii() {
 
     fboAscii.begin();
 
-    ofBackground(backgroundColor); // clear last buffer
+    //ofBackground(backgroundColor); // clear last buffer
+    ofBackground(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::background]);
 
     for (int y = 0; y < gridHeight; y++) {
         for (int x = 0; x < gridWidth; x++) {
@@ -409,7 +413,7 @@ void ofApp::convertFboToAscii() {
                     ofDrawLine(0, cY-ascenderH, fboWidth, cY-ascenderH);
                 }
 
-                ofSetColor(debugColor);
+                ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::cyan]);
                 if (y == 0) {
                     if (x == 0) {
                         myfont.drawString(u8"╔", cX, cY);
@@ -433,7 +437,7 @@ void ofApp::convertFboToAscii() {
                     myfont.drawString(u8"▒", cX, cY);
                 }
             } else {
-                ofSetColor(foregroundColor);
+                ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::foreground]);
                 index = (canvasPixels.getColor(x,y).getBrightness()/255.0) * (characterSetSize-1); // convert brightness to character index
                 myfont.drawString(ofToString(getCharacter(index)),cX, cY);
             }
@@ -463,4 +467,15 @@ void ofApp::startRecording() {
 
     recordedFramesCount = 0;
     recording = true;
+}
+
+//--------------------------------------------------------------
+void ofApp::drawTheme(int x, int y, int size) {
+    ofPushMatrix();
+    ofTranslate(x, y);
+    for (size_t i = 0; i < ColorThemes::colorThemes[currentTheme].size(); i++) {
+        ofSetColor(ColorThemes::colorThemes[currentTheme][i]);
+        ofDrawRectangle(size * (i % (ColorThemes::colorThemes[currentTheme].size()/2)), size * (i / (ColorThemes::colorThemes[currentTheme].size()/2)), size, size);
+    }
+    ofPopMatrix();
 }

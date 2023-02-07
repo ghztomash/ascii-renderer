@@ -13,6 +13,7 @@
 #include "baseRenderer.h"
 #include "implRenderer.h"
 #include "RendererFactory.h"
+#include "ColorTheme.h"
 #include <cstddef>
 #include <time.h>
 
@@ -39,6 +40,7 @@ public:
     void marginChanged(int &d);
     void characterSetChanged(int &d);
     void calculateGridSize();
+    void drawTheme(int x, int y, int size);
     string getCharacter(size_t i);
 
     void startRecording();
@@ -65,10 +67,10 @@ public:
     // color themes from catpuccin
     // https://github.com/catppuccin/catppuccin/blob/main/docs/style-guide.md
     // https://github.com/catppuccin/catppuccin
-    ofColor foregroundColor = ofColor::fromHex(0xc6d0f5);
-    ofColor backgroundColor = ofColor::fromHex(0x303446);
+    //ofColor foregroundColor = ofColor::fromHex(0xc6d0f5);
+    //ofColor backgroundColor = ofColor::fromHex(0x303446);
     ofColor crustColor = ofColor::fromHex(0x232634);
-    ofColor debugColor = ofColor::fromHex(0xe5c890);
+    //ofColor debugColor = ofColor::fromHex(0xe5c890);
 
     float charHeight;
     float charWidth;
@@ -102,6 +104,7 @@ public:
     ofxIntSlider size;
     ofxButton reload;
     ofxIntSlider currentCharacterSet;
+    ofxIntSlider currentTheme;
     ofxFloatSlider offsetH;
     ofxFloatSlider offsetV;
     ofxIntSlider marginSize;
