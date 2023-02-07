@@ -37,6 +37,7 @@ public:
     void gotMessage(ofMessage msg);
     void dpiChanged(int &d);
     void marginChanged(int &d);
+    void characterSetChanged(int &d);
     void calculateGridSize();
     string getCharacter(size_t i);
 
@@ -46,9 +47,17 @@ public:
 
     bool drawGui = true;
 
-    string characterSet = " ∴∵∶∷/:_◜◞◠+*`=?!¬░▒▄▀█";
+    vector<string> characterSets = {
+        " ∴∵∶∷/:_◜◞◠+*`=?!¬░▒▄▀█",
+        ".,~!?@#$%^&*|/()_+-={}[];:<>",
+        "☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼⌂",
+        "æÆô¢£¥₧ƒáñÑªº",
+        "¿⌐¬½¼¡«»",
+        "░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀",
+        "αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■",
+        "𐎀𐎁𐎂𐎃𐎄𐎅𐎆𐎇𐎈𐎉𐎊𐎋𐎌𐎍𐎎𐎏𐎐𐎑𐎒𐎓𐎔𐎕𐎖𐎗𐎘𐎙𐎚𐎛𐎜𐎝",
+    };
     size_t characterSetSize;
-
     size_t index;
 
     ofTrueTypeFont myfont;
@@ -92,6 +101,7 @@ public:
     ofxIntSlider dpi;
     ofxIntSlider size;
     ofxButton reload;
+    ofxIntSlider currentCharacterSet;
     ofxFloatSlider offsetH;
     ofxFloatSlider offsetV;
     ofxIntSlider marginSize;

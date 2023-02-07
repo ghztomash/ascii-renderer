@@ -38,11 +38,13 @@ void ofApp::setup() {
     marginSize.addListener(this, &ofApp::marginChanged);
     reload.addListener(this, &ofApp::loadFont);
     record.addListener(this, &ofApp::startRecording);
+    currentCharacterSet.addListener(this, &ofApp::characterSetChanged);
 
     gui.setup();
     gui.add(dpi.setup("dpi", 200, 1, 400));
     gui.add(size.setup("size", 15, 1, 100));
     gui.add(reload.setup("reload font"));
+    gui.add(currentCharacterSet.setup("char set", 0, 0, characterSets.size()-1));
     gui.add(offsetV.setup("offsetV", 1, -5.0, 5.0));
     gui.add(offsetH.setup("offsetH", 1, -5.0, 5.0));
     gui.add(marginSize.setup("margin", 0, 0, 8));
@@ -58,10 +60,10 @@ void ofApp::setup() {
     ofLog() << "Characters Loaded: " << myfont.getNumCharacters()
             << " full set: " << myfont.hasFullCharacterSet();
 
-    characterSetSize = ofUTF8Length(characterSet);
+    characterSetSize = ofUTF8Length(characterSets[currentCharacterSet]);
     // useful to take out single UTF8 characters out of a string
-    ofLog() << "charset: " << characterSet << " len:" << characterSetSize;
-    for (size_t i = 0; i < ofUTF8Length(characterSet); i++) {
+    ofLog() << "charset: " << characterSets[currentCharacterSet] << " len:" << characterSetSize;
+    for (size_t i = 0; i < ofUTF8Length(characterSets[currentCharacterSet]); i++) {
         //ofLog() << ofUTF8Substring(characterSet, i, 1);
         //ofLog() << getCharacter(i);
     }
@@ -269,6 +271,11 @@ void ofApp::marginChanged(int &d) {
 }
 
 //--------------------------------------------------------------
+void ofApp::characterSetChanged(int &d) { 
+    characterSetSize = ofUTF8Length(characterSets[currentCharacterSet]);
+}
+
+//--------------------------------------------------------------
 void ofApp::calculateGridSize() { 
     // TODO: potential for divide by zero before font is loaded
     gridWidth = (fboWidth / (charWidth + offsetH)) - (marginSize * 4);
@@ -335,7 +342,7 @@ string ofApp::getCharacter(size_t i) {
     if (i < 0 && i >= characterSetSize) {
         return "";
     }
-    return ofUTF8Substring(characterSet, i, 1);
+    return ofUTF8Substring(characterSets[currentCharacterSet], i, 1);
 }
 
 //--------------------------------------------------------------
