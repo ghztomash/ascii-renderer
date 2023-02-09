@@ -2,7 +2,7 @@
 <draw_parameters>
 	<rect>
 		<enabled>1</enabled>
-		<color>255, 255, 255, 255</color>
+		<color>240, 0, 255, 255</color>
 		<x>0.5</x>
 		<y>0.5</y>
 		<width>0.5</width>
@@ -45,7 +45,7 @@
 		<position>0, 0, -1</position>
 	</noiseCirc>
 	<cube>
-		<enabled>1</enabled>
+		<enabled>0</enabled>
 		<color>255, 255, 255, 255</color>
 		<pos>0, 0, -1.5</pos>
 		<dim>1, 1, 1</dim>
@@ -60,7 +60,7 @@
 		<lighting>1</lighting>
 	</cube>
 	<sphere>
-		<enabled>1</enabled>
+		<enabled>0</enabled>
 		<color>49, 49, 49, 255</color>
 		<pos>0, 0, -1</pos>
 		<radius>0.25</radius>
@@ -71,11 +71,11 @@
 		<position>0, 0, -1.1875</position>
 		<dimensions>0.5, 0, 0.5</dimensions>
 		<rotation>0, 45, 0</rotation>
-		<resolution>2</resolution>
+		<resolution>25</resolution>
 		<lighting>0</lighting>
 	</sphere>
 	<cylinder>
-		<enabled>1</enabled>
+		<enabled>0</enabled>
 		<color>255, 255, 255, 255</color>
 		<position>0, 0, -1</position>
 		<dimensions>0.5, 0.5, 0.5</dimensions>
@@ -88,13 +88,31 @@
 	</cylinder>
 	<circ_mouse>
 		<enabled>1</enabled>
-		<color>255, 255, 255, 255</color>
+		<color>0, 255, 54, 255</color>
 		<position>0, 0, -1</position>
-		<dimensions>0.5, 0.5, 0.5</dimensions>
+		<dimensions>0.125, 0.5, 0.5</dimensions>
 		<rotation>0, 0, 0</rotation>
 		<fill>1</fill>
 		<lineWidth>10</lineWidth>
 		<resolution>20</resolution>
 		<lighting>0</lighting>
 	</circ_mouse>
+	<noise>
+		<enabled>0</enabled>
+		<color>255, 255, 255, 255</color>
+		<position>0, 0, -1</position>
+		<x_multiplier>100</x_multiplier>
+		<y_multiplier>100</y_multiplier>
+		<z_multiplier>200</z_multiplier>
+		<alpha_blending>0</alpha_blending>
+	</noise>
+	<noiseSphere>
+		<enabled>0</enabled>
+		<color>255, 255, 255, 255</color>
+		<position>0, 0, -3.75</position>
+		<x_multiplier>7.65405</x_multiplier>
+		<y_multiplier>2.55202</y_multiplier>
+		<z_multiplier>145.409</z_multiplier>
+		<alpha_blending>0</alpha_blending>
+	</noiseSphere>
 </draw_parameters>

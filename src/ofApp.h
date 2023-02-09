@@ -42,6 +42,7 @@ public:
     void calculateGridSize();
     void drawTheme(int x, int y, int size);
     string getCharacter(size_t i);
+    size_t findNearestColor(ofColor col);
 
     void startRecording();
     void allocateFbo();
@@ -50,6 +51,7 @@ public:
     bool drawGui = true;
 
     vector<string> characterSets = {
+        "░▒█",
         " ∴∵∶∷/:_◜◞◠+*`=?!¬░▒▄▀█",
         ".,~!?@#$%^&*|/()_+-={}[];:<>",
         "☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼⌂",
@@ -104,6 +106,7 @@ public:
     ofxIntSlider size;
     ofxButton reload;
     ofxIntSlider currentCharacterSet;
+    ofxToggle enableColors;
     ofxIntSlider currentTheme;
     ofxFloatSlider offsetH;
     ofxFloatSlider offsetV;

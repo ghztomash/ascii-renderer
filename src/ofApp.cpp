@@ -15,6 +15,7 @@
 #include "ofRectangle.h"
 #include "ofTrueTypeFont.h"
 #include "ofUtils.h"
+#include "ofVec2f.h"
 #include <cassert>
 #include <cstddef>
 #include <cstdlib>
@@ -22,7 +23,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-    ofSetWindowTitle("ascii");
+    //ofSetWindowTitle("ascii");
     ofEnableSmoothing();
     ofEnableAntiAliasing();
     // ofDisableAntiAliasing();
@@ -46,6 +47,7 @@ void ofApp::setup() {
     gui.add(size.setup("size", 15, 1, 100));
     gui.add(reload.setup("reload font"));
     gui.add(currentCharacterSet.setup("char set", 0, 0, characterSets.size()-1));
+    gui.add(enableColors.setup("enable colors", true));
     gui.add(currentTheme.setup("color theme", 0, 0, ColorThemes::colorThemes.size()-1));
     gui.add(offsetV.setup("offsetV", 1, -5.0, 5.0));
     gui.add(offsetH.setup("offsetH", 1, -5.0, 5.0));
@@ -385,6 +387,9 @@ void ofApp::convertFboToAscii() {
     fboCanvas.readToPixels(canvasPixels);
     canvasPixels.resize(gridWidth, gridHeight);
 
+    ofColor pixelColor;
+    size_t colorIndex;
+
     fboAscii.begin();
 
     //ofBackground(backgroundColor); // clear last buffer
@@ -437,8 +442,14 @@ void ofApp::convertFboToAscii() {
                     myfont.drawString(u8"▒", cX, cY);
                 }
             } else {
-                ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::foreground]);
-                index = (canvasPixels.getColor(x,y).getBrightness()/255.0) * (characterSetSize-1); // convert brightness to character index
+                pixelColor = canvasPixels.getColor(x,y);
+                index = (pixelColor.getBrightness()/255.0) * (characterSetSize-1); // convert brightness to character index
+                if (enableColors) {
+                    colorIndex = findNearestColor(pixelColor);
+                    ofSetColor(ColorThemes::colorThemes[currentTheme][colorIndex]);
+                } else {
+                    ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::foreground]);
+                }
                 myfont.drawString(ofToString(getCharacter(index)),cX, cY);
             }
         }
@@ -478,4 +489,38 @@ void ofApp::drawTheme(int x, int y, int size) {
         ofDrawRectangle(size * (i % (ColorThemes::colorThemes[currentTheme].size()/2)), size * (i / (ColorThemes::colorThemes[currentTheme].size()/2)), size, size);
     }
     ofPopMatrix();
+}
+
+//--------------------------------------------------------------
+size_t ofApp::findNearestColor(ofColor col) {
+
+    if (col.getSaturation() <= 64) {
+        //if (col.getBrightness() <= 127)
+            //return ColorThemes::Color::background;
+        return ColorThemes::Color::foreground;
+    }
+
+    ofVec3f sourceColor = ofVec3f(col.r, col.g, col.b);
+    ofVec3f referenceColor;
+    float minDistance = 9999.0;
+    float dist;
+    size_t index = 0;
+
+    for (size_t i = 0; i < ColorThemes::colorThemes[currentTheme].size(); i++) {
+
+        referenceColor = ofVec3f(ColorThemes::colorThemes[currentTheme][i].r, ColorThemes::colorThemes[currentTheme][i].g, ColorThemes::colorThemes[currentTheme][i].b);
+
+        dist = referenceColor.distance(sourceColor);
+
+
+        if (dist <= minDistance) {
+            minDistance = dist;
+            index = i;
+        }
+    }
+
+    if(index == ColorThemes::Color::background)
+        return ColorThemes::Color::foreground;
+
+    return index;
 }
