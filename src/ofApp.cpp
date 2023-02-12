@@ -192,6 +192,7 @@ void ofApp::draw() {
 
     if (debugBuffer) {
         drawTheme(fboAscii.getWidth(),fboCanvas.getHeight(), charWidth);
+        ofSetColor(ofColor::white);
         ofDrawBitmapString(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + " fps: " + ofToString((int)ofGetFrameRate()) + (recording? " recording" : "" )
                 + " x: " + ofToString(mouseX) + " y:" + ofToString(mouseY)
                 , 0, ofGetHeight() + descenderH);
@@ -354,7 +355,6 @@ string ofApp::getCharacter(size_t i) {
 // allocate and size the fbo buffer
 void ofApp::allocateFbo() {
 
-
     fboAscii.allocate(fboWidth, fboHeight);
     ofLog() << "allocating fbo: " << fboAscii.isAllocated() << " " << fboWidth << "x" << fboHeight;
 
@@ -447,6 +447,7 @@ void ofApp::convertFboToAscii() {
                 if (enableColors) {
                     colorIndex = findNearestColor(pixelColor);
                     ofSetColor(ColorThemes::colorThemes[currentTheme][colorIndex]);
+                    //ofSetColor(pixelColor);
                 } else {
                     ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::foreground]);
                 }
@@ -492,12 +493,15 @@ void ofApp::drawTheme(int x, int y, int size) {
 }
 
 //--------------------------------------------------------------
+/*
 size_t ofApp::findNearestColor(ofColor col) {
 
     if (col.getSaturation() <= 64) {
-        //if (col.getBrightness() <= 127)
-            //return ColorThemes::Color::background;
         return ColorThemes::Color::foreground;
+    }
+
+    if (col.getBrightness() <= 127) {
+        return ColorThemes::Color::background;
     }
 
     ofVec3f sourceColor = ofVec3f(col.r, col.g, col.b);
@@ -523,4 +527,114 @@ size_t ofApp::findNearestColor(ofColor col) {
         return ColorThemes::Color::foreground;
 
     return index;
+}
+*/
+
+//--------------------------------------------------------------
+size_t ofApp::findNearestColor(ofColor col) {
+
+    if (col.getBrightness() <= 8) {
+        return ColorThemes::Color::foreground;
+    }
+
+    if (col.getSaturation() <= 32) {
+        return ColorThemes::Color::foreground;
+    }
+
+    //col.r = ((int)(col.r/64.0))*64;
+    //col.g = (col.g >> 3) << 3;
+    //col.b = (col.b >> 3) << 3;
+    //col = ofColor :: fromHsb(((int)col.getHue()>>4)<<4, (((int)col.getSaturation()>>1)<<1), 255.0, 255.0);
+    //col.setBrightness(255.0);
+    ofVec3f sourceColor = ofVec3f(col.r, col.g, col.b);
+    //ofVec4f sourceColor = ofVec4f(col.r, col.g, col.b, col.a);
+    //ofVec3f sourceColor = ofVec3f(col.getHue(), col.getSaturation(), col.getBrightness());
+    //ofVec2f sourceColor = ofVec2f(col.getBrightness(), col.getSaturation());
+    //sourceColor.rotate(col.getHueAngle());
+    //sourceColor.normalize();
+    ofVec3f referenceColor;
+    ofColor ref;
+
+    float minDistance = 999.0;
+    float minSatDist = 999.0;
+    float minHueDist = 999.0;
+    float dist;
+    float satDist;
+    float hueDist;
+    size_t index = 0;
+    size_t satIndex = 0;
+    size_t hueIndex = 0;
+    float totalDist = 0;
+
+    struct colorEntry {
+        size_t index;
+        float dist;
+        float satDist;
+        float hueDist;
+        float totalDist;
+
+        colorEntry(size_t i, float d, float s, float h, float t) {
+            index = i;
+            dist = d;
+            satDist = s;
+            hueDist = h;
+            totalDist = t;
+        }
+
+        //*
+        bool operator<(const colorEntry& a) const {
+                if (abs(hueDist - a.hueDist) <= 28.0) {
+                    if (abs(satDist - a.satDist) <= 104.0)
+                        return totalDist < a.totalDist;
+                    else
+                        return satDist < a.satDist;
+                }
+                return hueDist < a.hueDist;
+        }
+        //*/
+
+        /*
+        bool operator<(const colorEntry& a) const {
+            if (abs(hueDist - a.hueDist) <= hueDistWeight ) {
+                return satDist < a.satDist;
+            }
+            return hueDist < a.hueDist;
+        }
+        */
+
+        /*
+        bool operator<(const colorEntry& a) const {
+                return totalDist < a.totalDist;
+        }
+        */
+    };
+
+    vector<colorEntry> colorEntries;
+
+    for (size_t i = 1; i < ColorThemes::colorThemes[currentTheme].size(); i++) {
+
+        referenceColor = ofVec3f(ColorThemes::colorThemes[currentTheme][i].r, ColorThemes::colorThemes[currentTheme][i].g, ColorThemes::colorThemes[currentTheme][i].b);
+
+        ref = ColorThemes::colorThemes[currentTheme][i];
+        
+        hueDist = col.getHueAngle() - ref.getHueAngle(); 
+        if (hueDist < -180) {
+            hueDist += 360;
+        } else if (hueDist > 180) {
+            hueDist -= 360;
+        }
+
+        hueDist = abs(hueDist);
+
+        dist = referenceColor.distance(sourceColor);
+        satDist = abs(col.getSaturation()-ref.getSaturation());
+
+        totalDist = hueDist + satDist + dist ;
+
+        colorEntries.push_back(colorEntry(i, dist, satDist, hueDist, totalDist));
+    }
+
+    sort(colorEntries.begin(), colorEntries.end());
+
+    return colorEntries.front().index;
 }
