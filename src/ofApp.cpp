@@ -72,6 +72,8 @@ void ofApp::setup() {
         //ofLog() << getCharacter(i);
     }
 
+    sortCharacterSet(false);
+
     guiRenderer.setup("draw parameters", "draw_params.xml", fboWidth+fboCanvasWidth + 10, 10);
 
     shared_ptr<noiseRenderer> p(new noiseRenderer()); 
@@ -193,6 +195,9 @@ void ofApp::draw() {
     if (debugBuffer) {
         drawTheme(fboAscii.getWidth(),fboCanvas.getHeight(), charWidth);
         ofSetColor(ofColor::white);
+        if(fboCharacterBuffer.isAllocated()){
+            fboCharacterBuffer.draw(fboAscii.getWidth() + charWidth*8, fboCanvas.getHeight());
+        }
         ofDrawBitmapString(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + " fps: " + ofToString((int)ofGetFrameRate()) + (recording? " recording" : "" )
                 + " x: " + ofToString(mouseX) + " y:" + ofToString(mouseY)
                 , 0, ofGetHeight() + descenderH);
@@ -235,6 +240,11 @@ void ofApp::keyReleased(int key) {
         case 'r':
         case 'R':
             startRecording();
+            break;
+        // sort character set
+        case 's':
+        case 'S':
+            sortCharacterSet();
             break;
         default:
             break;
@@ -555,15 +565,9 @@ size_t ofApp::findNearestColor(ofColor col) {
     ofVec3f referenceColor;
     ofColor ref;
 
-    float minDistance = 999.0;
-    float minSatDist = 999.0;
-    float minHueDist = 999.0;
     float dist;
     float satDist;
     float hueDist;
-    size_t index = 0;
-    size_t satIndex = 0;
-    size_t hueIndex = 0;
     float totalDist = 0;
 
     struct colorEntry {
@@ -637,4 +641,68 @@ size_t ofApp::findNearestColor(ofColor col) {
     sort(colorEntries.begin(), colorEntries.end());
 
     return colorEntries.front().index;
+}
+
+//--------------------------------------------------------------
+void ofApp::sortCharacterSet(bool reverseOrder) {
+
+    fboCharacterBuffer.allocate(charWidth, charHeight);
+    ofPixels sortPixels;
+    float pixelBrightness;
+    size_t pixelsLength = charWidth*charHeight;
+    string character; 
+    string sortedCharacterSet = "";
+    
+    struct CharacterEntry {
+        string character;
+        float lightness;
+
+        CharacterEntry(string s, float l) {
+            character = s;
+            lightness = l;
+        }
+
+        bool operator<(const CharacterEntry& a) const {
+                return lightness < a.lightness;
+        }
+    };
+
+    vector<CharacterEntry> characterEntries;
+
+    for (size_t c = 0; c < characterSetSize; c++) {
+
+        fboCharacterBuffer.begin();
+        ofClear(0, 255);
+        ofSetColor(ofColor::white);
+
+        character = ofToString(getCharacter(c));
+        myfont.drawString(character,0, charHeight+descenderH);
+        //myfont.drawString(".",0, charHeight+descenderH);
+
+        fboCharacterBuffer.end();
+
+        pixelBrightness = 0; 
+        fboCharacterBuffer.readToPixels(sortPixels);
+
+        for (size_t x = 0; x < charWidth; x++) {
+            for (size_t y = 0; y < charHeight; y++) {
+                pixelBrightness += sortPixels.getColor(x,y).getBrightness();
+            }
+        }
+
+        pixelBrightness /= (float) pixelsLength;
+        characterEntries.push_back(CharacterEntry(character, pixelBrightness));
+
+    }
+    sort(characterEntries.begin(), characterEntries.end());
+    if(reverseOrder)
+        reverse(characterEntries.begin(), characterEntries.end());
+
+    for(auto e: characterEntries) {
+        sortedCharacterSet += e.character;
+        ofLog() << e.character << " lightness: " << e.lightness;
+    }
+
+    characterSets[currentCharacterSet] = sortedCharacterSet;
+    ofLog() << "sorted: " << sortedCharacterSet;
 }

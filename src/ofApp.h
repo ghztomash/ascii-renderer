@@ -43,6 +43,7 @@ public:
     void drawTheme(int x, int y, int size);
     string getCharacter(size_t i);
     size_t findNearestColor(ofColor col);
+    void sortCharacterSet(bool reverseOrder = false);
 
     void startRecording();
     void allocateFbo();
@@ -53,6 +54,7 @@ public:
     vector<string> characterSets = {
         "░▒█",
         " ∴∵∶∷/:_◜◞◠+*`=?!¬░▒▄▀█",
+        "∙∴∵∶∷/:_◜◞◠+-.<>{};'][*&^%$#@!~*`=?!¬░▒█",
         ".,~!?@#$%^&*|/()_+-={}[];:<>",
         "☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼⌂",
         "æÆô¢£¥₧ƒáñÑªº",
@@ -100,6 +102,8 @@ public:
     ofPixels canvasLastFrame;
     ofImage bufferLastFrame;
     ofFbo fboNoiseTexture;
+
+    ofFbo fboCharacterBuffer;
 
     ofxPanel gui;
     ofxIntSlider dpi;
