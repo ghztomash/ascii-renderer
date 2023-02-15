@@ -23,6 +23,14 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+
+    #ifdef MEASURE_PERFORMANCE
+	TIME_SAMPLE_SET_DRAW_LOCATION( TIME_MEASUREMENTS_BOTTOM_RIGHT ); //specify a drawing location (OPTIONAL)
+	TIME_SAMPLE_SET_AVERAGE_RATE(0.1);	//averaging samples, (0..1],
+    //TIME_SAMPLE_DISABLE_AVERAGE();	//disable averaging
+	TIME_SAMPLE_SET_REMOVE_EXPIRED_THREADS(true); //inactive threads will be dropped from the table
+    #endif
+
     //ofSetWindowTitle("ascii");
     ofEnableSmoothing();
     ofEnableAntiAliasing();
@@ -59,7 +67,9 @@ void ofApp::setup() {
     gui.add(recordFramesNumber.setup("rec frame count", 60, 1, 600));
     gui.add(record.setup("record frames"));
 
+	TS_START("loadFont");
     loadFont();
+	TS_STOP("loadFont");
 
     ofLog() << "Characters Loaded: " << myfont.getNumCharacters()
             << " full set: " << myfont.hasFullCharacterSet();
@@ -123,6 +133,7 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::update() {
 
+	TS_START("prepareCanvas");
     fboCanvas.readToPixels(canvasLastFrame);
     bufferLastFrame = canvasLastFrame;
 
@@ -133,33 +144,48 @@ void ofApp::update() {
         bufferLastFrame.draw(0,0);
     }
     fboCanvas.end();
+	TS_STOP("prepareCanvas");
 
+
+	TS_START("noiseTexture");
     fboNoiseTexture.begin();
     ofClear(0, 0);
     fboNoiseTexture.end();
+	TS_STOP("noiseTexture");
 
+	TS_START("noiseUpdate");
     noise.update(fboNoiseTexture);
-    
+	TS_STOP("noiseUpdate");
+
     // test live parameter update
     // cube.dimensions.set(glm::vec3((float)ofGetMouseX()/ofGetWidth(), (float)ofGetMouseY()/ofGetHeight(), 1.0));
 
     //sphere.setTexture(fboNoiseTexture.getTexture());
 
+	TSGL_START("renderersUpdate");
+	TS_START("renderersUpdate");
     for (size_t i = 0; i < renderersVec.size(); i++) {
         renderersVec[i]->update(fboCanvas);
     }
+	TS_STOP("renderersUpdate");
+	TSGL_STOP("renderersUpdate");
 
+	TS_START("convertFboToAscii");
     convertFboToAscii();
+	TS_STOP("convertFboToAscii");
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
     // ofDisableAntiAliasing(); //to get precise lines
 
+	TSGL_START("fboBuffer");
+	TS_START("fboBuffer");
     if (fboAscii.isAllocated()) {
         ofSetColor(ofColor::white);
         fboAscii.draw(0,0);
 
+        TS_START("fboRecording");
         if (recording) {
             fboAscii.readToPixels(fboAsciiPixels);
             // folder per capture
@@ -173,8 +199,12 @@ void ofApp::draw() {
                 recording = false;
             }
         }
+        TS_STOP("fboRecording");
     }
+	TS_STOP("fboBuffer");
+	TSGL_STOP("fboBuffer");
 
+	TS_START("debugBuffer");
     // draw debug buffer
     if(pixelBuffer.isAllocated() && debugBuffer) {
         ofSetColor(ofColor::white);
@@ -202,6 +232,7 @@ void ofApp::draw() {
                 + " x: " + ofToString(mouseX) + " y:" + ofToString(mouseY)
                 , 0, ofGetHeight() + descenderH);
     }
+	TS_STOP("debugBuffer");
 
     if (drawGui) {
         gui.draw();

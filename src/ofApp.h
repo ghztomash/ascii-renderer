@@ -17,6 +17,14 @@
 #include <cstddef>
 #include <time.h>
 
+
+#ifdef MEASURE_PERFORMANCE
+	#include "ofxTimeMeasurements.h"
+#else
+	#define TIME_SAMPLE_START ;
+	#define TIME_SAMPLE_STOP ;
+#endif
+
 class ofApp : public ofBaseApp {
 public:
     void setup();
