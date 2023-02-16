@@ -45,7 +45,7 @@ void ofApp::setup() {
     gui.setup();
     gui.add(size.setup("size", 48, 10, 100));
     gui.add(currentCharacterSet.setup("char set", 0, 0, characterSets.size()-1));
-    gui.add(currentFont.setup("font", 0, 0, 3));
+    gui.add(currentFont.setup("font", 0, 0, fontNames.size()-1));
     gui.add(enableColors.setup("enable colors", true));
     gui.add(currentTheme.setup("color theme", 0, 0, ColorThemes::colorThemes.size()-1));
     gui.add(offsetV.setup("offsetV", 0, -5.0, 5.0));
@@ -224,9 +224,10 @@ void ofApp::draw() {
             fboCharacterBuffer.draw(fboAscii.getWidth() + charWidth*8, fboCanvas.getHeight());
         }
 
-        font.draw(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + " fps: " + ofToString((int)ofGetFrameRate()) + (recording? " recording " : " " )
-                + characterSets[currentCharacterSet] + " x: " + ofToString(mouseX) + " y:" + ofToString(mouseY)
-                , 28, 0, ofGetHeight() + descenderH, currentFont);
+        font.draw(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + " font: " + ofToString(charHeight) + "x"+ ofToString(charWidth) +" fps: " + ofToString((int)ofGetFrameRate()) + (recording? " rec " : " " )
+                , 28, 0, ofGetHeight() + descenderH - charHeight, currentFont);
+        font.draw(" font: " +  fontNames[currentFont] + " chars: " + characterSets[currentCharacterSet] 
+                , 28, 0, ofGetHeight() + descenderH , currentFont);
     }
 	TS_STOP("debugBuffer");
 
@@ -378,9 +379,9 @@ void ofApp::calculateGridSize() {
 void ofApp::loadFont() {
     
 	font.setup("fonts/DejaVu.ttf", 1.0, 1024*4, false, 16, 8.0);
-	font.addFont("fonts/PetMe64.ttf");
-	font.addFont("fonts/frabk.ttf");
-	font.addFont("fonts/verdana.ttf");
+    for (int i = 1; i < fontNames.size(); i++) {
+        font.addFont("fonts/" + fontNames[i]);
+    }
 
     calculateGridSize();
     allocateFbo();

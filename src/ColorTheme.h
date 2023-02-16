@@ -59,7 +59,7 @@ namespace ColorThemes
         */
         {   // catpuccin-frape https://github.com/catppuccin/catppuccin
             ofColor::fromHex(0x303446), // background
-            ofColor::fromHex(0xE78284), // red
+            ofColor::fromHex(0xe78284), // red
             ofColor::fromHex(0xA6D189), // green
             ofColor::fromHex(0xE5C890), // yellow
             ofColor::fromHex(0x8CAAEE), // blue
@@ -67,11 +67,11 @@ namespace ColorThemes
             ofColor::fromHex(0x81C8BE), // cyan
             ofColor::fromHex(0xC6D0F5), // foreground
             ofColor::fromHex(0xE78284), // bright red
-            ofColor::fromHex(0xA6D189), // bright green
-            ofColor::fromHex(0xE5C890), // bright yellow
-            ofColor::fromHex(0x8CAAEE), // bright blue
-            ofColor::fromHex(0xF4B8E4), // bright magenta
-            ofColor::fromHex(0x81C8BE), // bright cyan
+            ofColor::fromHex(0x81c8be), // bright green
+            ofColor::fromHex(0xef9f76), // bright yellow
+            ofColor::fromHex(0x99d1db), // bright blue
+            ofColor::fromHex(0xca9ee6), // bright magenta
+            ofColor::fromHex(0x85c1dc), // bright cyan
         }, 
         {   // catpuccin-macchiato https://github.com/catppuccin/catppuccin
             ofColor::fromHex(0x24273A), // background
@@ -82,12 +82,12 @@ namespace ColorThemes
             ofColor::fromHex(0xF5BDE6), // magenta
             ofColor::fromHex(0x8BD5CA), // cyan
             ofColor::fromHex(0xCAD3F5), // foreground
-            ofColor::fromHex(0xED8796), // bright red
+            ofColor::fromHex(0xee99a0), // bright red
             ofColor::fromHex(0xA6DA95), // bright green
-            ofColor::fromHex(0xEED49F), // bright yellow
-            ofColor::fromHex(0x8AADF4), // bright blue
-            ofColor::fromHex(0xF5BDE6), // bright magenta
-            ofColor::fromHex(0x8BD5CA), // bright cyan
+            ofColor::fromHex(0xf5a97f), // bright yellow
+            ofColor::fromHex(0x91d7e3), // bright blue
+            ofColor::fromHex(0xc6a0f6), // bright magenta
+            ofColor::fromHex(0x7dc4e4), // bright cyan
         }, 
         {   // catpuccin-mocha https://github.com/catppuccin/catppuccin
             ofColor::fromHex(0x1E1E2E), // background
@@ -98,12 +98,12 @@ namespace ColorThemes
             ofColor::fromHex(0xF5C2E7), // magenta
             ofColor::fromHex(0x94E2D5), // cyan
             ofColor::fromHex(0xCDD6F4), // foreground
-            ofColor::fromHex(0xF38BA8), // bright red
-            ofColor::fromHex(0xA6E3A1), // bright green
-            ofColor::fromHex(0xF9E2AF), // bright yellow
-            ofColor::fromHex(0x89B4FA), // bright blue
+            ofColor::fromHex(0xeba0ac), // bright red
+            ofColor::fromHex(0x74c7ec), // bright green
+            ofColor::fromHex(0xfab387), // bright yellow
+            ofColor::fromHex(0xb4befe), // bright blue
             ofColor::fromHex(0xF5C2E7), // bright magenta
-            ofColor::fromHex(0x94E2D5), // bright cyan
+            ofColor::fromHex(0x89dceb), // bright cyan
         }, 
         {   // cyberpunk-neon https://github.com/Roboron3042/Cyberpunk-Neon
             ofColor::fromHex(0x000b1e), // background
@@ -112,14 +112,14 @@ namespace ColorThemes
             ofColor::fromHex(0xf57800), // yellow
             ofColor::fromHex(0x123e7c), // blue
             ofColor::fromHex(0x711c91), // magenta
-            ofColor::fromHex(0x0abdc6), // cyan
+            ofColor::fromHex(0x00F2FF), // cyan
             ofColor::fromHex(0x0abdc6), // foreground
-            ofColor::fromHex(0xff0000), // bright red
-            ofColor::fromHex(0xd300c4), // bright green
-            ofColor::fromHex(0xf57800), // bright yellow
+            ofColor::fromHex(0x66D437), // bright red
+            ofColor::fromHex(0xD437C9), // bright green
+            ofColor::fromHex(0xF2B57C), // bright yellow
             ofColor::fromHex(0x00ff00), // bright blue
-            ofColor::fromHex(0x711c91), // bright magenta
-            ofColor::fromHex(0x0abdc6), // bright cyan
+            ofColor::fromHex(0xFF19F0), // bright magenta
+            ofColor::fromHex(0x00F2FF), // bright cyan
         }, 
         {   // tokyo-night https://github.com/zatchheems/tokyo-night-alacritty-theme
             ofColor::fromHex(0x1a1b26), // background
@@ -137,6 +137,7 @@ namespace ColorThemes
             ofColor::fromHex(0xbb9af7), // bright magenta
             ofColor::fromHex(0x0db9d7), // bright cyan
         }, 
+        /*
         {   // tokyo-night-storm https://github.com/zatchheems/tokyo-night-alacritty-theme
             ofColor::fromHex(0x24283b), // background
             ofColor::fromHex(0xf7768e), // red
@@ -153,6 +154,7 @@ namespace ColorThemes
             ofColor::fromHex(0xbb9af7), // bright magenta
             ofColor::fromHex(0x0db9d7), // bright cyan
         }, 
+        */
         {   // https://www.markusweimar.de/static/contrasty-darkness-alacritty.txt 
             ofColor::fromHex(0x000000), // background
             ofColor::fromHex(0xff7c4d), // red
@@ -162,12 +164,12 @@ namespace ColorThemes
             ofColor::fromHex(0xff61df), // magenta
             ofColor::fromHex(0x00ffff), // cyan
             ofColor::fromHex(0xffffff), // foreground
-            ofColor::fromHex(0xff7c4d), // bright red
-            ofColor::fromHex(0x22ff00), // bright green
-            ofColor::fromHex(0xffcc00), // bright yellow
-            ofColor::fromHex(0x1a66ff), // bright blue
+            ofColor::fromHex(0xFF4400), // bright red
+            ofColor::fromHex(0xACFF00), // bright green
+            ofColor::fromHex(0xFFD600), // bright yellow
+            ofColor::fromHex(0x003BB3), // bright blue
             ofColor::fromHex(0xff61df), // bright magenta
-            ofColor::fromHex(0x00ffff), // bright cyan
+            ofColor::fromHex(0x68FF00), // bright cyan
         }, 
         {   // https://github.com/alacritty/alacritty-theme/blob/master/themes/ayu_dark.yaml
             ofColor::fromHex(0x0A0E14), // background
