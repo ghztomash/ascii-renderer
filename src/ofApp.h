@@ -5,7 +5,7 @@
 #include "ofGraphicsBaseTypes.h"
 #include "ofMain.h"
 #include "ofTexture.h"
-#include "ofTrueTypeFont.h"
+#include "ofxFontStash.h"
 #include "ofxButton.h"
 #include "ofxGui.h"
 #include "ofxPanel.h"
@@ -44,7 +44,8 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-    void dpiChanged(int &d);
+    void sizeChanged(int &d);
+    void offsetChanged(float &d);
     void marginChanged(int &d);
     void characterSetChanged(int &d);
     void calculateGridSize();
@@ -74,7 +75,8 @@ public:
     size_t characterSetSize;
     size_t index;
 
-    ofTrueTypeFont myfont;
+    ofxFontStash font;
+    int fontSize = 48;
 
     // color themes from catpuccin
     // https://github.com/catppuccin/catppuccin/blob/main/docs/style-guide.md
@@ -114,9 +116,8 @@ public:
     ofFbo fboCharacterBuffer;
 
     ofxPanel gui;
-    ofxIntSlider dpi;
     ofxIntSlider size;
-    ofxButton reload;
+    ofxIntSlider currentFont;
     ofxIntSlider currentCharacterSet;
     ofxToggle enableColors;
     ofxIntSlider currentTheme;
@@ -138,6 +139,7 @@ public:
     struct tm *tm;
     char st[64];
 
+    bool recalculateGridSize = false;
     int gridWidth, gridHeight;
 
     ofxPanel guiRenderer;

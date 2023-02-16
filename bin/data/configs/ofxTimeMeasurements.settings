@@ -1,5 +1,5 @@
 keyPressed()=1|1
-debugBuffer=1|0
+debugBuffer=1|1
 update()=1|1
 setup()=1|1
 loadFont=1|1

@@ -13,7 +13,6 @@
 #include "ofLog.h"
 #include "ofPixels.h"
 #include "ofRectangle.h"
-#include "ofTrueTypeFont.h"
 #include "ofUtils.h"
 #include "ofVec2f.h"
 #include <cassert>
@@ -43,44 +42,37 @@ void ofApp::setup() {
     // this disables alpha channel
     ofDisableArbTex();
 
-    // dpi.addListener(this, &ofApp::dpiChanged);
-    // size.addListener(this, &ofApp::dpiChanged);
-    marginSize.addListener(this, &ofApp::marginChanged);
-    reload.addListener(this, &ofApp::loadFont);
-    record.addListener(this, &ofApp::startRecording);
-    currentCharacterSet.addListener(this, &ofApp::characterSetChanged);
-
     gui.setup();
-    gui.add(dpi.setup("dpi", 200, 1, 400));
-    gui.add(size.setup("size", 15, 1, 100));
-    gui.add(reload.setup("reload font"));
+    gui.add(size.setup("size", 48, 10, 100));
     gui.add(currentCharacterSet.setup("char set", 0, 0, characterSets.size()-1));
+    gui.add(currentFont.setup("font", 0, 0, 3));
     gui.add(enableColors.setup("enable colors", true));
     gui.add(currentTheme.setup("color theme", 0, 0, ColorThemes::colorThemes.size()-1));
-    gui.add(offsetV.setup("offsetV", 1, -5.0, 5.0));
+    gui.add(offsetV.setup("offsetV", 0, -5.0, 5.0));
     gui.add(offsetH.setup("offsetH", 1, -5.0, 5.0));
-    gui.add(marginSize.setup("margin", 0, 0, 8));
+    gui.add(marginSize.setup("margin", 2, 0, 10));
     gui.add(debugGrid.setup("debugGrid", true));
-    gui.add(debugLines.setup("debugLines", true));
+    gui.add(debugLines.setup("debugLines", false));
     gui.add(debugBuffer.setup("debugBuffer", true));
-    gui.add(blur.setup("blur", true));
+    gui.add(blur.setup("blur", false));
     gui.add(recordFramesNumber.setup("rec frame count", 60, 1, 600));
     gui.add(record.setup("record frames"));
+
+    marginSize.addListener(this, &ofApp::marginChanged);
+    size.addListener(this, &ofApp::sizeChanged);
+    currentFont.addListener(this, &ofApp::sizeChanged);
+    offsetH.addListener(this, &ofApp::offsetChanged);
+    offsetV.addListener(this, &ofApp::offsetChanged);
+    record.addListener(this, &ofApp::startRecording);
+    currentCharacterSet.addListener(this, &ofApp::characterSetChanged);
 
 	TS_START("loadFont");
     loadFont();
 	TS_STOP("loadFont");
 
-    ofLog() << "Characters Loaded: " << myfont.getNumCharacters()
-            << " full set: " << myfont.hasFullCharacterSet();
-
     characterSetSize = ofUTF8Length(characterSets[currentCharacterSet]);
     // useful to take out single UTF8 characters out of a string
     ofLog() << "charset: " << characterSets[currentCharacterSet] << " len:" << characterSetSize;
-    for (size_t i = 0; i < ofUTF8Length(characterSets[currentCharacterSet]); i++) {
-        //ofLog() << ofUTF8Substring(characterSet, i, 1);
-        //ofLog() << getCharacter(i);
-    }
 
     sortCharacterSet(false);
 
@@ -132,6 +124,9 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+    if (recalculateGridSize){
+        calculateGridSize();
+    }
 
 	TS_START("prepareCanvas");
     fboCanvas.readToPixels(canvasLastFrame);
@@ -225,12 +220,13 @@ void ofApp::draw() {
     if (debugBuffer) {
         drawTheme(fboAscii.getWidth(),fboCanvas.getHeight(), charWidth);
         ofSetColor(ofColor::white);
-        if(fboCharacterBuffer.isAllocated()){
+        if(fboCharacterBuffer.isAllocated()) {
             fboCharacterBuffer.draw(fboAscii.getWidth() + charWidth*8, fboCanvas.getHeight());
         }
-        ofDrawBitmapString(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + " fps: " + ofToString((int)ofGetFrameRate()) + (recording? " recording" : "" )
-                + " x: " + ofToString(mouseX) + " y:" + ofToString(mouseY)
-                , 0, ofGetHeight() + descenderH);
+
+        font.draw(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + " fps: " + ofToString((int)ofGetFrameRate()) + (recording? " recording " : " " )
+                + characterSets[currentCharacterSet] + " x: " + ofToString(mouseX) + " y:" + ofToString(mouseY)
+                , 28, 0, ofGetHeight() + descenderH, currentFont);
     }
 	TS_STOP("debugBuffer");
 
@@ -310,11 +306,18 @@ void ofApp::gotMessage(ofMessage msg) {}
 void ofApp::dragEvent(ofDragInfo dragInfo) {}
 
 //--------------------------------------------------------------
-void ofApp::dpiChanged(int &d) { loadFont(); }
+void ofApp::sizeChanged(int &d) {
+    recalculateGridSize = true;
+}
 
 //--------------------------------------------------------------
 void ofApp::marginChanged(int &d) { 
-    calculateGridSize();
+    recalculateGridSize = true;
+}
+
+//--------------------------------------------------------------
+void ofApp::offsetChanged(float &d) { 
+    recalculateGridSize = true;
 }
 
 //--------------------------------------------------------------
@@ -324,12 +327,45 @@ void ofApp::characterSetChanged(int &d) {
 
 //--------------------------------------------------------------
 void ofApp::calculateGridSize() { 
+    recalculateGridSize = false;
+
+    fontSize = size;
+    font.setSize(fontSize);
+    ofRectangle r = font.getBBox("█", fontSize, 0, 0, OF_ALIGN_HORZ_LEFT, 0, currentFont);
+
+    charHeight = font.getSize();
+
+    float gridWidthMult;
+
+    if (r.getHeight() - r.getWidth() > 1) {
+        charWidth = (int)charHeight / 2.0;
+        gridWidthMult = 4.0;
+    } else {
+        charWidth = charHeight;
+        gridWidthMult = 2.0;
+    }
+
+    ascenderH = font.getFontAscender(fontSize, currentFont);
+    descenderH = font.getFontDescender(fontSize, currentFont);
+
+    if (false) {
+        ofLog() << " glyph w: " << r.getWidth() << " glyph h: " << r.getHeight();
+
+        ofLog() << " height: " << font.stringHeight("█")
+            << " width: " << font.stringWidth("█")
+            << " spacing: " << font.getCharacterSpacing()
+            << " space: " << font.getSpaceSize()
+            << " ascenderH: " << font.getFontAscender(fontSize)
+            << " descenderH: " << font.getFontDescender(fontSize)
+            << " size: " << font.getFontHeight(fontSize);
+    }
+
     // TODO: potential for divide by zero before font is loaded
-    gridWidth = (fboWidth / (charWidth + offsetH)) - (marginSize * 4);
+    gridWidth = (fboWidth / (charWidth + offsetH)) - (marginSize * gridWidthMult);
     gridHeight = (fboHeight / (charHeight + offsetV)) - (marginSize * 2);
 
     marginOffsetH = (fboWidth - (gridWidth + marginSize * 4) * (charWidth + offsetH)) / 2.0;
-    marginOffsetV = (fboHeight - (gridHeight + marginSize * 2)* (charHeight + offsetV)) / 2.0;
+    marginOffsetV = (fboHeight - (gridHeight + marginSize * 2) * (charHeight + offsetV)) / 2.0;
 
     if (gridWidth <= 0)
         gridWidth = 2;
@@ -340,47 +376,14 @@ void ofApp::calculateGridSize() {
 
 //--------------------------------------------------------------
 void ofApp::loadFont() {
-    //ofTrueTypeFontSettings settings("fonts/PetMe64.ttf", size);
-    ofTrueTypeFontSettings settings("fonts/DejaVu.ttf", size);
-    settings.dpi = dpi;  // 74 82 110 120 178
-    settings.antialiased = false;
-    settings.contours = false;
-
-    settings.addRanges(ofAlphabet::Emoji);
-    // settings.addRanges(ofAlphabet::Japanese);
-    // settings.addRanges(ofAlphabet::Chinese);
-    // settings.addRanges(ofAlphabet::Korean);
-    // settings.addRanges(ofAlphabet::Arabic);
-    // settings.addRanges(ofAlphabet::Devanagari);
-    settings.addRanges(ofAlphabet::Latin);
-    // settings.addRanges(ofAlphabet::Greek);
-    // settings.addRanges(ofAlphabet::Cyrillic);
-    // settings.addRange(ofUnicode::MathOperators);
-
-    myfont.load(settings);
-    // myfont.setLetterSpacing(0.5f);
-    // myfont.setLineHeight(10);
-
-    ofRectangle r = myfont.getGlyphBBox();
-
-    // charHeight = r.getHeight();
-    // charWidth = r.getWidth();
-    charHeight = (int)myfont.getLineHeight();
-    charWidth = (int)charHeight / 2.0;
-    ascenderH = myfont.getAscenderHeight();
-    descenderH = myfont.getDescenderHeight();
+    
+	font.setup("fonts/DejaVu.ttf", 1.0, 1024*4, false, 16, 8.0);
+	font.addFont("fonts/PetMe64.ttf");
+	font.addFont("fonts/frabk.ttf");
+	font.addFont("fonts/verdana.ttf");
 
     calculateGridSize();
     allocateFbo();
-
-    ofLog() << "height: " << charHeight << " width: " << charWidth
-            << " spacing: " << myfont.getLetterSpacing()
-            << " space size: " << myfont.getLetterSpacing()
-            << " ascenderH: " << myfont.getAscenderHeight()
-            << " descenderH: " << myfont.getDescenderHeight()
-            << " size: " << myfont.getSize();
-
-    ofLog() << " glyph w: " << r.getWidth() << " glyph h: " << r.getHeight();
 }
 
 //--------------------------------------------------------------
@@ -443,18 +446,15 @@ void ofApp::convertFboToAscii() {
             cY = marginOffsetV + ascenderH + charHeight * marginSize + y * (charHeight + offsetV);
 
             if (debugGrid) { // draw debug test pattern
-                ofSetHexColor(0xa5adce);
+                ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::yellow]);
                 if ((mouseX >= cX) && (mouseX <= cX + charWidth) &&
                         (mouseY <= cY - descenderH) && (mouseY >= cY - ascenderH)) {
                     ofDrawRectangle(cX, cY - ascenderH, charWidth + offsetH, charHeight + offsetV);
-                    myfont.drawString( "cX: " + ofToString(cX) + ", cY: " + ofToString(cY) + 
-                            "\tx: " + ofToString(mouseX) + ", y: " + ofToString(mouseY),
-                            0, fboHeight+descenderH);
                 }
 
                 // draw gridlines
                 if (debugLines) {
-                    ofSetHexColor(0x626880);
+                    ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::magenta]);
                     ofDrawLine(cX, 0, cX, fboHeight);
                     ofDrawLine(0, cY-ascenderH, fboWidth, cY-ascenderH);
                 }
@@ -462,29 +462,30 @@ void ofApp::convertFboToAscii() {
                 ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::cyan]);
                 if (y == 0) {
                     if (x == 0) {
-                        myfont.drawString(u8"╔", cX, cY);
+                        font.drawString(u8"╔", cX, cY, currentFont);
                     } else if (x == gridWidth - 1) {
-                        myfont.drawString(u8"╗", cX, cY);
+                        font.drawString(u8"╗", cX, cY, currentFont);
                     } else {
-                        myfont.drawString(u8"═", cX, cY);
-                        //myfont.drawString(u8"▒", cX, cY);
+                        font.drawString(u8"═", cX, cY, currentFont);
+                        //font.drawString(u8"▒", cX, cY, currentFont);
                     }
                 } else if (y == gridHeight - 1) {
                     if (x == 0) {
-                        myfont.drawString(u8"╚", cX, cY);
+                        font.drawString(u8"╚", cX, cY, currentFont);
                     } else if (x == gridWidth - 1) {
-                        myfont.drawString(u8"╝", cX, cY);
+                        font.drawString(u8"╝", cX, cY, currentFont);
                     } else {
-                        myfont.drawString(u8"═", cX, cY);
+                        font.drawString(u8"═", cX, cY, currentFont);
                     }
                 } else if ((x == 0) || (x == gridWidth - 1)) {
-                    myfont.drawString(u8"║", cX, cY);
+                    font.drawString(u8"║", cX, cY, currentFont);
                 } else {
-                    myfont.drawString(u8"▒", cX, cY);
+                    font.drawString(u8"▒", cX, cY, currentFont);
                 }
             } else {
                 pixelColor = canvasPixels.getColor(x,y);
                 index = (pixelColor.getBrightness()/255.0) * (characterSetSize-1); // convert brightness to character index
+
                 if (enableColors) {
                     colorIndex = findNearestColor(pixelColor);
                     ofSetColor(ColorThemes::colorThemes[currentTheme][colorIndex]);
@@ -492,7 +493,8 @@ void ofApp::convertFboToAscii() {
                 } else {
                     ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::foreground]);
                 }
-                myfont.drawString(ofToString(getCharacter(index)),cX, cY);
+
+                font.drawString(ofToString(getCharacter(index)),cX, cY, currentFont);
             }
         }
     }           
@@ -501,7 +503,7 @@ void ofApp::convertFboToAscii() {
     if (debugGrid && debugLines) {
         cX = marginOffsetH + charWidth * marginSize * 2 + gridWidth * (charWidth + offsetH);
         cY = marginOffsetV + ascenderH + charHeight * marginSize + gridHeight * (charHeight + offsetV);
-        ofSetHexColor(0x626880);
+        ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::magenta]);
         ofDrawLine(cX, 0, cX, fboHeight);
         ofDrawLine(0, cY-ascenderH, fboWidth, cY-ascenderH);
     }
@@ -707,8 +709,8 @@ void ofApp::sortCharacterSet(bool reverseOrder) {
         ofSetColor(ofColor::white);
 
         character = ofToString(getCharacter(c));
-        myfont.drawString(character,0, charHeight+descenderH);
-        //myfont.drawString(".",0, charHeight+descenderH);
+        font.drawString(character,0, charHeight+descenderH, currentFont);
+        //font.drawString(".",0, charHeight+descenderH, currentFont);
 
         fboCharacterBuffer.end();
 
