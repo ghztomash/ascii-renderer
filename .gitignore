@@ -99,7 +99,9 @@ Temporary Items
 .apdisk
 
 compile_commands.json
+*.settings
 *.png
 *.mp4
 .clangd
+.vim/
 .gdb_history
