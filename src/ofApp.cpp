@@ -190,8 +190,7 @@ void ofApp::update() {
 		pixelBufferFront.bind(GL_PIXEL_UNPACK_BUFFER);
 		px = pixelBufferFront.map<unsigned char>(GL_READ_ONLY);
 
-        //pixToSave = PixelsToSave{pixelBufferFront.map<unsigned char>(GL_READ_ONLY), "capture_"+ projectName +"/fbo_"+ ofToString(recordedFramesCount) +".png"};
-		saverThread.save(px);
+        saverThread.save(px);
 
 		// swap the front and back buffer so we are always
 		// copying the texture to one buffer and reading
@@ -209,6 +208,7 @@ void ofApp::update() {
             recordedFramesCount = 0;
             recording = false;
 			pixelBufferBack.unmap();
+            saverThread.resetCount();
             //makeVideo();
         }
     }
@@ -583,7 +583,7 @@ void ofApp::drawTheme(int x, int y, int size) {
     ofTranslate(x, y);
     for (size_t i = 0; i < ColorThemes::colorThemes[currentTheme].size(); i++) {
         ofSetColor(ColorThemes::colorThemes[currentTheme][i]);
-        ofDrawRectangle(size * (i % (ColorThemes::colorThemes[currentTheme].size()/2)), size * (i / (ColorThemes::colorThemes[currentTheme].size()/2)), size, size);
+        ofDrawRectangle(size * (i % (ColorThemes::colorThemes[currentTheme].size()/2)), size * (i / (ColorThemes::colorThemes[currentTheme].size()/2.0)), size, size);
     }
     ofPopMatrix();
 }

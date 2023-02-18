@@ -20,11 +20,13 @@ public:
 
     void start(int width, int height, string projectName);
 	void save(unsigned char * pixels);
+    void resetCount();
 	void waitReady();
 	void threadedFunction();
 
 private:
     int w, h;
+    int count;
     bool isSetup = false;
     string project;
 
