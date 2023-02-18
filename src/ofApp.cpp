@@ -174,28 +174,23 @@ void ofApp::update() {
 
     TS_START("fboRecording");
     if (recording) {
-        if(recordedFramesCount != 0) {
-			// wait for the thread to finish saving the
-			// previous frame and then unmap it
-			saverThread.waitReady();
-			pixelBufferBack.unmap();
-		}
 
+        // previous frame and then unmap it
+        ringBuffer[lastRingBufferIndex].unmap();
 		// copy the fbo texture to a buffer
-		fboAscii.getTexture().copyTo(pixelBufferBack);
+		fboAscii.getTexture().copyTo(ringBuffer[ringBufferIndex]);
 
 		// bind and map the buffer as PIXEL_UNPACK so it can be
 		// accessed from a different thread  from the cpu
 		// and send the memory address to the saver thread
-		pixelBufferFront.bind(GL_PIXEL_UNPACK_BUFFER);
-		px = pixelBufferFront.map<unsigned char>(GL_READ_ONLY);
+        ringBuffer[ringBufferIndex].bind(GL_PIXEL_UNPACK_BUFFER);
 
-        saverThread.save(px);
+		p.pixels = ringBuffer[ringBufferIndex].map<unsigned char>(GL_READ_ONLY);
+        p.frame = recordedFramesCount;
 
-		// swap the front and back buffer so we are always
-		// copying the texture to one buffer and reading
-		// back from another to avoid stalls
-		swap(pixelBufferBack,pixelBufferFront);
+		saverThread.save(p);
+        lastRingBufferIndex = ringBufferIndex;
+        ringBufferIndex = (ringBufferIndex+1)%NUM_BUFFERS;
 
         // folder per capture
         //ofSaveImage(fboAsciiPixels, "capture_"+ projectName +"/"+ ofToString(st) +"/fbo_"+ ofToString(recordedFramesCount) +".png");
@@ -207,8 +202,6 @@ void ofApp::update() {
         if (recordedFramesCount >= recordFramesNumber) {
             recordedFramesCount = 0;
             recording = false;
-			pixelBufferBack.unmap();
-            saverThread.resetCount();
             //makeVideo();
         }
     }
@@ -449,9 +442,12 @@ string ofApp::getCharacter(size_t i) {
 void ofApp::allocateFbo() {
 
     fboAscii.allocate(fboWidth, fboHeight, GL_RGB);
-	pixelBufferBack.allocate(fboWidth*fboHeight*3,GL_DYNAMIC_READ);
-	pixelBufferFront.allocate(fboWidth*fboHeight*3,GL_DYNAMIC_READ);
     ofLog() << "allocating fbo: " << fboAscii.isAllocated() << " " << fboWidth << "x" << fboHeight;
+
+    // loop through ring buffer and allocate each ofBufferObject
+    for (int i=0; i<NUM_BUFFERS; i++) {
+        ringBuffer[i].allocate(fboWidth*fboHeight*3,GL_DYNAMIC_READ);
+    }
 
     fboAscii.begin();
     ofClear(0, 255);

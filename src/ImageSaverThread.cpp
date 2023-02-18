@@ -12,32 +12,19 @@ ImageSaverThread::ImageSaverThread(){
 
 ImageSaverThread::~ImageSaverThread(){
 	channel.close();
-	channelReady.close();
 	waitForThread(true);
 }
 
 void ImageSaverThread::start(int width, int height, string projectName) {
     w = width;
     h = height;
-    count = 0;
     project = projectName;
 	startThread();
 }
 
-void ImageSaverThread::save(unsigned char * pixels){
+void ImageSaverThread::save(PixelsToSave pixels){
 	// send the pixels to save to the thread
 	channel.send(pixels);
-}
-
-void ImageSaverThread::waitReady(){
-	// wait till the thread is done saving the
-	// previous frame
-	bool ready;
-	channelReady.receive(ready);
-}
-
-void ImageSaverThread::resetCount(){
-    count = 0;
 }
 
 void ImageSaverThread::threadedFunction(){
@@ -45,17 +32,14 @@ void ImageSaverThread::threadedFunction(){
 	// save them as jpeg and then tell the main
 	// thread that we are done
 	// if the channel closes go out of the thread
-	unsigned char * p;
+    PixelsToSave pix;
     ofLog() << "SaverThread starting";
 
-	while(channel.receive(p)) {
+	while(channel.receive(pix)) {
         //ofLog() << "SaverThread received count: " << count++;
 
-		pixels.setFromPixels(p,w,h,OF_PIXELS_RGB);
-		ofSaveImage(pixels, "capture_"+ project +"/fbo_"+ ofToString(count) +".png");
-        count++;
-
-        channelReady.send(true);
+		pixels.setFromPixels(pix.pixels,w,h,OF_PIXELS_RGB);
+		ofSaveImage(pixels, "capture_" + project + "/fbo_" + ofToString(pix.frame) + ".jpg", OF_IMAGE_QUALITY_BEST);
 	}
     ofLog() << "SaverThread stoping";
 }

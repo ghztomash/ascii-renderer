@@ -26,6 +26,8 @@
 	#define TIME_SAMPLE_STOP ;
 #endif
 
+#define NUM_BUFFERS 4
+
 class ofApp : public ofBaseApp {
 public:
     void setup();
@@ -168,16 +170,18 @@ public:
     ofxToggle debugBuffer;
     ofxToggle blur;
 
-    string projectName = "test_size";
+    string projectName = "test";
     ofxIntSlider recordFramesNumber;
     ofxButton record;
     int recordedFramesCount;
     bool recording = false;
 
-    ofBufferObject pixelBufferBack, pixelBufferFront;
     ImageSaverThread saverThread;
-    PixelsToSave pixToSave;
-    unsigned char * px;
+    // declare ring buffer of ofBufferObject pointers
+    ofBufferObject ringBuffer[NUM_BUFFERS];
+    int ringBufferIndex=0;
+    int lastRingBufferIndex=0;
+    PixelsToSave p;
 
     time_t t;
     struct tm *tm;

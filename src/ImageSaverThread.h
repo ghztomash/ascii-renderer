@@ -9,7 +9,7 @@
 
 struct PixelsToSave {
     unsigned char * pixels;
-    string name;
+    int frame;
 };
 
 class ImageSaverThread: public ofThread{
@@ -19,18 +19,14 @@ public:
 	~ImageSaverThread();
 
     void start(int width, int height, string projectName);
-	void save(unsigned char * pixels);
-    void resetCount();
-	void waitReady();
+	void save(PixelsToSave pixels);
 	void threadedFunction();
 
 private:
     int w, h;
-    int count;
     bool isSetup = false;
     string project;
 
 	ofPixels pixels;
-	ofThreadChannel<unsigned char *> channel;
-	ofThreadChannel<bool> channelReady;
+	ofThreadChannel<PixelsToSave> channel;
 };
