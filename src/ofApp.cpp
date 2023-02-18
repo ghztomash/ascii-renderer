@@ -1,6 +1,7 @@
 #include "ofApp.h"
 
 #include "ColorTheme.h"
+#include "ImageSaverThread.h"
 #include "baseRenderer.h"
 #include "implRenderer.h"
 #include "ofAppRunner.h"
@@ -79,7 +80,8 @@ void ofApp::setup() {
     guiRenderer.setup("draw parameters", "draw_params.xml", fboWidth+fboCanvasWidth + 10, 10);
 
     shared_ptr<noiseRenderer> p(new noiseRenderer()); 
-    p->setup(fboCanvasWidth/4, fboCanvasHeight/4);
+    //p->setup(fboCanvasWidth/8, fboCanvasHeight/8);
+    p->setup(20, 20);
     renderersVec.emplace_back(p);
     guiRenderer.add(renderersVec.back()->parameters);
 
@@ -96,7 +98,7 @@ void ofApp::setup() {
 
     renderersVec.emplace_back(RendererFactory::newRenderer(CUBE_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
-    renderersVec.back()->loadTexture("textures/box.jpg");
+    //renderersVec.back()->loadTexture("textures/box.jpg");
 
     renderersVec.emplace_back(RendererFactory::newRenderer(SPHERE_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
@@ -105,7 +107,8 @@ void ofApp::setup() {
     renderersVec.emplace_back(RendererFactory::newRenderer(CYLINDER_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
 
-    noise.setup(fboCanvasWidth/4, fboCanvasHeight/4, "noiseSphere");
+    //noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");
+    noise.setup(20, 20, "noiseSphere");
     guiRenderer.add(noise.parameters);
 
 #ifdef TARGET_LINUX
@@ -168,6 +171,48 @@ void ofApp::update() {
 	TS_START("convertFboToAscii");
     convertFboToAscii();
 	TS_STOP("convertFboToAscii");
+
+    TS_START("fboRecording");
+    if (recording) {
+        if(recordedFramesCount != 0) {
+			// wait for the thread to finish saving the
+			// previous frame and then unmap it
+			saverThread.waitReady();
+			pixelBufferBack.unmap();
+		}
+
+		// copy the fbo texture to a buffer
+		fboAscii.getTexture().copyTo(pixelBufferBack);
+
+		// bind and map the buffer as PIXEL_UNPACK so it can be
+		// accessed from a different thread  from the cpu
+		// and send the memory address to the saver thread
+		pixelBufferFront.bind(GL_PIXEL_UNPACK_BUFFER);
+		px = pixelBufferFront.map<unsigned char>(GL_READ_ONLY);
+
+        //pixToSave = PixelsToSave{pixelBufferFront.map<unsigned char>(GL_READ_ONLY), "capture_"+ projectName +"/fbo_"+ ofToString(recordedFramesCount) +".png"};
+		saverThread.save(px);
+
+		// swap the front and back buffer so we are always
+		// copying the texture to one buffer and reading
+		// back from another to avoid stalls
+		swap(pixelBufferBack,pixelBufferFront);
+
+        // folder per capture
+        //ofSaveImage(fboAsciiPixels, "capture_"+ projectName +"/"+ ofToString(st) +"/fbo_"+ ofToString(recordedFramesCount) +".png");
+        // folder per project
+        //ofSaveImage(fboAsciiPixels, "capture_"+ projectName +"/fbo_"+ ofToString(recordedFramesCount) +".png");
+
+        recordedFramesCount++;
+
+        if (recordedFramesCount >= recordFramesNumber) {
+            recordedFramesCount = 0;
+            recording = false;
+			pixelBufferBack.unmap();
+            //makeVideo();
+        }
+    }
+    TS_STOP("fboRecording");
 }
 
 //--------------------------------------------------------------
@@ -180,6 +225,7 @@ void ofApp::draw() {
         ofSetColor(ofColor::white);
         fboAscii.draw(0,0);
 
+        /*
         TS_START("fboRecording");
         if (recording) {
             fboAscii.readToPixels(fboAsciiPixels);
@@ -195,6 +241,8 @@ void ofApp::draw() {
             }
         }
         TS_STOP("fboRecording");
+        */
+
     }
 	TS_STOP("fboBuffer");
 	TSGL_STOP("fboBuffer");
@@ -379,7 +427,7 @@ void ofApp::calculateGridSize() {
 void ofApp::loadFont() {
     
 	font.setup("fonts/DejaVu.ttf", 1.0, 1024*4, false, 16, 8.0);
-    for (int i = 1; i < fontNames.size(); i++) {
+    for (size_t i = 1; i < fontNames.size(); i++) {
         font.addFont("fonts/" + fontNames[i]);
     }
 
@@ -400,7 +448,9 @@ string ofApp::getCharacter(size_t i) {
 // allocate and size the fbo buffer
 void ofApp::allocateFbo() {
 
-    fboAscii.allocate(fboWidth, fboHeight);
+    fboAscii.allocate(fboWidth, fboHeight, GL_RGB);
+	pixelBufferBack.allocate(fboWidth*fboHeight*3,GL_DYNAMIC_READ);
+	pixelBufferFront.allocate(fboWidth*fboHeight*3,GL_DYNAMIC_READ);
     ofLog() << "allocating fbo: " << fboAscii.isAllocated() << " " << fboWidth << "x" << fboHeight;
 
     fboAscii.begin();
@@ -422,6 +472,8 @@ void ofApp::allocateFbo() {
     // resize the buffer pixels to new size
     pixelBuffer.allocate(fboCanvasWidth, fboCanvasHeight, OF_IMAGE_COLOR_ALPHA);
     pixelBuffer.update();
+
+    saverThread.start(fboWidth, fboHeight, projectName);
     
 }
 
@@ -519,7 +571,7 @@ void ofApp::startRecording() {
     // get current time
     t = time(NULL);
     tm = localtime(&t);
-    strftime(st, sizeof(st), "%b%d-%H%M%S", tm);
+    strftime(time_string, sizeof(time_string), "%b%d-%H%M%S", tm);
 
     recordedFramesCount = 0;
     recording = true;
@@ -739,4 +791,10 @@ void ofApp::sortCharacterSet(bool reverseOrder) {
 
     characterSets[currentCharacterSet] = sortedCharacterSet;
     ofLog() << "sorted: " << sortedCharacterSet;
+}
+
+//--------------------------------------------------------------
+void ofApp::makeVideo() {
+    string command = "cd data && ./generate_loop.sh " + projectName + " && open capture_" + projectName + " && cd ..";
+    system(command.c_str());
 }

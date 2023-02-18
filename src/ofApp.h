@@ -14,6 +14,7 @@
 #include "implRenderer.h"
 #include "RendererFactory.h"
 #include "ColorTheme.h"
+#include "ImageSaverThread.h"
 #include <cstddef>
 #include <time.h>
 
@@ -53,6 +54,7 @@ public:
     string getCharacter(size_t i);
     size_t findNearestColor(ofColor col);
     void sortCharacterSet(bool reverseOrder = false);
+    void makeVideo();
 
     void startRecording();
     void allocateFbo();
@@ -172,9 +174,14 @@ public:
     int recordedFramesCount;
     bool recording = false;
 
+    ofBufferObject pixelBufferBack, pixelBufferFront;
+    ImageSaverThread saverThread;
+    PixelsToSave pixToSave;
+    unsigned char * px;
+
     time_t t;
     struct tm *tm;
-    char st[64];
+    char time_string[64];
 
     bool recalculateGridSize = false;
     int gridWidth, gridHeight;

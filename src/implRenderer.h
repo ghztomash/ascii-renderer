@@ -14,6 +14,13 @@
 #include "ofVec3f.h"
 #include "vector_float3.hpp"
 
+#ifdef MEASURE_PERFORMANCE
+	#include "ofxTimeMeasurements.h"
+#else
+	#define TIME_SAMPLE_START ;
+	#define TIME_SAMPLE_STOP ;
+#endif
+
 const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "cube", "sphere", "cylinder", "noise"};
 
 enum RendererType {
@@ -220,6 +227,7 @@ class noiseRenderer: public baseRenderer {
                 return;
             }
 
+            TS_START("noise renderer");
             // new optimized(?) code
             if (alpha) {
                 for (i = 0, i_n = 0; i < size; i++) {
@@ -245,8 +253,12 @@ class noiseRenderer: public baseRenderer {
                 }
             }
             noiseBuffer.update();
+            TS_STOP("noise renderer");
+
+            TS_START("noise buffer resize");
             noiseImage = noiseBuffer;
-            noiseImage.resize(fbo.getWidth(), fbo.getHeight());
+            //noiseImage.resize(fbo.getWidth(), fbo.getHeight());
+            TS_STOP("noise buffer resize");
             
             /* old code for reference
             for (int y = 0; y < noiseBuffer.getHeight(); y++) {
@@ -257,11 +269,13 @@ class noiseRenderer: public baseRenderer {
             noiseBuffer.update();
             */
             
+            TS_START("noise fbo");
             fbo.begin();
             ofSetColor(color);
             ofSetRectMode(OF_RECTMODE_CORNER);
             noiseImage.draw(0,0);
             fbo.end();
+            TS_STOP("noise fbo");
         }
 
     protected:
