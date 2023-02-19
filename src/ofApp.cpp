@@ -16,10 +16,6 @@
 #include "ofRectangle.h"
 #include "ofUtils.h"
 #include "ofVec2f.h"
-#include <cassert>
-#include <cstddef>
-#include <cstdlib>
-#include <memory>
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -56,6 +52,7 @@ void ofApp::setup() {
     gui.add(debugLines.setup("debugLines", false));
     gui.add(debugBuffer.setup("debugBuffer", true));
     gui.add(blur.setup("blur", false));
+    gui.add(fadeAmmount.setup("fade", 4, 0, 255));
     gui.add(recordFramesNumber.setup("rec frame count", 60, 1, 600));
     gui.add(record.setup("record frames"));
 
@@ -133,12 +130,12 @@ void ofApp::update() {
 
 	TS_START("prepareCanvas");
     fboCanvas.readToPixels(canvasLastFrame);
-    bufferLastFrame = canvasLastFrame;
+    bufferLastFrame = ofImage(canvasLastFrame);
 
     fboCanvas.begin();
     ofClear(0, 255);
     if (blur) {
-        ofSetColor(ofColor::white, 254);
+        ofSetColor(ofColor::white, fadeAmmount);
         bufferLastFrame.draw(0,0);
     }
     fboCanvas.end();
@@ -212,52 +209,29 @@ void ofApp::update() {
 void ofApp::draw() {
     // ofDisableAntiAliasing(); //to get precise lines
 
-	TSGL_START("fboBuffer");
-	TS_START("fboBuffer");
+	TSGL_START("asciiFboBuffer");
+	TS_START("asciiFboBuffer");
     if (fboAscii.isAllocated()) {
         ofSetColor(ofColor::white);
         fboAscii.draw(0,0);
-
-        /*
-        TS_START("fboRecording");
-        if (recording) {
-            fboAscii.readToPixels(fboAsciiPixels);
-            // folder per capture
-            //ofSaveImage(fboAsciiPixels, "capture_"+ projectName +"/"+ ofToString(st) +"/fbo_"+ ofToString(recordedFramesCount) +".png");
-            // folder per project
-            ofSaveImage(fboAsciiPixels, "capture_"+ projectName +"/fbo_"+ ofToString(recordedFramesCount) +".png");
-            recordedFramesCount++;
-
-            if (recordedFramesCount >= recordFramesNumber) {
-                recordedFramesCount = 0;
-                recording = false;
-            }
-        }
-        TS_STOP("fboRecording");
-        */
-
     }
-	TS_STOP("fboBuffer");
-	TSGL_STOP("fboBuffer");
+	TS_STOP("asciiFboBuffer");
+	TSGL_STOP("asciiFboBuffer");
 
 	TS_START("debugBuffer");
     // draw debug buffer
-    if(pixelBuffer.isAllocated() && debugBuffer) {
+    if(fboCanvas.isAllocated() && debugBuffer) {
         ofSetColor(ofColor::white);
-        //bufferPreviewPixels = pixelBuffer.getPixels();
-        //bufferPreviewPixels.resize(pixelBuffer.getWidth()*20, pixelBuffer.getHeight()*20);
-        //bufferPreview = pixelBuffer;
-        //bufferPreview = bufferPreviewPixels;
-        //bufferPreview.resize(gridWidth*20/2,gridHeight*20);
-        //bufferPreview.draw(0,0);
-        //bufferPreview.save("buffer.png");
         
         fboCanvas.draw(fboAscii.getWidth(), 0);
+        canvasPixels.resize(fboCanvasWidth, fboCanvasHeight);
         bufferPreview = canvasPixels;
-        bufferPreview.resize(fboCanvasWidth,fboCanvasHeight);
+        //bufferPreview.resize(fboCanvasWidth,fboCanvasHeight);
         bufferPreview.draw(fboAscii.getWidth(),fboCanvas.getHeight());
     }
+	TS_STOP("debugBuffer");
 
+	TS_START("debugStuff");
     if (debugBuffer) {
         drawTheme(fboAscii.getWidth(),fboCanvas.getHeight(), charWidth);
         ofSetColor(ofColor::white);
@@ -270,7 +244,7 @@ void ofApp::draw() {
         font.draw(" font: " +  fontNames[currentFont] + " chars: " + characterSets[currentCharacterSet] 
                 , 28, 0, ofGetHeight() + descenderH , currentFont);
     }
-	TS_STOP("debugBuffer");
+	TS_STOP("debugStuff");
 
     if (drawGui) {
         gui.draw();
@@ -453,7 +427,7 @@ void ofApp::allocateFbo() {
     ofClear(0, 255);
     fboAscii.end();
 
-    fboCanvas.allocate(fboCanvasWidth, fboCanvasHeight);
+    fboCanvas.allocate(fboCanvasWidth, fboCanvasHeight, GL_RGBA32F_ARB);
     ofLog() << "allocating canvas: " << fboCanvas.isAllocated() << " " << fboCanvasWidth << "x" << fboCanvasHeight;
 
     fboCanvas.begin();
@@ -465,10 +439,6 @@ void ofApp::allocateFbo() {
     ofClear(0, 0);
     fboNoiseTexture.end();
     
-    // resize the buffer pixels to new size
-    pixelBuffer.allocate(fboCanvasWidth, fboCanvasHeight, OF_IMAGE_COLOR_ALPHA);
-    pixelBuffer.update();
-
     saverThread.start(fboWidth, fboHeight, projectName);
     
 }
@@ -579,7 +549,7 @@ void ofApp::drawTheme(int x, int y, int size) {
     ofTranslate(x, y);
     for (size_t i = 0; i < ColorThemes::colorThemes[currentTheme].size(); i++) {
         ofSetColor(ColorThemes::colorThemes[currentTheme][i]);
-        ofDrawRectangle(size * (i % (ColorThemes::colorThemes[currentTheme].size()/2)), size * (i / (ColorThemes::colorThemes[currentTheme].size()/2.0)), size, size);
+        ofDrawRectangle(size * (i % (ColorThemes::colorThemes[currentTheme].size()/2)), size * (i / (ColorThemes::colorThemes[currentTheme].size()/2)), size, size);
     }
     ofPopMatrix();
 }

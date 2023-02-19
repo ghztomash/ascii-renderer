@@ -135,7 +135,6 @@ public:
     float marginOffsetV;
     float cX, cY;
 
-    ofImage pixelBuffer;
     ofImage bufferPreview;
     ofPixels bufferPreviewPixels;
 
@@ -169,6 +168,7 @@ public:
     ofxToggle debugLines;
     ofxToggle debugBuffer;
     ofxToggle blur;
+    ofxIntSlider fadeAmmount;
 
     string projectName = "test";
     ofxIntSlider recordFramesNumber;

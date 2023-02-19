@@ -9,6 +9,7 @@
 #include "ofImage.h"
 #include "ofLight.h"
 #include "ofMath.h"
+#include "ofPixels.h"
 #include "ofTexture.h"
 #include "ofUtils.h"
 #include "ofVec3f.h"
@@ -227,7 +228,6 @@ class noiseRenderer: public baseRenderer {
                 return;
             }
 
-            TS_START("noise renderer");
             // new optimized(?) code
             if (alpha) {
                 for (i = 0, i_n = 0; i < size; i++) {
@@ -253,13 +253,7 @@ class noiseRenderer: public baseRenderer {
                 }
             }
             noiseBuffer.update();
-            TS_STOP("noise renderer");
 
-            TS_START("noise buffer resize");
-            noiseImage = noiseBuffer;
-            //noiseImage.resize(fbo.getWidth(), fbo.getHeight());
-            TS_STOP("noise buffer resize");
-            
             /* old code for reference
             for (int y = 0; y < noiseBuffer.getHeight(); y++) {
                 for (int x = 0; x < noiseBuffer.getWidth(); x++) {
@@ -269,13 +263,11 @@ class noiseRenderer: public baseRenderer {
             noiseBuffer.update();
             */
             
-            TS_START("noise fbo");
             fbo.begin();
             ofSetColor(color);
             ofSetRectMode(OF_RECTMODE_CORNER);
-            noiseImage.draw(0,0);
+            noiseBuffer.draw(0,0, fbo.getWidth(), fbo.getHeight());
             fbo.end();
-            TS_STOP("noise fbo");
         }
 
     protected:
@@ -289,7 +281,6 @@ class noiseRenderer: public baseRenderer {
         ofParameter<bool> alpha = false;
 
         ofImage noiseBuffer;
-        ofImage noiseImage;
         unsigned char* bufferPixels;
         unsigned char noiseValue;
         size_t i, i_n; 
