@@ -8,7 +8,7 @@ int main() {
 
     #ifdef MEASURE_PERFORMANCE
     TIME_SAMPLE_ADD_SETUP_HOOKS();
-	TIME_SAMPLE_SET_FRAMERATE(30);
+	TIME_SAMPLE_SET_FRAMERATE(60);
     #endif
 
     // this kicks off the running of my app

@@ -140,9 +140,8 @@ public:
 
     float fboWidth = 1080;
     float fboHeight = 1080;
-    int frameRate = 30;
+    int frameRate = 60;
     ofFbo fboAscii;
-    ofPixels fboAsciiPixels;
 
     float fboCanvasWidth = fboWidth / 2.0;
     float fboCanvasHeight = fboHeight / 2.0;
@@ -152,6 +151,7 @@ public:
     ofPixels canvasLastFrame;
     ofImage bufferLastFrame;
     ofFbo fboNoiseTexture;
+    ofFbo fboGrid;
 
     ofFbo fboCharacterBuffer;
 

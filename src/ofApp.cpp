@@ -52,7 +52,7 @@ void ofApp::setup() {
     gui.add(debugLines.setup("debugLines", false));
     gui.add(debugBuffer.setup("debugBuffer", true));
     gui.add(blur.setup("blur", false));
-    gui.add(fadeAmmount.setup("fade", 4, 0, 255));
+    gui.add(fadeAmmount.setup("fade", 254, 0, 255));
     gui.add(recordFramesNumber.setup("rec frame count", 60, 1, 600));
     gui.add(record.setup("record frames"));
 
@@ -128,10 +128,14 @@ void ofApp::update() {
         calculateGridSize();
     }
 
-	TS_START("prepareCanvas");
+	TS_START("lastFrame");
     fboCanvas.readToPixels(canvasLastFrame);
-    bufferLastFrame = ofImage(canvasLastFrame);
+    if (blur) {
+        bufferLastFrame = canvasLastFrame;
+    }
+	TS_STOP("lastFrame");
 
+	TS_START("prepareCanvas");
     fboCanvas.begin();
     ofClear(0, 255);
     if (blur) {
@@ -148,9 +152,7 @@ void ofApp::update() {
     fboNoiseTexture.end();
 	TS_STOP("noiseTexture");
 
-	TS_START("noiseUpdate");
     noise.update(fboNoiseTexture);
-	TS_STOP("noiseUpdate");
 
     // test live parameter update
     // cube.dimensions.set(glm::vec3((float)ofGetMouseX()/ofGetWidth(), (float)ofGetMouseY()/ofGetHeight(), 1.0));
@@ -165,9 +167,11 @@ void ofApp::update() {
 	TS_STOP("renderersUpdate");
 	TSGL_STOP("renderersUpdate");
 
+	//TSGL_START("convertFboToAscii");
 	TS_START("convertFboToAscii");
     convertFboToAscii();
 	TS_STOP("convertFboToAscii");
+	//TSGL_STOP("convertFboToAscii");
 
     TS_START("fboRecording");
     if (recording) {
@@ -224,10 +228,8 @@ void ofApp::draw() {
         ofSetColor(ofColor::white);
         
         fboCanvas.draw(fboAscii.getWidth(), 0);
-        canvasPixels.resize(fboCanvasWidth, fboCanvasHeight);
         bufferPreview = canvasPixels;
-        //bufferPreview.resize(fboCanvasWidth,fboCanvasHeight);
-        bufferPreview.draw(fboAscii.getWidth(),fboCanvas.getHeight());
+        bufferPreview.draw(fboAscii.getWidth(),fboCanvas.getHeight(),fboCanvasWidth,fboCanvasHeight);
     }
 	TS_STOP("debugBuffer");
 
@@ -393,7 +395,7 @@ void ofApp::calculateGridSize() {
 //--------------------------------------------------------------
 void ofApp::loadFont() {
     
-	font.setup("fonts/DejaVu.ttf", 1.0, 1024*4, false, 16, 8.0);
+	font.setup("fonts/DejaVu.ttf", 1.0, 1024*1, false, 8, 4.0);
     for (size_t i = 1; i < fontNames.size(); i++) {
         font.addFont("fonts/" + fontNames[i]);
     }
@@ -447,8 +449,12 @@ void ofApp::allocateFbo() {
 // draw the ascii characters into the fbo
 void ofApp::convertFboToAscii() {
 
-    fboCanvas.readToPixels(canvasPixels);
-    canvasPixels.resize(gridWidth, gridHeight);
+    // TODO: improve resize performance
+	TS_START("resize");
+    //fboCanvas.readToPixels(canvasPixels);
+    canvasPixels = canvasLastFrame;
+    canvasPixels.resize(gridWidth, gridHeight, OF_INTERPOLATE_NEAREST_NEIGHBOR);
+	TS_STOP("resize");
 
     ofColor pixelColor;
     size_t colorIndex;
@@ -458,74 +464,111 @@ void ofApp::convertFboToAscii() {
     //ofBackground(backgroundColor); // clear last buffer
     ofBackground(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::background]);
 
-    for (int y = 0; y < gridHeight; y++) {
-        for (int x = 0; x < gridWidth; x++) {
+    TSGL_START("loop");
+	TS_START("loop");
+
+    size_t size = gridWidth * gridHeight;
+    size_t x = 0;
+    size_t y = 0;
+
+    if (debugGrid) { // draw debug test pattern
+        for (size_t i = 0; i < size; i++) {
+
+            x = i % (size_t)gridWidth;
+            y = i / (size_t)gridWidth;
 
             cX = marginOffsetH + charWidth * marginSize * 2 + x * (charWidth + offsetH);
             cY = marginOffsetV + ascenderH + charHeight * marginSize + y * (charHeight + offsetV);
 
-            if (debugGrid) { // draw debug test pattern
+            TS_START_ACC("debug");
+
+            if ((mouseX >= cX) && (mouseX <= cX + charWidth) &&
+                    (mouseY <= cY - descenderH) && (mouseY >= cY - ascenderH)) {
                 ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::yellow]);
-                if ((mouseX >= cX) && (mouseX <= cX + charWidth) &&
-                        (mouseY <= cY - descenderH) && (mouseY >= cY - ascenderH)) {
-                    ofDrawRectangle(cX, cY - ascenderH, charWidth + offsetH, charHeight + offsetV);
-                }
-
-                // draw gridlines
-                if (debugLines) {
-                    ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::magenta]);
-                    ofDrawLine(cX, 0, cX, fboHeight);
-                    ofDrawLine(0, cY-ascenderH, fboWidth, cY-ascenderH);
-                }
-
-                ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::cyan]);
-                if (y == 0) {
-                    if (x == 0) {
-                        font.drawString(u8"╔", cX, cY, currentFont);
-                    } else if (x == gridWidth - 1) {
-                        font.drawString(u8"╗", cX, cY, currentFont);
-                    } else {
-                        font.drawString(u8"═", cX, cY, currentFont);
-                        //font.drawString(u8"▒", cX, cY, currentFont);
-                    }
-                } else if (y == gridHeight - 1) {
-                    if (x == 0) {
-                        font.drawString(u8"╚", cX, cY, currentFont);
-                    } else if (x == gridWidth - 1) {
-                        font.drawString(u8"╝", cX, cY, currentFont);
-                    } else {
-                        font.drawString(u8"═", cX, cY, currentFont);
-                    }
-                } else if ((x == 0) || (x == gridWidth - 1)) {
-                    font.drawString(u8"║", cX, cY, currentFont);
-                } else {
-                    font.drawString(u8"▒", cX, cY, currentFont);
-                }
-            } else {
-                pixelColor = canvasPixels.getColor(x,y);
-                index = (pixelColor.getBrightness()/255.0) * (characterSetSize-1); // convert brightness to character index
-
-                if (enableColors) {
-                    colorIndex = findNearestColor(pixelColor);
-                    ofSetColor(ColorThemes::colorThemes[currentTheme][colorIndex]);
-                    //ofSetColor(pixelColor);
-                } else {
-                    ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::foreground]);
-                }
-
-                font.drawString(ofToString(getCharacter(index)),cX, cY, currentFont);
+                ofDrawRectangle(cX, cY - ascenderH, charWidth + offsetH, charHeight + offsetV);
             }
-        }
-    }           
 
-    // draw last gridline
-    if (debugGrid && debugLines) {
-        cX = marginOffsetH + charWidth * marginSize * 2 + gridWidth * (charWidth + offsetH);
-        cY = marginOffsetV + ascenderH + charHeight * marginSize + gridHeight * (charHeight + offsetV);
-        ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::magenta]);
-        ofDrawLine(cX, 0, cX, fboHeight);
-        ofDrawLine(0, cY-ascenderH, fboWidth, cY-ascenderH);
+            // draw gridlines
+            if (debugLines) {
+                ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::magenta]);
+                ofDrawLine(cX, 0, cX, fboHeight);
+                ofDrawLine(0, cY-ascenderH, fboWidth, cY-ascenderH);
+            }
+
+            ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::cyan]);
+            if (y == 0) {
+                if (x == 0) {
+                    font.drawString(u8"╔", cX, cY, currentFont);
+                } else if (x == gridWidth - 1) {
+                    font.drawString(u8"╗", cX, cY, currentFont);
+                } else {
+                    font.drawString(u8"═", cX, cY, currentFont);
+                    //font.drawString(u8"▒", cX, cY, currentFont);
+                }
+            } else if (y == gridHeight - 1) {
+                if (x == 0) {
+                    font.drawString(u8"╚", cX, cY, currentFont);
+                } else if (x == gridWidth - 1) {
+                    font.drawString(u8"╝", cX, cY, currentFont);
+                } else {
+                    font.drawString(u8"═", cX, cY, currentFont);
+                }
+            } else if ((x == 0) || (x == gridWidth - 1)) {
+                font.drawString(u8"║", cX, cY, currentFont);
+            } else {
+                font.drawString(u8"▒", cX, cY, currentFont);
+            }
+
+            TS_STOP_ACC("debug");
+        }
+        // draw last gridline
+        if ( debugLines) {
+            cX = marginOffsetH + charWidth * marginSize * 2 + gridWidth * (charWidth + offsetH);
+            cY = marginOffsetV + ascenderH + charHeight * marginSize + gridHeight * (charHeight + offsetV);
+            ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::magenta]);
+            ofDrawLine(cX, 0, cX, fboHeight);
+            ofDrawLine(0, cY-ascenderH, fboWidth, cY-ascenderH);
+        }
+    } else {
+        for (size_t i = 0; i < size; i++) {
+
+            x = i % (size_t)gridWidth;
+            y = i / (size_t)gridWidth;
+
+            TS_START_ACC("character");
+
+            TS_START_ACC("coords");
+            cX = marginOffsetH + charWidth * marginSize * 2 + x * (charWidth + offsetH);
+            cY = marginOffsetV + ascenderH + charHeight * marginSize + y * (charHeight + offsetV);
+            TS_STOP_ACC("coords");
+
+            TS_START_ACC("getColor");
+            pixelColor = canvasPixels.getColor(x,y);
+            index = (pixelColor.getBrightness()/255.0) * (characterSetSize-1); // convert brightness to character index
+            TS_STOP_ACC("getColor");
+
+            if (enableColors) {
+                TS_START_ACC("nearestColor");
+                colorIndex = findNearestColor(pixelColor);
+                ofSetColor(ColorThemes::colorThemes[currentTheme][colorIndex]);
+                //ofSetColor(pixelColor);
+                TS_STOP_ACC("nearestColor");
+            } else {
+                TS_START_ACC("setColor");
+                ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::foreground]);
+                TS_STOP_ACC("setColor");
+            }
+
+            TS_START_ACC("drawString");
+            font.drawString(ofToString(getCharacter(index)),cX, cY, currentFont);
+            TS_STOP_ACC("drawString");
+        }
+
+        TS_STOP_ACC("character");
     }
+
+    TS_STOP("loop");
+    TSGL_STOP("loop");
     fboAscii.end();
 
 }
