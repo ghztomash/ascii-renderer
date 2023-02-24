@@ -40,14 +40,15 @@ void ofApp::setup() {
     ofDisableArbTex();
 
     gui.setup();
-    gui.add(size.setup("size", 48, 10, 100));
+    gui.add(size.setup("size", 48, 10, 200));
     gui.add(currentCharacterSet.setup("char set", 0, 0, characterSets.size()-1));
     gui.add(currentFont.setup("font", 0, 0, fontNames.size()-1));
     gui.add(enableColors.setup("enable colors", true));
     gui.add(currentTheme.setup("color theme", 0, 0, ColorThemes::colorThemes.size()-1));
-    gui.add(offsetV.setup("offsetV", 0, -5.0, 5.0));
-    gui.add(offsetH.setup("offsetH", 1, -5.0, 5.0));
+    gui.add(offsetV.setup("offsetV", 0, -10.0, 10.0));
+    gui.add(offsetH.setup("offsetH", 1, -10.0, 10.0));
     gui.add(marginSize.setup("margin", 2, 0, 10));
+    gui.add(zoom.setup("fit to screen", true));
     gui.add(debugGrid.setup("debugGrid", true));
     gui.add(debugLines.setup("debugLines", false));
     gui.add(debugBuffer.setup("debugBuffer", true));
@@ -207,6 +208,10 @@ void ofApp::update() {
         }
     }
     TS_STOP("fboRecording");
+
+    // for mouse index
+    scalar = zoom ? screenSize / fboWidth : 1.0;
+
 }
 
 //--------------------------------------------------------------
@@ -217,7 +222,11 @@ void ofApp::draw() {
 	TS_START("asciiFboBuffer");
     if (fboAscii.isAllocated()) {
         ofSetColor(ofColor::white);
-        fboAscii.draw(0,0);
+        if (!zoom) {
+            fboAscii.draw(0,0);
+        } else {
+            fboAscii.draw(0,0, screenSize, screenSize);
+        }
     }
 	TS_STOP("asciiFboBuffer");
 	TSGL_STOP("asciiFboBuffer");
@@ -227,9 +236,9 @@ void ofApp::draw() {
     if(fboCanvas.isAllocated() && debugBuffer) {
         ofSetColor(ofColor::white);
         
-        fboCanvas.draw(fboAscii.getWidth(), 0);
+        fboCanvas.draw(zoom ? screenSize : fboWidth, 0, screenSize/2.0, screenSize/2.0);
         bufferPreview = canvasPixels;
-        bufferPreview.draw(fboAscii.getWidth(),fboCanvas.getHeight(),fboCanvasWidth,fboCanvasHeight);
+        bufferPreview.draw(zoom ? screenSize : fboWidth, screenSize/2.0, screenSize/2.0, screenSize/2.0);
     }
 	TS_STOP("debugBuffer");
 
@@ -240,6 +249,8 @@ void ofApp::draw() {
         if(fboCharacterBuffer.isAllocated()) {
             fboCharacterBuffer.draw(fboAscii.getWidth() + charWidth*8, fboCanvas.getHeight());
         }
+
+        //font.draw(ofToString(mouseX) + "x" + ofToString(mouseY), 28, mouseX, mouseY, currentFont);
 
         font.draw(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + " font: " + ofToString(charHeight) + "x"+ ofToString(charWidth) +" fps: " + ofToString((int)ofGetFrameRate()) + (recording? " rec " : " " )
                 , 28, 0, ofGetHeight() + descenderH - charHeight, currentFont);
@@ -286,10 +297,25 @@ void ofApp::keyReleased(int key) {
         case 'R':
             startRecording();
             break;
+        // generate video
+        case 'v':
+        case 'V':
+            makeVideo();
+            break;
         // sort character set
         case 's':
         case 'S':
             sortCharacterSet();
+            break;
+        // change zoom
+        case 'z':
+        case 'Z':
+            zoom = !zoom;
+            break;
+        // change projectName
+        case 'p':
+        case 'P':
+            projectName = ofSystemTextBoxDialog("Project Name", projectName);
             break;
         default:
             break;
@@ -315,7 +341,10 @@ void ofApp::mouseEntered(int x, int y) {}
 void ofApp::mouseExited(int x, int y) {}
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h) {}
+void ofApp::windowResized(int w, int h) {
+    // get the screen size to draw the fbo
+    screenSize = ofGetWidth() < ofGetHeight() ? ofGetWidth() : ofGetHeight();
+}
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg) {}
@@ -482,8 +511,8 @@ void ofApp::convertFboToAscii() {
 
             TS_START_ACC("debug");
 
-            if ((mouseX >= cX) && (mouseX <= cX + charWidth) &&
-                    (mouseY <= cY - descenderH) && (mouseY >= cY - ascenderH)) {
+            if ((mouseX/scalar >= cX) && (mouseX/scalar <= cX + charWidth) &&
+                    (mouseY/scalar <= cY - descenderH) && (mouseY/scalar >= cY - ascenderH)) {
                 ofSetColor(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::yellow]);
                 ofDrawRectangle(cX, cY - ascenderH, charWidth + offsetH, charHeight + offsetV);
             }
@@ -560,6 +589,7 @@ void ofApp::convertFboToAscii() {
             }
 
             TS_START_ACC("drawString");
+            // TODO: optimize printing characters
             font.drawString(ofToString(getCharacter(index)),cX, cY, currentFont);
             TS_STOP_ACC("drawString");
         }
