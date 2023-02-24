@@ -21,6 +21,7 @@ public:
     void start(int width, int height, string projectName);
 	void save(PixelsToSave pixels);
 	void threadedFunction();
+    void changeProject(string projectName);
 
 private:
     int w, h;

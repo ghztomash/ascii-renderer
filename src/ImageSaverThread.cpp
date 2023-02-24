@@ -22,6 +22,10 @@ void ImageSaverThread::start(int width, int height, string projectName) {
 	startThread();
 }
 
+void ImageSaverThread::changeProject(string projectName) {
+    project = projectName;
+}
+
 void ImageSaverThread::save(PixelsToSave pixels){
 	// send the pixels to save to the thread
 	channel.send(pixels);
@@ -37,7 +41,6 @@ void ImageSaverThread::threadedFunction(){
 
 	while(channel.receive(pix)) {
         //ofLog() << "SaverThread received count: " << count++;
-
 		pixels.setFromPixels(pix.pixels,w,h,OF_PIXELS_RGB);
 		ofSaveImage(pixels, "capture_" + project + "/fbo_" + ofToString(pix.frame) + ".jpg", OF_IMAGE_QUALITY_BEST);
 	}

@@ -40,7 +40,7 @@ void ofApp::setup() {
     ofDisableArbTex();
 
     gui.setup();
-    gui.add(size.setup("size", 48, 10, 200));
+    gui.add(size.setup("size", 48, 10, 450));
     gui.add(currentCharacterSet.setup("char set", 0, 0, characterSets.size()-1));
     gui.add(currentFont.setup("font", 0, 0, fontNames.size()-1));
     gui.add(enableColors.setup("enable colors", true));
@@ -108,6 +108,12 @@ void ofApp::setup() {
     //noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");
     noise.setup(20, 20, "noiseSphere");
     guiRenderer.add(noise.parameters);
+
+    // character dimensions for debug print
+    debugDescenderH = font.getFontDescender(debugFontSize, currentFont);
+    debugCharHeight = font.getFontHeight(debugFontSize, currentFont);
+
+    screenSize = ofGetWidth() < ofGetHeight() ? ofGetWidth() : ofGetHeight();
 
 #ifdef TARGET_LINUX
     ofLog() << "OS: Linux";
@@ -182,10 +188,9 @@ void ofApp::update() {
 		// copy the fbo texture to a buffer
 		fboAscii.getTexture().copyTo(ringBuffer[ringBufferIndex]);
 
-		// bind and map the buffer as PIXEL_UNPACK so it can be
+		// map the buffer as PIXEL_UNPACK so it can be
 		// accessed from a different thread  from the cpu
 		// and send the memory address to the saver thread
-        ringBuffer[ringBufferIndex].bind(GL_PIXEL_UNPACK_BUFFER);
 
 		p.pixels = ringBuffer[ringBufferIndex].map<unsigned char>(GL_READ_ONLY);
         p.frame = recordedFramesCount;
@@ -244,18 +249,18 @@ void ofApp::draw() {
 
 	TS_START("debugStuff");
     if (debugBuffer) {
-        drawTheme(fboAscii.getWidth(),fboCanvas.getHeight(), charWidth);
+        drawTheme(zoom ? screenSize : fboWidth, screenSize/2.0, charWidth);
         ofSetColor(ofColor::white);
         if(fboCharacterBuffer.isAllocated()) {
-            fboCharacterBuffer.draw(fboAscii.getWidth() + charWidth*8, fboCanvas.getHeight());
+            fboCharacterBuffer.draw((zoom ? screenSize : fboWidth) + charWidth*8, screenSize/2.0);
         }
 
         //font.draw(ofToString(mouseX) + "x" + ofToString(mouseY), 28, mouseX, mouseY, currentFont);
 
         font.draw(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + " font: " + ofToString(charHeight) + "x"+ ofToString(charWidth) +" fps: " + ofToString((int)ofGetFrameRate()) + (recording? " rec " : " " )
-                , 28, 0, ofGetHeight() + descenderH - charHeight, currentFont);
+                , debugFontSize, 0, ofGetHeight() + debugDescenderH - debugCharHeight, currentFont);
         font.draw(" font: " +  fontNames[currentFont] + " chars: " + characterSets[currentCharacterSet] 
-                , 28, 0, ofGetHeight() + descenderH , currentFont);
+                , debugFontSize, 0, ofGetHeight() + debugDescenderH , currentFont);
     }
 	TS_STOP("debugStuff");
 
@@ -315,7 +320,10 @@ void ofApp::keyReleased(int key) {
         // change projectName
         case 'p':
         case 'P':
-            projectName = ofSystemTextBoxDialog("Project Name", projectName);
+            if (!recording) {
+                projectName = ofSystemTextBoxDialog("Project Name", projectName);
+                saverThread.changeProject(projectName);
+            }
             break;
         default:
             break;
@@ -377,6 +385,7 @@ void ofApp::calculateGridSize() {
     recalculateGridSize = false;
 
     fontSize = size;
+    debugFontSize = fontSize / 2.0;
     font.setSize(fontSize);
     ofRectangle r = font.getBBox("█", fontSize, 0, 0, OF_ALIGN_HORZ_LEFT, 0, currentFont);
 
@@ -394,6 +403,9 @@ void ofApp::calculateGridSize() {
 
     ascenderH = font.getFontAscender(fontSize, currentFont);
     descenderH = font.getFontDescender(fontSize, currentFont);
+
+    debugDescenderH = font.getFontDescender(debugFontSize, currentFont);
+    debugCharHeight = font.getFontHeight(debugFontSize, currentFont);
 
     if (false) {
         ofLog() << " glyph w: " << r.getWidth() << " glyph h: " << r.getHeight();

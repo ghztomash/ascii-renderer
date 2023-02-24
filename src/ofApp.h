@@ -138,6 +138,9 @@ public:
 
     ofxFontStash font;
     int fontSize = 48;
+    int debugFontSize = 24;
+    float debugDescenderH;
+    float debugCharHeight;
 
     // color themes from catpuccin
     // https://github.com/catppuccin/catppuccin/blob/main/docs/style-guide.md
@@ -209,7 +212,7 @@ public:
     char time_string[64];
 
     bool recalculateGridSize = false;
-    size_t gridWidth, gridHeight;
+    int gridWidth, gridHeight;
 
     ofxPanel guiRenderer;
     noiseRenderer noise;
