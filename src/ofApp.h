@@ -57,6 +57,7 @@ public:
     size_t findNearestColor(ofColor col);
     void sortCharacterSet(bool reverseOrder = false);
     void makeVideo();
+    int secondsToFrames(float seconds);
 
     void startRecording();
     void allocateFbo();
@@ -168,9 +169,11 @@ public:
     ofxIntSlider fadeAmmount;
 
     string projectName = "test";
-    ofxIntSlider recordFramesNumber;
+    ofxFloatSlider recordSeconds;
     ofxButton record;
     ofxButton video;
+
+    int recordFramesNumber = 0;
     int recordedFramesCount;
     bool recording = false;
 

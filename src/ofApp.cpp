@@ -61,7 +61,7 @@ void ofApp::setup() {
     gui.add(debugBuffer.setup("debugBuffer", true));
     gui.add(blur.setup("blur", false));
     gui.add(fadeAmmount.setup("fade", 254, 0, 255));
-    gui.add(recordFramesNumber.setup("rec frame count", 60, 1, 600));
+    gui.add(recordSeconds.setup("rec dur", 2, 0, 60));
     gui.add(record.setup("record frames"));
 
     marginSize.addListener(this, &ofApp::marginChanged);
@@ -263,7 +263,8 @@ void ofApp::draw() {
 
         //font.draw(ofToString(mouseX) + "x" + ofToString(mouseY), 28, mouseX, mouseY, currentFont);
 
-        font.draw(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + " font: " + ofToString(charHeight) + "x"+ ofToString(charWidth) +" fps: " + ofToString((int)ofGetFrameRate()) + (recording? " rec " : " " )
+        font.draw(" grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) + " font: " + ofToString(charHeight) + "x"+ ofToString(charWidth) +
+                " fps: " + ofToString((int)ofGetFrameRate()) + (recording ? (" ☺ REC: " + ofToString(recordedFramesCount)+"/"+ofToString(recordFramesNumber)) : " " )
                 , debugFontSize, 0, ofGetHeight() + debugDescenderH - debugCharHeight, currentFont);
         font.draw(" font: " +  fontNames[currentFont] + " chars: " + characterSets[currentCharacterSet] 
                 , debugFontSize, 0, ofGetHeight() + debugDescenderH , currentFont);
@@ -649,6 +650,7 @@ void ofApp::startRecording() {
     tm = localtime(&t);
     strftime(time_string, sizeof(time_string), "%b%d-%H%M%S", tm);
 
+    recordFramesNumber = secondsToFrames(recordSeconds);
     recordedFramesCount = 0;
     recording = true;
 }
@@ -873,4 +875,10 @@ void ofApp::sortCharacterSet(bool reverseOrder) {
 void ofApp::makeVideo() {
     string command = "cd data && ./generate_loop.sh " + projectName + " " + ofToString(frameRate) + " && open captures/" + projectName + " && cd ..";
     system(command.c_str());
+}
+
+//--------------------------------------------------------------
+int ofApp::secondsToFrames(float seconds) {
+    // convert seconds to number of frames
+    return (int) (seconds * frameRate);
 }
