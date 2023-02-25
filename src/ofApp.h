@@ -108,33 +108,7 @@ public:
     size_t characterSetSize;
     size_t index;
 
-    vector<string> fontNames = {
-        "DejaVu.ttf",
-        "MesloLG.ttf",
-        "FiraCode.ttf",
-        "BigBlue.ttf",
-        "Fantasque.ttf",
-        "frabk.ttf",
-        "GohuFont.ttf",
-        "Hack.ttf",
-        "Heavy.ttf",
-        "PetMe64.ttf",
-        "IBM3270.ttf",
-        "IBM_VGA_8x16.ttf",
-        "IBM_VGA_9x16.ttf",
-        "Verite_8x8.ttf",
-        "ToshibaSat_8x16.ttf",
-        "ToshibaSat_8x8.ttf",
-        "IBMFlexi.ttf",
-        "IBMPlex.ttf",
-        "JetBrains.ttf",
-        "Monoid.ttf",
-        "ProFont.ttf",
-        "ProggyClean.ttf",
-        "Terminess.ttf",
-        "unifont.ttf",
-        "verdana.ttf",
-    };
+    vector<string> fontNames;
 
     ofxFontStash font;
     int fontSize = 48;

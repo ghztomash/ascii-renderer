@@ -16,6 +16,7 @@
 #include "ofRectangle.h"
 #include "ofUtils.h"
 #include "ofVec2f.h"
+#include <cstdlib>
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -39,6 +40,12 @@ void ofApp::setup() {
     // this disables alpha channel
     ofDisableArbTex();
 
+    // load fonts from data/fonts
+	TS_START("loadFont");
+    loadFont();
+	TS_STOP("loadFont");
+
+    // setup gui elements
     gui.setup();
     gui.add(size.setup("size", 48, 10, 450));
     gui.add(currentCharacterSet.setup("char set", 0, 0, characterSets.size()-1));
@@ -65,9 +72,8 @@ void ofApp::setup() {
     record.addListener(this, &ofApp::startRecording);
     currentCharacterSet.addListener(this, &ofApp::characterSetChanged);
 
-	TS_START("loadFont");
-    loadFont();
-	TS_STOP("loadFont");
+    calculateGridSize();
+    allocateFbo();
 
     characterSetSize = ofUTF8Length(characterSets[currentCharacterSet]);
     // useful to take out single UTF8 characters out of a string
@@ -435,14 +441,33 @@ void ofApp::calculateGridSize() {
 
 //--------------------------------------------------------------
 void ofApp::loadFont() {
-    
-	font.setup("fonts/DejaVu.ttf", 1.0, 1024*1, false, 8, 4.0);
-    for (size_t i = 1; i < fontNames.size(); i++) {
-        font.addFont("fonts/" + fontNames[i]);
+
+    //some path, may be absolute or relative to bin/data
+    string path = "fonts/";
+    ofDirectory dir(path);
+    //only show ttf files
+    dir.allowExt("ttf");
+    //populate the directory object
+    dir.listDir();
+    dir.sort();
+
+    if (dir.size() <= 0) {
+        ofLogError("No fonts found in in bin/data/fonts directory");
+        std::exit(-1);
     }
 
-    calculateGridSize();
-    allocateFbo();
+    // load the first font
+    font.setup(dir.getPath(0), 1.0, 1024*1, false, 8, 4.0);
+    fontNames.push_back(dir.getName(0));
+
+    //go through and load all the fonts
+    for (size_t i = 1; i < dir.size(); i++) {
+        font.addFont(dir.getPath(i));
+        fontNames.push_back(dir.getName(i));
+    }
+
+    // close directory
+    dir.close();
 }
 
 //--------------------------------------------------------------
@@ -837,7 +862,7 @@ void ofApp::sortCharacterSet(bool reverseOrder) {
 
     for(auto e: characterEntries) {
         sortedCharacterSet += e.character;
-        ofLog() << e.character << " lightness: " << e.lightness;
+        //ofLog() << e.character << " lightness: " << e.lightness;
     }
 
     characterSets[currentCharacterSet] = sortedCharacterSet;
