@@ -1,6 +1,6 @@
 # Some general ignore patterns
 bin/*
-!bin/data/
+!bin/data/generate_loop.sh
 
 build/
 obj/
@@ -102,6 +102,9 @@ compile_commands.json
 *.settings
 *.png
 *.mp4
+*.jpg
+*.ttf
+*.xml
 .clangd
 .vim/
 .gdb_history
