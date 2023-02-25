@@ -42,7 +42,7 @@ void ImageSaverThread::threadedFunction(){
 	while(channel.receive(pix)) {
         //ofLog() << "SaverThread received count: " << count++;
 		pixels.setFromPixels(pix.pixels,w,h,OF_PIXELS_RGB);
-		ofSaveImage(pixels, "capture_" + project + "/fbo_" + ofToString(pix.frame) + ".jpg", OF_IMAGE_QUALITY_BEST);
+		ofSaveImage(pixels, "captures/" + project + "/" + project + "_" + ofToString(pix.frame) + ".jpg", OF_IMAGE_QUALITY_BEST);
 	}
     ofLog() << "SaverThread stoping";
 }

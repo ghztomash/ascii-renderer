@@ -15,5 +15,6 @@ if [ $# -eq 2 ]
 fi
 
 echo -e "\nGenerating video file for project: $PROJECT\n"
-cd capture_$PROJECT
-ffmpeg -r $FRAMERATE -i "fbo_%d.jpg" -pix_fmt yuv420p -movflags +faststart video.mp4 -y 
+cd captures
+cd $PROJECT
+ffmpeg -r $FRAMERATE -i $PROJECT"_%d.jpg" -pix_fmt yuv420p -movflags +faststart $PROJECT.mp4 -y

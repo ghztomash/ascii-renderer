@@ -871,6 +871,6 @@ void ofApp::sortCharacterSet(bool reverseOrder) {
 
 //--------------------------------------------------------------
 void ofApp::makeVideo() {
-    string command = "cd data && ./generate_loop.sh " + projectName + " && open capture_" + projectName + " && cd ..";
+    string command = "cd data && ./generate_loop.sh " + projectName + " " + ofToString(frameRate) + " && open captures/" + projectName + " && cd ..";
     system(command.c_str());
 }
