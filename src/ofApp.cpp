@@ -16,7 +16,6 @@
 #include "ofRectangle.h"
 #include "ofUtils.h"
 #include "ofVec2f.h"
-#include <cstdlib>
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -109,6 +108,9 @@ void ofApp::setup() {
     renderersVec.back()->setTexture(fboNoiseTexture.getTexture());
 
     renderersVec.emplace_back(RendererFactory::newRenderer(CYLINDER_RENDERER));
+    guiRenderer.add(renderersVec.back()->parameters);
+
+    renderersVec.emplace_back(RendererFactory::newRenderer(CONE_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
 
     //noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");

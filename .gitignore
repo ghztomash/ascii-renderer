@@ -108,3 +108,5 @@ compile_commands.json
 .clangd
 .vim/
 .gdb_history
+
+!/**/.gitkeep

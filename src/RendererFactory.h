@@ -57,6 +57,14 @@ class RendererFactory {
                     return obj;
                     break;
                 }
+            case CONE_RENDERER:
+                {
+                    shared_ptr<coneRenderer> obj; 
+                    obj = make_shared<coneRenderer>(); 
+                    obj->setup();
+                    return obj;
+                    break;
+                }
             case NOISE_RENDERER:
                 {
                     shared_ptr<noiseRenderer> obj; 

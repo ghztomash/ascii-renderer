@@ -22,7 +22,7 @@
 	#define TIME_SAMPLE_STOP ;
 #endif
 
-const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "cube", "sphere", "cylinder", "noise"};
+const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "cube", "sphere", "cylinder", "cone" ,"noise"};
 
 enum RendererType {
     RECT_RENDERER,
@@ -31,10 +31,11 @@ enum RendererType {
     CUBE_RENDERER,
     SPHERE_RENDERER,
     CYLINDER_RENDERER,
+    CONE_RENDERER,
     NOISE_RENDERER
 };
 
-// test draw rectangle:
+// draw rectangle:
 class rectRenderer: public baseRenderer {
     public:
         void setup (string name = "rect") {
@@ -55,7 +56,7 @@ class rectRenderer: public baseRenderer {
     private:
 };
 
-// test draw circle:
+// draw circle:
 class circRenderer: public baseRenderer {
     public:
         void setup (string name = "circ") {
@@ -76,7 +77,7 @@ class circRenderer: public baseRenderer {
     private:
 };
 
-// test draw circle:
+// draw circle:
 class circMouseRenderer: public baseRenderer {
     public:
         void setup ( float offX = 0, float offY = 0, string name = "circ mouse") {
@@ -114,7 +115,7 @@ class circMouseRenderer: public baseRenderer {
         float offsetY;
 };
 
-// test draw cube:
+// draw cube:
 class cubeRenderer: public baseRenderer {
     public:
         void setup (string name = "cube") {
@@ -141,7 +142,7 @@ class cubeRenderer: public baseRenderer {
         ofParameter<glm::vec3> rotationSpeed;
 };
 
-// test draw sphere:
+// draw sphere:
 class sphereRenderer: public baseRenderer {
     public:
         void setup (string name = "sphere") {
@@ -168,7 +169,7 @@ class sphereRenderer: public baseRenderer {
         ofParameter<glm::vec3> rotationSpeed;
 };
 
-// test draw cylinder:
+// draw cylinder:
 class cylinderRenderer: public baseRenderer {
     public:
         void setup (string name = "cylinder") {
@@ -194,7 +195,33 @@ class cylinderRenderer: public baseRenderer {
         ofParameter<glm::vec3> rotationSpeed;
 };
 
-// test draw noise:
+// draw cone:
+class coneRenderer: public baseRenderer {
+    public:
+        void setup (string name = "cone") {
+            baseRenderer::setup(name);
+            parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
+        }
+
+        void update (ofFbo &fbo) {
+            baseRenderer::preUpdate(fbo);
+
+            ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum()/30.0);
+            ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum()/30.0);
+            ofRotateZDeg(rotationSpeed.get().z * ofGetFrameNum()/30.0);
+
+            ofSetConeResolution(resolution, 1, 1);
+            ofDrawCone(dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight());
+            
+            baseRenderer::postUpdate(fbo);
+        }
+
+    protected:
+    private:
+        ofParameter<glm::vec3> rotationSpeed;
+};
+
+// draw noise:
 class noiseRenderer: public baseRenderer {
     public:
 
