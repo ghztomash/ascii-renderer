@@ -1,10 +1,6 @@
 #pragma once
 
-#include "ofColor.h"
-#include "ofFbo.h"
-#include "ofGraphicsBaseTypes.h"
 #include "ofMain.h"
-#include "ofTexture.h"
 #include "ofxFontStash.h"
 #include "ofxButton.h"
 #include "ofxGui.h"
@@ -15,9 +11,6 @@
 #include "RendererFactory.h"
 #include "ColorTheme.h"
 #include "ImageSaverThread.h"
-#include <cstddef>
-#include <time.h>
-
 
 #ifdef MEASURE_PERFORMANCE
 	#include "ofxTimeMeasurements.h"

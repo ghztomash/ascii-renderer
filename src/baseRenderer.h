@@ -1,12 +1,5 @@
 #pragma once
-
-#include "ofColor.h"
-#include "ofGraphics.h"
 #include "ofMain.h"
-#include "ofParameter.h"
-#include "ofxGui.h"
-#include "ofxSliderGroup.h"
-#include <memory>
 
 class baseRenderer {
     public:

@@ -1,20 +1,6 @@
 #pragma once
-
 #include "baseRenderer.h"
-#include "of3dGraphics.h"
-#include "ofEasyCam.h"
-#include "ofEvents.h"
-#include "ofGraphics.h"
-#include "ofGraphicsBaseTypes.h"
-#include "ofImage.h"
-#include "ofLight.h"
-#include "ofMath.h"
-#include "ofPixels.h"
-#include "ofTexture.h"
-#include "ofUtils.h"
-#include "ofVec3f.h"
 #include "ofxWaveforms.h"
-#include "vector_float3.hpp"
 
 #ifdef MEASURE_PERFORMANCE
 	#include "ofxTimeMeasurements.h"

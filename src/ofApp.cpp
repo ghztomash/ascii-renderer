@@ -1,22 +1,5 @@
 #include "ofApp.h"
 
-#include "ColorTheme.h"
-#include "ImageSaverThread.h"
-#include "baseRenderer.h"
-#include "implRenderer.h"
-#include "ofAppRunner.h"
-#include "ofColor.h"
-#include "ofEvents.h"
-#include "ofGraphics.h"
-#include "ofGraphicsBaseTypes.h"
-#include "ofGraphicsConstants.h"
-#include "ofImage.h"
-#include "ofLog.h"
-#include "ofPixels.h"
-#include "ofRectangle.h"
-#include "ofUtils.h"
-#include "ofVec2f.h"
-
 //--------------------------------------------------------------
 void ofApp::setup() {
 
