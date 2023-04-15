@@ -88,6 +88,9 @@ void ofApp::setup() {
     renderersVec.emplace_back(p);
     guiRenderer.add(renderersVec.back()->parameters);
 
+    renderersVec.emplace_back(RendererFactory::newRenderer(CIRC_WAVES_RENDERER));
+    guiRenderer.add(renderersVec.back()->parameters);
+
     renderersVec.emplace_back(RendererFactory::newRenderer(RECT_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
 

@@ -13,6 +13,7 @@
 #include "ofTexture.h"
 #include "ofUtils.h"
 #include "ofVec3f.h"
+#include "ofxWaveforms.h"
 #include "vector_float3.hpp"
 
 #ifdef MEASURE_PERFORMANCE
@@ -22,12 +23,13 @@
 	#define TIME_SAMPLE_STOP ;
 #endif
 
-const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "cube", "sphere", "cylinder", "cone" ,"noise"};
+const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "circwaves" ,  "cube", "sphere", "cylinder", "cone" ,"noise"};
 
 enum RendererType {
     RECT_RENDERER,
     CIRCLE_RENDERER,
     CIRC_MOUSE_RENDERER,
+    CIRC_WAVES_RENDERER,
     CUBE_RENDERER,
     SPHERE_RENDERER,
     CYLINDER_RENDERER,
@@ -111,6 +113,52 @@ class circMouseRenderer: public baseRenderer {
 
     protected:
     private:
+        float offsetX;
+        float offsetY;
+};
+
+// draw wavefor circle:
+class circWavesRenderer: public baseRenderer {
+    public:
+        void setup (string name = "circ wave") {
+            baseRenderer::setup(name);
+            lighting = false;
+            //parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+
+            sequence.addSequence();
+            sequence.addStep(0, SIN, 2.0, 1);
+            sequence.addSequence();
+            sequence.addStep(1, COS, 4.0, 1);
+            sequence.reset();
+
+        }
+
+        void update (ofFbo &fbo) {
+            if ((!fbo.isAllocated()) || (!enabled)) {
+                return;
+            }
+
+            sequence.update();
+            fbo.begin();
+
+            //ofEnableDepthTest();
+            ofEnableAntiAliasing(); //to get precise lines
+            ofEnableSmoothing();
+            ofSetLineWidth(lineWidth);
+            ofEnableAlphaBlending();
+
+            ofSetCircleResolution(resolution);
+            ofSetColor(color);
+            ofDrawCircle(sequence.getValue(0) * fbo.getWidth(), sequence.getValue(1) * fbo.getHeight(), dimensions.get().x * fbo.getWidth());
+
+            ofDisableDepthTest();
+            fbo.end();
+        }
+
+    protected:
+    private:
+        WaveformTracks sequence;
+        ofParameter<glm::vec2> waveformTimes;
         float offsetX;
         float offsetY;
 };

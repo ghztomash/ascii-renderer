@@ -33,6 +33,14 @@ class RendererFactory {
                     return obj;
                     break;
                 }
+            case CIRC_WAVES_RENDERER:
+                {
+                    shared_ptr<circWavesRenderer> obj; 
+                    obj = make_shared<circWavesRenderer>(); 
+                    obj->setup();
+                    return obj;
+                    break;
+                }
             case CUBE_RENDERER:
                 {
                     shared_ptr<cubeRenderer> obj; 
