@@ -81,6 +81,20 @@ class RendererFactory {
                     return obj;
                     break;
                 }
+            case DOTYPE_G_RENDERER:
+                {
+                    shared_ptr<doTypeGRenderer> obj = make_shared<doTypeGRenderer>(); 
+                    obj->setup();
+                    return obj;
+                    break;
+                }
+            case DOTYPE_H_RENDERER:
+                {
+                    shared_ptr<doTypeHRenderer> obj = make_shared<doTypeHRenderer>(); 
+                    obj->setup();
+                    return obj;
+                    break;
+                }
             default:
                 obj = make_shared<baseRenderer>(); 
                 break;

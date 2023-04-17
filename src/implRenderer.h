@@ -1,6 +1,9 @@
 #pragma once
+#include "Waveforms.h"
 #include "baseRenderer.h"
+#include "ofGraphics.h"
 #include "ofxWaveforms.h"
+#include <algorithm>
 
 #ifdef MEASURE_PERFORMANCE
 	#include "ofxTimeMeasurements.h"
@@ -9,7 +12,7 @@
 	#define TIME_SAMPLE_STOP ;
 #endif
 
-const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "circwaves" ,  "cube", "sphere", "cylinder", "cone" ,"noise"};
+const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "circwaves" , "cube", "sphere", "cylinder", "cone" , "noise", "dotype-g", "dotype-h"};
 
 enum RendererType {
     RECT_RENDERER,
@@ -20,7 +23,9 @@ enum RendererType {
     SPHERE_RENDERER,
     CYLINDER_RENDERER,
     CONE_RENDERER,
-    NOISE_RENDERER
+    NOISE_RENDERER,
+    DOTYPE_G_RENDERER,
+    DOTYPE_H_RENDERER
 };
 
 // draw rectangle:
@@ -347,4 +352,118 @@ class noiseRenderer: public baseRenderer {
         size_t i, i_n; 
         size_t size;
         int x, y;
+};
+
+// draw days of type G:
+class doTypeGRenderer: public baseRenderer {
+    public:
+        void setup (string name = "dot g") {
+            baseRenderer::setup(name);
+            lighting = false;
+            //parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+
+            myfont.load("fonts/Hack.ttf", 82);
+            font2.setup("fonts/Hack.ttf", 1.0, 1024*1, false, 8, 4.0);
+
+            sequence.addSequence();
+            sequence.addStep(0, SIN, 2.0, 1);
+            sequence.addSequence();
+            sequence.addStep(1, COS, 4.0, 1);
+            sequence.reset();
+
+        }
+
+        void update (ofFbo &fbo) {
+
+            sequence.update();
+
+            baseRenderer::preUpdate(fbo);
+            font2.setSize(dimensions.get().x * fbo.getHeight());
+            font2.drawString("hi!!", 0,0);
+            baseRenderer::postUpdate(fbo);
+        }
+
+    protected:
+    private:
+        ofTrueTypeFont myfont;
+        ofxFontStash font2;
+        WaveformTracks sequence;
+        ofParameter<glm::vec2> waveformTimes;
+        float offsetX;
+        float offsetY;
+};
+
+// draw days of type H:
+class doTypeHRenderer: public baseRenderer {
+    public:
+        void setup (string name = "dot g") {
+            baseRenderer::setup(name);
+            lighting = false;
+            //parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+
+            sequence.addSequence("legs");
+            sequence.addStep(0, RISE, 2.0, 1);
+            sequence.addStep(0, HOLD, 2.0, 1);
+            sequence.addStep(0, FALL, 2.0, 1);
+            sequence.addStep(0, HOLD, 2.0, 1);
+            sequence.addStep(0, HOLD, 2.0, 1);
+            sequence.addStep(0, RISE, 2.0, 1);
+            sequence.addStep(0, FALL, 2.0, 1);
+            sequence.addStep(0, HOLD, 2.0, 1);
+            sequence.addStep(0, HOLD, 2.0, 1);
+            sequence.addSequence("serif");
+            sequence.addStep(1, RISE, 2.0, 1);
+            sequence.addStep(1, HOLD, 2.0, 1);
+            sequence.addStep(1, FALL, 2.0, 1);
+            sequence.addStep(1, HOLD, 2.0, 1);
+            sequence.addStep(1, RISE, 2.0, 1);
+            sequence.addStep(1, HOLD, 2.0, 1);
+            sequence.addStep(1, HOLD, 2.0, 1);
+            sequence.addStep(1, FALL, 2.0, 1);
+            sequence.addStep(1, HOLD, 2.0, 1);
+            sequence.reset();
+
+        }
+
+        void update (ofFbo &fbo) {
+
+            sequence.update();
+            scale = fbo.getWidth();
+
+            baseRenderer::preUpdate(fbo);
+            
+            ofTranslate(0, 0, -2.0*scale);
+            //ofRotateZDeg(180);
+            ofPushMatrix();
+            //ofTranslate(-1.0, -1.0);
+            ofSetRectMode(OF_RECTMODE_CENTER);
+            ofScale(scale * dimensions.get().x, scale * dimensions.get().y);
+
+            ofDisableDepthTest();
+
+            //horizontal center
+            ofDrawRectangle(0, 0, 5, 1);
+            //vertical legs
+            ofDrawRectangle( 2, 0, 1 + sequence.getValue("legs")*2.0, 3);
+            ofDrawRectangle(-2, 0, 1 + sequence.getValue("legs")*2.0, 3);
+            // bottom serif
+            ofDrawRectangle(-2, -2, 1+sequence.getValue("serif")*2.0, 1);
+            ofDrawRectangle( 2, -2, 1+sequence.getValue("serif")*2.0, 1);
+            // top serif
+            ofDrawRectangle(-2, 2, 1+sequence.getValue("serif")*2.0, 1);
+            ofDrawRectangle(2, 2, 1+sequence.getValue("serif")*2.0, 1);
+
+            ofSetRectMode(OF_RECTMODE_CORNER);
+            ofPopMatrix();
+
+            baseRenderer::postUpdate(fbo);
+        }
+
+    protected:
+    private:
+        float scale;
+        WaveformTracks sequence;
+        ofParameter<glm::vec2> waveformTimes;
+        float offsetX;
+        float offsetY;
 };

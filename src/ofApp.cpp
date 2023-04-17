@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "implRenderer.h"
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -65,6 +66,7 @@ void ofApp::setup() {
 
     guiRenderer.setup("draw parameters", "draw_params.xml", fboWidth+fboCanvasWidth + 10, 10);
 
+    /*
     shared_ptr<noiseRenderer> p(new noiseRenderer()); 
     //p->setup(fboCanvasWidth/8, fboCanvasHeight/8);
     p->setup(20, 20);
@@ -97,6 +99,13 @@ void ofApp::setup() {
     guiRenderer.add(renderersVec.back()->parameters);
 
     renderersVec.emplace_back(RendererFactory::newRenderer(CONE_RENDERER));
+    guiRenderer.add(renderersVec.back()->parameters);
+    */
+
+    //renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_G_RENDERER));
+    //guiRenderer.add(renderersVec.back()->parameters);
+
+    renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_H_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
 
     //noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");
