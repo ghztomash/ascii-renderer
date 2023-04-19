@@ -105,7 +105,7 @@ void ofApp::setup() {
     //renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_G_RENDERER));
     //guiRenderer.add(renderersVec.back()->parameters);
 
-    renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_H_RENDERER));
+    renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_K_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
 
     //noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");

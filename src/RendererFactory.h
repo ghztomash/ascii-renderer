@@ -95,6 +95,13 @@ class RendererFactory {
                     return obj;
                     break;
                 }
+            case DOTYPE_K_RENDERER:
+                {
+                    shared_ptr<doTypeKRenderer> obj = make_shared<doTypeKRenderer>(); 
+                    obj->setup();
+                    return obj;
+                    break;
+                }
             default:
                 obj = make_shared<baseRenderer>(); 
                 break;

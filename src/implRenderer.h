@@ -4,6 +4,7 @@
 #include "ofGraphics.h"
 #include "ofxWaveforms.h"
 #include <algorithm>
+#include "lineLoader.h"
 
 #ifdef MEASURE_PERFORMANCE
 	#include "ofxTimeMeasurements.h"
@@ -12,7 +13,8 @@
 	#define TIME_SAMPLE_STOP ;
 #endif
 
-const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "circwaves" , "cube", "sphere", "cylinder", "cone" , "noise", "dotype-g", "dotype-h"};
+const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "circwaves" , "cube", "sphere", 
+    "cylinder", "cone" , "noise", "dotype-g", "dotype-h", "dotype-k"};
 
 enum RendererType {
     RECT_RENDERER,
@@ -25,7 +27,8 @@ enum RendererType {
     CONE_RENDERER,
     NOISE_RENDERER,
     DOTYPE_G_RENDERER,
-    DOTYPE_H_RENDERER
+    DOTYPE_H_RENDERER,
+    DOTYPE_K_RENDERER
 };
 
 // draw rectangle:
@@ -396,7 +399,7 @@ class doTypeGRenderer: public baseRenderer {
 // draw days of type H:
 class doTypeHRenderer: public baseRenderer {
     public:
-        void setup (string name = "dot g") {
+        void setup (string name = "dot h") {
             baseRenderer::setup(name);
             lighting = false;
             //parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
@@ -466,4 +469,65 @@ class doTypeHRenderer: public baseRenderer {
         ofParameter<glm::vec2> waveformTimes;
         float offsetX;
         float offsetY;
+};
+
+// draw days of type K:
+class doTypeKRenderer: public baseRenderer {
+    public:
+        void setup (string name = "dot k") {
+            baseRenderer::setup(name);
+            lighting = false;
+
+            lines = lineLoader::loadJson("paths/lines.json");
+            //parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+
+            sequence.addSequence();
+            sequence.addStep(0, SIN, 2.0, 1);
+            sequence.reset();
+        }
+
+        void update (ofFbo &fbo) {
+
+            sequence.update();
+            scale = fbo.getWidth();
+
+            baseRenderer::preUpdate(fbo);
+            
+            //ofTranslate(0, 0, -2.0*scale);
+            ofRotateXDeg(180);
+            ofPushMatrix();
+            //ofTranslate(-1.0, -1.0);
+            //ofScale(scale * dimensions.get().x, scale * dimensions.get().y);
+
+            ofDisableDepthTest();
+
+            ofSetColor(255, 0, 255);
+            ofDrawCircle(0, 0, 20);
+
+            for (int i = 0; i < lines.size(); i++) {
+
+                for (int j = 0; j < lines[i].size(); j++) {
+                    ofDrawCircle(lines[i][j], 5);
+                }
+
+                ofSetColor(255, 0, 255);
+                ofDrawCircle(lines[i].getPointAtPercent(ofGetMouseX() / (float)ofGetWidth()), 10);
+
+                ofSetColor(255);
+                lines[i].draw();
+            }
+
+            ofPopMatrix();
+
+            baseRenderer::postUpdate(fbo);
+        }
+
+    protected:
+    private:
+        float scale;
+        WaveformTracks sequence;
+        ofParameter<glm::vec2> waveformTimes;
+        float offsetX;
+        float offsetY;
+        vector<ofPolyline> lines;
 };
