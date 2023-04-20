@@ -478,17 +478,28 @@ class doTypeKRenderer: public baseRenderer {
             baseRenderer::setup(name);
             lighting = false;
 
-            lines = lineLoader::loadJson("paths/lines.json");
+            lines = lineLoader::loadJson("paths/klines.json");
             //parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+            parameters.add(color2.set("colorPoints", ofColor(255,255, 255), ofColor(0, 0), ofColor(255, 255)));
+            parameters.add(drawPoints.set("drawPoints", false, false, true));
 
             sequence.addSequence();
-            sequence.addStep(0, SIN, 2.0, 1);
+            sequence.addStep(0, COS, 8.0, 1);
+            sequence.addStep(0, HOLD, 4.0, 1);
+            sequence.addSequence();
+            sequence.addStep(1, SIN, 8.0, 1);
+            sequence.addStep(1, SIN, 4.0, 1);
             sequence.reset();
+
+            wave.setTime(8.0);
+            wave.setWaveform(NOISE);
+            wave.reset();
         }
 
         void update (ofFbo &fbo) {
 
             sequence.update();
+            wave.update();
             scale = fbo.getWidth();
 
             baseRenderer::preUpdate(fbo);
@@ -501,24 +512,21 @@ class doTypeKRenderer: public baseRenderer {
 
             ofDisableDepthTest();
 
-            ofSetColor(255, 0, 255);
-            ofDrawCircle(0, 0, 20);
+            ofSetColor(color);
+            ofDrawCircle(lines[1].getPointAtPercent(sequence.getValue(1 % sequence.size())), ((sequence.getValue(1)-0.5)*3.0)*scale * (dimensions.get().x / 5.0));
+            ofDrawCircle(lines[0].getPointAtPercent(sequence.getValue(0 % sequence.size())), (1+wave.getValue(NOISE)) *scale * dimensions.get().x / 5.0);
 
             for (int i = 0; i < lines.size(); i++) {
-
-                for (int j = 0; j < lines[i].size(); j++) {
-                    ofDrawCircle(lines[i][j], 5);
+                if(drawPoints){
+                    for (int j = 0; j < lines[i].size(); j++) {
+                        ofSetColor(color2, wave.getValue(NOISE, i*20.0) * 255.0);
+                        ofDrawCircle(lines[i][j], scale * dimensions.get().y / 5.0);
+                    }
                 }
-
-                ofSetColor(255, 0, 255);
-                ofDrawCircle(lines[i].getPointAtPercent(ofGetMouseX() / (float)ofGetWidth()), 10);
-
-                ofSetColor(255);
                 lines[i].draw();
             }
 
             ofPopMatrix();
-
             baseRenderer::postUpdate(fbo);
         }
 
@@ -526,7 +534,10 @@ class doTypeKRenderer: public baseRenderer {
     private:
         float scale;
         WaveformTracks sequence;
+        Waveforms wave;
         ofParameter<glm::vec2> waveformTimes;
+        ofParameter<bool> drawPoints;
+        ofParameter<ofColor> color2;
         float offsetX;
         float offsetY;
         vector<ofPolyline> lines;

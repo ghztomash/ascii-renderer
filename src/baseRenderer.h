@@ -33,8 +33,9 @@ class baseRenderer {
             enabled = false;
         }
 
-        
         virtual void update(ofFbo &fbo) {};
+
+        virtual void reset() {};
 
         void loadTexture(string path) {
             ofLoadImage(texture, path);
