@@ -13,10 +13,10 @@
 #include "ImageSaverThread.h"
 
 #ifdef MEASURE_PERFORMANCE
-	#include "ofxTimeMeasurements.h"
+#include "ofxTimeMeasurements.h"
 #else
-	#define TIME_SAMPLE_START ;
-	#define TIME_SAMPLE_STOP ;
+#define TIME_SAMPLE_START ;
+#define TIME_SAMPLE_STOP ;
 #endif
 
 #define NUM_BUFFERS 4
