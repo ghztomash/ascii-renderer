@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "ColorTheme.h"
 #include "implRenderer.h"
 
 //--------------------------------------------------------------
@@ -49,7 +50,7 @@ void ofApp::setup() {
     gui.add(debugBuffer.setup("debugBuffer", true));
     gui.add(blur.setup("blur", false));
     gui.add(fadeAmmount.setup("fade", 254, 0, 255));
-    gui.add(recordSeconds.setup("rec dur", 2, 0, 60));
+    gui.add(recordSeconds.setup("rec dur", 2, 0, 240));
     gui.add(record.setup("record frames"));
 
     marginSize.addListener(this, &ofApp::marginChanged);
@@ -104,20 +105,20 @@ void ofApp::setup() {
 
     renderersVec.emplace_back(RendererFactory::newRenderer(CYLINDER_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
+    */
 
     renderersVec.emplace_back(RendererFactory::newRenderer(CONE_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
-    */
 
     // renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_G_RENDERER));
     // guiRenderer.add(renderersVec.back()->parameters);
 
-    renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_L_RENDERER));
+    renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_N2_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
 
-    // noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");
-    noise.setup(20, 20, "noiseSphere");
-    guiRenderer.add(noise.parameters);
+    //noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");
+    //noise.setup(20, 20, "noiseSphere");
+    //guiRenderer.add(noise.parameters);
 
     // character dimensions for debug print
     debugDescenderH = font.getFontDescender(debugFontSize, currentFont);
@@ -283,7 +284,7 @@ void ofApp::draw() {
                            : " "),
             debugFontSize, 0, ofGetHeight() + debugDescenderH - debugCharHeight,
             currentFont);
-        font.draw(" font: " + fontNames[currentFont] +
+        font.draw(" colors: " + ColorThemes::THEME_NAMES[currentTheme] + " font: " + fontNames[currentFont] +
                       " chars: " + characterSets[currentCharacterSet],
                   debugFontSize, 0, ofGetHeight() + debugDescenderH,
                   currentFont);
@@ -303,56 +304,70 @@ void ofApp::keyPressed(int key) {}
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
     switch (key) {
-    // draw gui
-    case 'g':
-    case 'G':
-        drawGui = !drawGui;
-        break;
-    // draw test pattern
-    case 'd':
-    case 'D':
-        debugGrid = !debugGrid;
-        break;
-    // draw grid lines
-    case 'l':
-    case 'L':
-        debugLines = !debugLines;
-        break;
-    // draw buffer preview
-    case 'b':
-    case 'B':
-        debugBuffer = !debugBuffer;
-        break;
-    // record fbo frames
-    case 'r':
-    case 'R':
-        startRecording();
-        break;
-    // generate video
-    case 'v':
-    case 'V':
-        makeVideo();
-        break;
-    // sort character set
-    case 's':
-    case 'S':
-        sortCharacterSet();
-        break;
-    // change zoom
-    case 'z':
-    case 'Z':
-        zoom = !zoom;
-        break;
-    // change projectName
-    case 'p':
-    case 'P':
-        if (!recording) {
-            projectName = ofSystemTextBoxDialog("Project Name", projectName);
-            saverThread.changeProject(projectName);
-        }
-        break;
-    default:
-        break;
+        // draw gui
+        case 'g':
+        case 'G':
+            drawGui = !drawGui;
+            break;
+        // draw test pattern
+        case 'd':
+        case 'D':
+            debugGrid = !debugGrid;
+            break;
+        // draw grid lines
+        case 'l':
+        case 'L':
+            debugLines = !debugLines;
+            break;
+        // draw buffer preview
+        case 'b':
+        case 'B':
+            debugBuffer = !debugBuffer;
+            break;
+        // record fbo frames
+        case 'r':
+        case 'R':
+            startRecording();
+            break;
+        // generate video
+        case 'v':
+        case 'V':
+            makeVideo();
+            saveDescriptiom();
+            break;
+        // sort character set
+        case 's':
+        case 'S':
+            sortCharacterSet();
+            break;
+        // change zoom
+        case 'z':
+        case 'Z':
+            zoom = !zoom;
+            break;
+        // change projectName
+        case 'p':
+        case 'P':
+            if (!recording) {
+                projectName = ofSystemTextBoxDialog("Project Name", projectName);
+                saverThread.changeProject(projectName);
+            }
+            break;
+        case '?':
+            ofSystemAlertDialog(
+                "g: draw gui\n"
+                "d: draw test pattern\n"
+                "l: draw grid lines\n"
+                "b: draw buffer preview\n"
+                "r: record fbo frames\n"
+                "v: generate video\n"
+                "s: sort character set\n"
+                "z: change fit screen\n"
+                "p: change projectName\n"
+                "?: show this help\n");
+            break;
+        default:
+            break;
     }
 }
 
@@ -681,6 +696,12 @@ void ofApp::convertFboToAscii() {
 }
 
 //--------------------------------------------------------------
+void ofApp::injectText(string text, int x, int y) {
+    // TODO: overlay custom text on top of canvas
+    // or other characters text, frame etc
+}
+
+//--------------------------------------------------------------
 // start recording frames
 void ofApp::startRecording() {
     // TODO: add time timestamp to files
@@ -780,46 +801,46 @@ size_t ofApp::findNearestColor(ofColor col) {
     float totalDist = 0;
 
     struct colorEntry {
-        size_t index;
-        float dist;
-        float satDist;
-        float hueDist;
-        float totalDist;
+            size_t index;
+            float dist;
+            float satDist;
+            float hueDist;
+            float totalDist;
 
-        colorEntry(size_t i, float d, float s, float h, float t) {
-            index = i;
-            dist = d;
-            satDist = s;
-            hueDist = h;
-            totalDist = t;
-        }
+            colorEntry(size_t i, float d, float s, float h, float t) {
+                index = i;
+                dist = d;
+                satDist = s;
+                hueDist = h;
+                totalDist = t;
+            }
 
-        //*
-        bool operator<(const colorEntry &a) const {
-            if (abs(hueDist - a.hueDist) <= 28.0) {
-                if (abs(satDist - a.satDist) <= 104.0)
-                    return totalDist < a.totalDist;
-                else
+            //*
+            bool operator<(const colorEntry &a) const {
+                if (abs(hueDist - a.hueDist) <= 28.0) {
+                    if (abs(satDist - a.satDist) <= 104.0)
+                        return totalDist < a.totalDist;
+                    else
+                        return satDist < a.satDist;
+                }
+                return hueDist < a.hueDist;
+            }
+            //*/
+
+            /*
+            bool operator<(const colorEntry& a) const {
+                if (abs(hueDist - a.hueDist) <= hueDistWeight ) {
                     return satDist < a.satDist;
+                }
+                return hueDist < a.hueDist;
             }
-            return hueDist < a.hueDist;
-        }
-        //*/
+            */
 
-        /*
-        bool operator<(const colorEntry& a) const {
-            if (abs(hueDist - a.hueDist) <= hueDistWeight ) {
-                return satDist < a.satDist;
+            /*
+            bool operator<(const colorEntry& a) const {
+                    return totalDist < a.totalDist;
             }
-            return hueDist < a.hueDist;
-        }
-        */
-
-        /*
-        bool operator<(const colorEntry& a) const {
-                return totalDist < a.totalDist;
-        }
-        */
+            */
     };
 
     vector<colorEntry> colorEntries;
@@ -866,17 +887,17 @@ void ofApp::sortCharacterSet(bool reverseOrder) {
     string sortedCharacterSet = "";
 
     struct CharacterEntry {
-        string character;
-        float lightness;
+            string character;
+            float lightness;
 
-        CharacterEntry(string s, float l) {
-            character = s;
-            lightness = l;
-        }
+            CharacterEntry(string s, float l) {
+                character = s;
+                lightness = l;
+            }
 
-        bool operator<(const CharacterEntry &a) const {
-            return lightness < a.lightness;
-        }
+            bool operator<(const CharacterEntry &a) const {
+                return lightness < a.lightness;
+            }
     };
 
     vector<CharacterEntry> characterEntries;
@@ -930,4 +951,18 @@ void ofApp::makeVideo() {
 int ofApp::secondsToFrames(float seconds) {
     // convert seconds to number of frames
     return (int)(seconds * frameRate);
+}
+
+//--------------------------------------------------------------
+void ofApp::saveDescriptiom() {
+    ofFile descriptionFile("data/captures/" + projectName + "/desc.txt", ofFile::WriteOnly, false);
+    descriptionFile.create();
+    descriptionFile << "project: " + projectName << '\n';
+    descriptionFile << "grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) << '\n';
+    descriptionFile << "font size: " + ofToString(charHeight) + "x" + ofToString(charWidth) << '\n';
+    descriptionFile << "colors: " + ColorThemes::THEME_NAMES[currentTheme] << '\n';
+    descriptionFile << "font: " + fontNames[currentFont] << '\n';
+    descriptionFile << "char set: " + characterSets[currentCharacterSet] << '\n';
+    descriptionFile << "tags: #ascii #asciiart #petscii #petsciiart #creativecoding" << '\n';
+    descriptionFile.close();
 }

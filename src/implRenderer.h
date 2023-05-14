@@ -16,7 +16,7 @@
 const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "circwaves", "cube", "sphere",
                                        "cylinder", "cone", "noise", "dotype-g", "dotype-h", "dotype-k", "dotype-l",
                                        "dotype-n0", "dotype-n1", "dotype-n2", "dotype-n3", "dotype-n4", "dotype-n5",
-                                        "dotype-n6", "dotype-n7", "dotype-n8", "dotype-n9"};
+                                       "dotype-n6", "dotype-n7", "dotype-n8", "dotype-n9"};
 
 enum RendererType {
     RECT_RENDERER,
@@ -252,24 +252,41 @@ class coneRenderer : public baseRenderer {
     public:
         void setup(string name = "cone") {
             baseRenderer::setup(name);
-            parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
+            parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(360.0, 360.0, 360.0)));
+            sequence.addSequence("rotation");
+            sequence.addStep(0, SIN, 8.0, 1);
+            sequence.addStep(0, SIN, 4.0, 1);
+            sequence.addStep(0, SIN, 2.0, 1);
+            sequence.addStep(0, SIN, 2.0, 1);
+            sequence.addSequence("size");
+            sequence.addStep(1, TANH, 16.0, 1);
         }
 
         void update(ofFbo &fbo) {
+            sequence.changeStepDuration(0,0, rotationSpeed.get().x);
+            sequence.changeStepDuration(0,1, rotationSpeed.get().x/2.0);
+            sequence.changeStepDuration(0,2, rotationSpeed.get().x/4.0);
+            sequence.changeStepDuration(0,3, rotationSpeed.get().x/4.0);
+            sequence.changeStepDuration(1,0, rotationSpeed.get().y);
+            sequence.update();
             baseRenderer::preUpdate(fbo);
 
-            ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum() / 30.0);
-            ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum() / 30.0);
-            ofRotateZDeg(rotationSpeed.get().z * ofGetFrameNum() / 30.0);
+            ofPushMatrix();
+            ofScale(1.0 + sequence.getValue(1) * dimensions.get().z );
+            // ofRotateXDeg(waveX.getValue() * 360.0);
+            ofRotateYDeg(sequence.getValue(0) * 360.0);
+            // ofRotateZDeg(waveZ.getValue() * 360.0);
 
             ofSetConeResolution(resolution, 1, 1);
             ofDrawCone(dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight());
+            ofPopMatrix();
 
             baseRenderer::postUpdate(fbo);
         }
 
     protected:
     private:
+        WaveformTracks sequence;
         ofParameter<glm::vec3> rotationSpeed;
 };
 
@@ -625,13 +642,14 @@ class doTypeLRenderer : public baseRenderer {
 // draw days of type 0:
 class doTypeN0Renderer : public baseRenderer {
     public:
-        void setup(string name = "dot l") {
+        void setup(string name = "dot n0") {
             baseRenderer::setup(name);
             lighting = false;
 
-            lines = lineLoader::loadJson("paths/llines.json");
+            lines = lineLoader::loadJson("paths/lines_n0.json");
             // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
-            parameters.add(color2.set("colorPoints", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+            parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+            parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
             parameters.add(drawPoints.set("drawPoints", false, false, true));
             parameters.add(numParticles.set("particles", 1, 0, 1000));
 
@@ -648,6 +666,14 @@ class doTypeN0Renderer : public baseRenderer {
             wave2.setTime(4.0);
             wave2.setWaveform(SIN);
             wave2.reset();
+
+            noise1.setTime(2.0);
+            noise1.setWaveform(NOISE);
+            noise1.reset();
+
+            noise2.setTime(1.0);
+            noise2.setWaveform(NOISE);
+            noise2.reset();
         }
 
         void update(ofFbo &fbo) {
@@ -661,24 +687,227 @@ class doTypeN0Renderer : public baseRenderer {
             // ofTranslate(0, 0, -2.0*scale);
             ofRotateXDeg(180);
             ofPushMatrix();
-            // ofTranslate(-1.0, -1.0);
-            // ofScale(scale * dimensions.get().x, scale * dimensions.get().y);
 
             ofDisableDepthTest();
+            ofVec3f pos;
+
+            if (drawPoints) {
+                for (int i = 0; i < lines.size(); i++) {
+                    for (int j = 0; j < lines[0].size(); j++) {
+                        ofSetColor(color3, wave.getValue(NOISE, i * 20.0) * 255.0);
+                        pos = lines[0][j];
+                        pos.x = pos.x + (noise1.getValue(NOISE, j) * 2.0 - 1.0) * dimensions.get().z * scale;
+                        pos.y = pos.y + (noise2.getValue(NOISE, j) * 2.0 - 1.0) * dimensions.get().z * scale;
+                        ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
+                    }
+                }
+            }
 
             ofSetColor(color);
             for (int i = 0; i < numParticles; i++) {
-                ofDrawCircle(lines[0].getPointAtPercent(wave.getValue(NOISE, i)) * (1 + wave2.getValue(SIN, i)), scale * dimensions.get().x / 5.0);
+                ofSetColor(color, ofMap(i, 0, numParticles, 0, 255));
+                pos = lines[0].getPointAtPercent(wave.getValue(LIN, i));
+                pos.x = pos.x + (noise1.getValue(NOISE, i / 2.0) * 2.0 - 1.0) * dimensions.get().z * scale;
+                pos.y = pos.y + (noise2.getValue(NOISE, i / 2.0) * 2.0 - 1.0) * dimensions.get().z * scale;
+                ofDrawCircle(pos, scale * dimensions.get().x / 5.0);
+            }
+            ofSetColor(color2);
+            for (int i = 0; i < numParticles / 2.0; i++) {
+                ofSetColor(color2, ofMap(i, 0, numParticles / 2.0, 0, 255));
+                pos = lines[1].getPointAtPercent(wave.getValue(SIN, i));
+                pos.x = pos.x + (noise1.getValue(NOISE, i / 4.0) * 2.0 - 1.0) * dimensions.get().z * scale;
+                pos.y = pos.y + (noise2.getValue(NOISE, i / 4.0) * 2.0 - 1.0) * dimensions.get().z * scale;
+                ofDrawCircle(pos, scale * dimensions.get().x / 5.0);
             }
 
-            for (int i = 0; i < lines.size(); i++) {
-                if (drawPoints) {
-                    for (int j = 0; j < lines[i].size(); j++) {
-                        ofSetColor(color2, wave.getValue(NOISE, i * 20.0) * 255.0);
-                        ofDrawCircle(lines[i][j], scale * dimensions.get().y / 5.0);
+            ofPopMatrix();
+            baseRenderer::postUpdate(fbo);
+        }
+
+    protected:
+    private:
+        ofTrueTypeFont myfont;
+        ofxFontStash font2;
+        float scale;
+        WaveformTracks sequence;
+        Waveforms wave;
+        Waveforms wave2;
+        Waveforms noise1;
+        Waveforms noise2;
+        ofParameter<glm::vec2> waveformTimes;
+        ofParameter<bool> drawPoints;
+        ofParameter<ofColor> color2;
+        ofParameter<ofColor> color3;
+        ofParameter<int> numParticles;
+        vector<ofPolyline> lines;
+};
+
+// NOTE: letter N1
+// draw days of type 0:
+class doTypeN1Renderer : public baseRenderer {
+    public:
+        void setup(string name = "dot n1") {
+            baseRenderer::setup(name);
+            lighting = false;
+
+            lines = lineLoader::loadJson("paths/lines_n1.json");
+            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+            parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+            parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+            parameters.add(drawPoints.set("drawPoints", false, false, true));
+            parameters.add(numParticles.set("particles", 1, 0, 1000));
+
+            sequence.addSequence();
+            sequence.addStep(0, SIN, 8.0, 1);
+            sequence.addSequence();
+            sequence.addStep(1, SIN, 1.0, 1);
+            sequence.reset();
+
+            wave.setTime(4.0);
+            wave.setWaveform(LIN);
+            wave.reset();
+
+            wave2.setTime(2.0);
+            wave2.setWaveform(SIN);
+            wave2.reset();
+
+            noise1.setTime(1.0);
+            noise1.setWaveform(SIN);
+            noise1.reset();
+
+            noise2.setTime(0.5);
+            noise2.setWaveform(NOISE);
+            noise2.reset();
+        }
+
+        void update(ofFbo &fbo) {
+
+            sequence.update();
+            wave.update();
+            scale = fbo.getWidth();
+
+            baseRenderer::preUpdate(fbo);
+
+            // ofTranslate(0, 0, -2.0*scale);
+            ofRotateXDeg(180);
+            ofPushMatrix();
+
+            ofDisableDepthTest();
+            ofVec3f pos;
+
+            if (drawPoints) {
+                for (int i = 0; i < lines.size(); i++) {
+                    for (int j = 0; j < lines[0].size(); j++) {
+                        ofSetColor(color3, wave.getValue(NOISE, i * 20.0) * 255.0);
+                        pos = lines[0][j];
+                        pos.x = pos.x + (noise1.getValue(NOISE, j) * 2.0 - 1.0) * dimensions.get().z * scale;
+                        // pos.y = pos.y + (noise2.getValue(NOISE, j)*2.0-1.0) * dimensions.get().z*scale;
+                        ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
                     }
                 }
-                // lines[i].draw();
+            }
+
+            ofSetColor(color);
+            for (int i = 0; i < numParticles; i++) {
+                ofSetColor(color, ofMap(i, 0, numParticles, 0, 255));
+                pos = lines[0].getPointAtPercent(wave.getValue(LIN, i));
+                pos.x = pos.x + (noise1.getValue(NOISE, i / 2.0) * 2.0 - 1.0) * dimensions.get().z * scale;
+                // pos.y = pos.y + (noise2.getValue(NOISE, i/2.0)*2.0-1.0) * dimensions.get().z*scale;
+                ofDrawCircle(pos, scale * dimensions.get().x / 5.0);
+            }
+
+            ofPopMatrix();
+            baseRenderer::postUpdate(fbo);
+        }
+
+    protected:
+    private:
+        ofTrueTypeFont myfont;
+        ofxFontStash font2;
+        float scale;
+        WaveformTracks sequence;
+        Waveforms wave;
+        Waveforms wave2;
+        Waveforms noise1;
+        Waveforms noise2;
+        ofParameter<glm::vec2> waveformTimes;
+        ofParameter<bool> drawPoints;
+        ofParameter<ofColor> color2;
+        ofParameter<ofColor> color3;
+        ofParameter<int> numParticles;
+        vector<ofPolyline> lines;
+};
+
+// NOTE: letter N2
+// draw days of type 0:
+class doTypeN2Renderer : public baseRenderer {
+    public:
+        void setup(string name = "dot n2") {
+            baseRenderer::setup(name);
+            lighting = false;
+
+            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+            parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+            parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+            parameters.add(drawPoints.set("drawPoints", false, false, true));
+            parameters.add(waveScaler.set("scale", 1, 0, 1));
+
+            sequence.addSequence();
+            sequence.addStep(0, SIN, 8.0, 1);
+            sequence.addSequence();
+            sequence.addStep(1, SIN, 1.0, 1);
+            sequence.reset();
+
+            wave.setTime(8.0);
+            wave.setWaveform(SIN);
+            wave.reset();
+
+            wave2.setTime(4.0);
+            wave2.setWaveform(SIN);
+            wave2.reset();
+
+            noise1.setTime(8.0);
+            noise1.setWaveform(COS);
+            noise1.reset();
+
+            noise2.setTime(4.0);
+            noise2.setWaveform(COS);
+            noise2.reset();
+        }
+
+        void update(ofFbo &fbo) {
+
+            sequence.update();
+            wave.update();
+            wave2.update();
+            noise1.update();
+            noise2.update();
+            scale = fbo.getWidth();
+
+            baseRenderer::preUpdate(fbo);
+
+            // ofTranslate(0, 0, -2.0*scale);
+            ofRotateXDeg(180);
+            ofPushMatrix();
+
+            ofDisableDepthTest();
+            ofVec3f pos;
+
+            // split the screen into 3 parts
+            float part = (fbo.getWidth() / 2.0) * (dimensions.get().x);
+
+            for (int i = 0; i < fbo.getHeight(); i++) {
+                ofSetColor(color);
+                pos = ofVec3f(-part, -part + i, 0);
+                pos.x = pos.x + ((noise1.getValue(SIN, i * waveScaler) * 2.0 - 1.0) + (noise2.getValue(SIN, i * waveScaler) * 2.0 - 1.0)) * dimensions.get().z * scale;
+                ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
+            }
+
+            for (int i = 0; i < fbo.getHeight(); i++) {
+                ofSetColor(color2);
+                pos = ofVec3f(part, -part + i, 0);
+                pos.x = pos.x + ((wave.getValue(COS, i * waveScaler) * 2.0 - 1.0) + (wave2.getValue(COS, i * waveScaler) * 2.0 - 1.0)) * dimensions.get().z * scale;
+                ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
             }
 
             ofPopMatrix();
@@ -691,9 +920,106 @@ class doTypeN0Renderer : public baseRenderer {
         WaveformTracks sequence;
         Waveforms wave;
         Waveforms wave2;
+        Waveforms noise1;
+        Waveforms noise2;
         ofParameter<glm::vec2> waveformTimes;
         ofParameter<bool> drawPoints;
         ofParameter<ofColor> color2;
-        ofParameter<int> numParticles;
-        vector<ofPolyline> lines;
+        ofParameter<ofColor> color3;
+        ofParameter<float> waveScaler;
+};
+
+// NOTE: letter N3
+// draw days of type 0:
+class doTypeN3Renderer : public baseRenderer {
+    public:
+        void setup(string name = "dot n3") {
+            baseRenderer::setup(name);
+            lighting = false;
+
+            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+            parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+            parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+            parameters.add(drawPoints.set("drawPoints", false, false, true));
+            parameters.add(waveScaler.set("scale", 1, 0, 1));
+
+            sequence.addSequence();
+            sequence.addStep(0, SIN, 8.0, 1);
+            sequence.addSequence();
+            sequence.addStep(1, SIN, 1.0, 1);
+            sequence.reset();
+
+            wave.setTime(8.0);
+            wave.setWaveform(SIN);
+            wave.reset();
+
+            wave2.setTime(4.0);
+            wave2.setWaveform(SIN);
+            wave2.reset();
+
+            noise1.setTime(8.0);
+            noise1.setWaveform(COS);
+            noise1.reset();
+
+            noise2.setTime(4.0);
+            noise2.setWaveform(COS);
+            noise2.reset();
+        }
+
+        void update(ofFbo &fbo) {
+
+            sequence.update();
+            wave.update();
+            wave2.update();
+            noise1.update();
+            noise2.update();
+            scale = fbo.getWidth() * (dimensions.get().x);
+
+            baseRenderer::preUpdate(fbo);
+
+            // ofTranslate(0, 0, -2.0*scale);
+            ofRotateXDeg(180);
+            ofPushMatrix();
+
+            ofDisableDepthTest();
+            ofVec3f pos;
+
+            // split the screen into 3 parts
+            float part = (fbo.getWidth() / 2.0) * (dimensions.get().x);
+
+            ofSetColor(color, wave.getValue(NOISE, 1.0 * 20.0) * 255.0);
+            pos = ofVec3f(0, -1, 0) * scale;
+            pos.x = pos.x + (noise1.getValue(SIN, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
+            pos.y = pos.y + (noise2.getValue(COS, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
+            ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
+
+            ofSetColor(color2, wave.getValue(NOISE, 2.0 * 20.0) * 255.0);
+            pos = ofVec3f(1, 1, 0) * scale;
+            pos.x = pos.x + (noise2.getValue(SIN, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
+            pos.y = pos.y + (noise1.getValue(COS, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
+            ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
+
+            ofSetColor(color3, wave.getValue(NOISE, 3.0 * 20.0) * 255.0);
+            pos = ofVec3f(-1, 1, 0) * scale;
+            pos.x = pos.x + (wave.getValue(SIN, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
+            pos.y = pos.y + (wave2.getValue(COS, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
+            ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
+
+            ofPopMatrix();
+            baseRenderer::postUpdate(fbo);
+        }
+
+    protected:
+    private:
+        float scale;
+        WaveformTracks sequence;
+        Waveforms wave;
+        Waveforms wave2;
+        Waveforms noise1;
+        Waveforms noise2;
+        ofParameter<glm::vec2> waveformTimes;
+        ofParameter<bool> drawPoints;
+        ofParameter<ofColor> color2;
+        ofParameter<ofColor> color3;
+        ofParameter<float> waveScaler;
 };

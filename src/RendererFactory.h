@@ -121,6 +121,30 @@ class RendererFactory {
                         return obj;
                         break;
                     }
+                case DOTYPE_N1_RENDERER:
+                    {
+                        shared_ptr<doTypeN1Renderer> obj =
+                            make_shared<doTypeN1Renderer>();
+                        obj->setup();
+                        return obj;
+                        break;
+                    }
+                case DOTYPE_N2_RENDERER:
+                    {
+                        shared_ptr<doTypeN2Renderer> obj =
+                            make_shared<doTypeN2Renderer>();
+                        obj->setup();
+                        return obj;
+                        break;
+                    }
+                case DOTYPE_N3_RENDERER:
+                    {
+                        shared_ptr<doTypeN3Renderer> obj =
+                            make_shared<doTypeN3Renderer>();
+                        obj->setup();
+                        return obj;
+                        break;
+                    }
                 default:
                     obj = make_shared<baseRenderer>();
                     break;
