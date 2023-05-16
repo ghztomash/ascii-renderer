@@ -105,7 +105,6 @@ void ofApp::setup() {
 
     renderersVec.emplace_back(RendererFactory::newRenderer(CYLINDER_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
-    */
 
     renderersVec.emplace_back(RendererFactory::newRenderer(CONE_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
@@ -114,6 +113,14 @@ void ofApp::setup() {
     // guiRenderer.add(renderersVec.back()->parameters);
 
     renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_N2_RENDERER));
+    guiRenderer.add(renderersVec.back()->parameters);
+
+    */
+
+    renderersVec.emplace_back(RendererFactory::newRenderer(CIRCLE_RENDERER));
+    guiRenderer.add(renderersVec.back()->parameters);
+
+    renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_N8_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
 
     //noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");

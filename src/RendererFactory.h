@@ -145,6 +145,14 @@ class RendererFactory {
                         return obj;
                         break;
                     }
+                case DOTYPE_N8_RENDERER:
+                    {
+                        shared_ptr<doTypeN8Renderer> obj =
+                            make_shared<doTypeN8Renderer>();
+                        obj->setup();
+                        return obj;
+                        break;
+                    }
                 default:
                     obj = make_shared<baseRenderer>();
                     break;

@@ -1023,3 +1023,106 @@ class doTypeN3Renderer : public baseRenderer {
         ofParameter<ofColor> color3;
         ofParameter<float> waveScaler;
 };
+
+// NOTE: letter N8
+// draw days of type 8:
+class doTypeN8Renderer : public baseRenderer {
+    public:
+        void setup(string name = "dot n8") {
+            baseRenderer::setup(name);
+            lighting = false;
+
+            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+            parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+            parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+            parameters.add(drawPoints.set("drawPoints", false, false, true));
+            parameters.add(waveScaler.set("scale", 1, 0, 1));
+            parameters.add(numParticles.set("particles", 100, 1, 1000));
+
+            sequence.addSequence();
+            sequence.addStep(0, SIN, 8.0, 1);
+            sequence.addSequence();
+            sequence.addStep(1, SIN, 1.0, 1);
+            sequence.reset();
+
+            lfo.setTime(8.0);
+            lfo.setWaveform(LIN);
+            lfo.reset();
+
+            wave.setTime(4.0);
+            wave.setWaveform(SIN);
+            wave.setPhaseOffset(PI);
+            wave.reset();
+
+            wave2.setTime(8.0);
+            wave2.setWaveform(SIN);
+            wave2.setPhaseOffset(PI);
+            wave2.reset();
+
+            noise1.setTime(4.0);
+            noise1.setWaveform(TRI);
+            noise1.reset();
+
+            noise2.setTime(8.0);
+            noise2.setWaveform(TRI);
+            //noise2.setPhaseOffset(PI);
+            noise2.reset();
+        }
+
+        void update(ofFbo &fbo) {
+
+            lfo.update();
+            sequence.update();
+            wave.update();
+            wave2.update();
+            noise1.update();
+            noise2.update();
+            scale = fbo.getWidth();
+            radius = (1 + lfo.getValue()*2.0) * dimensions.get().z * scale;
+
+            baseRenderer::preUpdate(fbo);
+
+            // ofTranslate(0, 0, -2.0*scale);
+            ofRotateXDeg(180);
+            ofPushMatrix();
+
+        ofSetCircleResolution(resolution);
+
+            ofDisableDepthTest();
+            ofVec3f pos;
+
+            for (int i = 0; i < numParticles; i++) {
+                ofSetColor(color, ofMap(i, 0, numParticles, 0, 255));
+                pos.x = (noise1.getValue(TAN_SIN, i * waveScaler) * 2.0 - 1.0) * dimensions.get().x * scale;
+                pos.y = (noise2.getValue(TRI, i * waveScaler) * 2.0 - 1.0) * dimensions.get().y * scale;
+                ofDrawCircle(pos, radius);
+            }
+
+            for (int i = 0; i < numParticles; i++) {
+                ofSetColor(color2, ofMap(i, 0, numParticles, 0, 255));
+                pos.x = (wave.getValue(TAN_SIN, i * waveScaler) * 2.0 - 1.0) * dimensions.get().x * scale;
+                pos.y = (wave2.getValue(TRI, i * waveScaler) * 2.0 - 1.0) * dimensions.get().y * scale;
+                ofDrawCircle(pos, radius);
+            }
+
+            ofPopMatrix();
+            baseRenderer::postUpdate(fbo);
+        }
+
+    protected:
+    private:
+        float scale;
+        float radius;
+        WaveformTracks sequence;
+        Waveforms lfo;
+        Waveforms wave;
+        Waveforms wave2;
+        Waveforms noise1;
+        Waveforms noise2;
+        ofParameter<glm::vec2> waveformTimes;
+        ofParameter<bool> drawPoints;
+        ofParameter<ofColor> color2;
+        ofParameter<ofColor> color3;
+        ofParameter<float> waveScaler;
+        ofParameter<int> numParticles;
+};
