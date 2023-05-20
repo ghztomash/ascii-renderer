@@ -115,17 +115,18 @@ void ofApp::setup() {
     renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_N2_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
 
-    */
 
     renderersVec.emplace_back(RendererFactory::newRenderer(CIRCLE_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
 
+    */
+
     renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_N8_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
 
-    //noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");
-    //noise.setup(20, 20, "noiseSphere");
-    //guiRenderer.add(noise.parameters);
+    // noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");
+    // noise.setup(20, 20, "noiseSphere");
+    // guiRenderer.add(noise.parameters);
 
     // character dimensions for debug print
     debugDescenderH = font.getFontDescender(debugFontSize, currentFont);
@@ -808,46 +809,46 @@ size_t ofApp::findNearestColor(ofColor col) {
     float totalDist = 0;
 
     struct colorEntry {
-            size_t index;
-            float dist;
-            float satDist;
-            float hueDist;
-            float totalDist;
+        size_t index;
+        float dist;
+        float satDist;
+        float hueDist;
+        float totalDist;
 
-            colorEntry(size_t i, float d, float s, float h, float t) {
-                index = i;
-                dist = d;
-                satDist = s;
-                hueDist = h;
-                totalDist = t;
-            }
+        colorEntry(size_t i, float d, float s, float h, float t) {
+            index = i;
+            dist = d;
+            satDist = s;
+            hueDist = h;
+            totalDist = t;
+        }
 
-            //*
-            bool operator<(const colorEntry &a) const {
-                if (abs(hueDist - a.hueDist) <= 28.0) {
-                    if (abs(satDist - a.satDist) <= 104.0)
-                        return totalDist < a.totalDist;
-                    else
-                        return satDist < a.satDist;
-                }
-                return hueDist < a.hueDist;
-            }
-            //*/
-
-            /*
-            bool operator<(const colorEntry& a) const {
-                if (abs(hueDist - a.hueDist) <= hueDistWeight ) {
-                    return satDist < a.satDist;
-                }
-                return hueDist < a.hueDist;
-            }
-            */
-
-            /*
-            bool operator<(const colorEntry& a) const {
+        //*
+        bool operator<(const colorEntry &a) const {
+            if (abs(hueDist - a.hueDist) <= 28.0) {
+                if (abs(satDist - a.satDist) <= 104.0)
                     return totalDist < a.totalDist;
+                else
+                    return satDist < a.satDist;
             }
-            */
+            return hueDist < a.hueDist;
+        }
+        //*/
+
+        /*
+        bool operator<(const colorEntry& a) const {
+            if (abs(hueDist - a.hueDist) <= hueDistWeight ) {
+                return satDist < a.satDist;
+            }
+            return hueDist < a.hueDist;
+        }
+        */
+
+        /*
+        bool operator<(const colorEntry& a) const {
+                return totalDist < a.totalDist;
+        }
+        */
     };
 
     vector<colorEntry> colorEntries;
@@ -894,17 +895,17 @@ void ofApp::sortCharacterSet(bool reverseOrder) {
     string sortedCharacterSet = "";
 
     struct CharacterEntry {
-            string character;
-            float lightness;
+        string character;
+        float lightness;
 
-            CharacterEntry(string s, float l) {
-                character = s;
-                lightness = l;
-            }
+        CharacterEntry(string s, float l) {
+            character = s;
+            lightness = l;
+        }
 
-            bool operator<(const CharacterEntry &a) const {
-                return lightness < a.lightness;
-            }
+        bool operator<(const CharacterEntry &a) const {
+            return lightness < a.lightness;
+        }
     };
 
     vector<CharacterEntry> characterEntries;

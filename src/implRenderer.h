@@ -15,8 +15,7 @@
 
 const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "circwaves", "cube", "sphere",
                                        "cylinder", "cone", "noise", "dotype-g", "dotype-h", "dotype-k", "dotype-l",
-                                       "dotype-n0", "dotype-n1", "dotype-n2", "dotype-n3", "dotype-n4", "dotype-n5",
-                                       "dotype-n6", "dotype-n7", "dotype-n8", "dotype-n9"};
+                                       "dotype-n0", "dotype-n1", "dotype-n2", "dotype-n3", "dotype-n8"};
 
 enum RendererType {
     RECT_RENDERER,
@@ -36,30 +35,25 @@ enum RendererType {
     DOTYPE_N1_RENDERER,
     DOTYPE_N2_RENDERER,
     DOTYPE_N3_RENDERER,
-    DOTYPE_N4_RENDERER,
-    DOTYPE_N5_RENDERER,
-    DOTYPE_N6_RENDERER,
-    DOTYPE_N7_RENDERER,
     DOTYPE_N8_RENDERER,
-    DOTYPE_N9_RENDERER,
 };
 
 // draw rectangle:
 class rectRenderer : public baseRenderer {
     public:
-        void setup(string name = "rect") {
-            baseRenderer::setup(name);
-            parameters.remove("resolution");
-            lighting = false;
-        }
+    void setup(string name = "rect") {
+        baseRenderer::setup(name);
+        parameters.remove("resolution");
+        lighting = false;
+    }
 
-        void update(ofFbo &fbo) {
-            baseRenderer::preUpdate(fbo);
-            ofSetRectMode(OF_RECTMODE_CENTER);
-            ofDrawRectangle(0, 0, dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight());
-            ofSetRectMode(OF_RECTMODE_CORNER);
-            baseRenderer::postUpdate(fbo);
-        }
+    void update(ofFbo &fbo) {
+        baseRenderer::preUpdate(fbo);
+        ofSetRectMode(OF_RECTMODE_CENTER);
+        ofDrawRectangle(0, 0, dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight());
+        ofSetRectMode(OF_RECTMODE_CORNER);
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
@@ -68,19 +62,19 @@ class rectRenderer : public baseRenderer {
 // draw circle:
 class circRenderer : public baseRenderer {
     public:
-        void setup(string name = "circ") {
-            baseRenderer::setup(name);
-            lighting = false;
-        }
+    void setup(string name = "circ") {
+        baseRenderer::setup(name);
+        lighting = false;
+    }
 
-        void update(ofFbo &fbo) {
-            baseRenderer::preUpdate(fbo);
+    void update(ofFbo &fbo) {
+        baseRenderer::preUpdate(fbo);
 
-            ofSetCircleResolution(resolution);
-            ofDrawCircle(0, 0, dimensions.get().x * fbo.getWidth());
+        ofSetCircleResolution(resolution);
+        ofDrawCircle(0, 0, dimensions.get().x * fbo.getWidth());
 
-            baseRenderer::postUpdate(fbo);
-        }
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
@@ -89,1040 +83,1033 @@ class circRenderer : public baseRenderer {
 // draw circle:
 class circMouseRenderer : public baseRenderer {
     public:
-        void setup(float offX = 0, float offY = 0, string name = "circ mouse") {
-            baseRenderer::setup(name);
-            lighting = false;
-            offsetX = offX;
-            offsetY = offY;
+    void setup(float offX = 0, float offY = 0, string name = "circ mouse") {
+        baseRenderer::setup(name);
+        lighting = false;
+        offsetX = offX;
+        offsetY = offY;
+    }
+
+    void update(ofFbo &fbo) {
+        if ((!fbo.isAllocated()) || (!enabled)) {
+            return;
         }
 
-        void update(ofFbo &fbo) {
-            if ((!fbo.isAllocated()) || (!enabled)) {
-                return;
-            }
+        fbo.begin();
 
-            fbo.begin();
+        // ofEnableDepthTest();
+        ofEnableAntiAliasing(); // to get precise lines
+        ofEnableSmoothing();
+        ofSetLineWidth(lineWidth);
+        ofEnableAlphaBlending();
 
-            // ofEnableDepthTest();
-            ofEnableAntiAliasing(); // to get precise lines
-            ofEnableSmoothing();
-            ofSetLineWidth(lineWidth);
-            ofEnableAlphaBlending();
+        ofSetCircleResolution(resolution);
 
-            ofSetCircleResolution(resolution);
+        ofSetColor(color);
+        ofDrawCircle(ofGetMouseX() - offsetX, ofGetMouseY() - offsetY, dimensions.get().x * fbo.getWidth());
 
-            ofSetColor(color);
-            ofDrawCircle(ofGetMouseX() - offsetX, ofGetMouseY() - offsetY, dimensions.get().x * fbo.getWidth());
-
-            ofDisableDepthTest();
-            fbo.end();
-        }
+        ofDisableDepthTest();
+        fbo.end();
+    }
 
     protected:
     private:
-        float offsetX;
-        float offsetY;
+    float offsetX;
+    float offsetY;
 };
 
 // draw wavefor circle:
 class circWavesRenderer : public baseRenderer {
     public:
-        void setup(string name = "circ wave") {
-            baseRenderer::setup(name);
-            lighting = false;
-            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+    void setup(string name = "circ wave") {
+        baseRenderer::setup(name);
+        lighting = false;
+        // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
 
-            sequence.addSequence();
-            sequence.addStep(0, SIN, 2.0, 1);
-            sequence.addSequence();
-            sequence.addStep(1, COS, 4.0, 1);
-            sequence.reset();
+        sequence.addSequence();
+        sequence.addStep(0, SIN, 2.0, 1);
+        sequence.addSequence();
+        sequence.addStep(1, COS, 4.0, 1);
+        sequence.reset();
+    }
+
+    void update(ofFbo &fbo) {
+        if ((!fbo.isAllocated()) || (!enabled)) {
+            return;
         }
 
-        void update(ofFbo &fbo) {
-            if ((!fbo.isAllocated()) || (!enabled)) {
-                return;
-            }
+        sequence.update();
+        fbo.begin();
 
-            sequence.update();
-            fbo.begin();
+        // ofEnableDepthTest();
+        ofEnableAntiAliasing(); // to get precise lines
+        ofEnableSmoothing();
+        ofSetLineWidth(lineWidth);
+        ofEnableAlphaBlending();
 
-            // ofEnableDepthTest();
-            ofEnableAntiAliasing(); // to get precise lines
-            ofEnableSmoothing();
-            ofSetLineWidth(lineWidth);
-            ofEnableAlphaBlending();
+        ofSetCircleResolution(resolution);
+        ofSetColor(color);
+        ofDrawCircle(sequence.getValue(0) * fbo.getWidth(), sequence.getValue(1) * fbo.getHeight(), dimensions.get().x * fbo.getWidth());
 
-            ofSetCircleResolution(resolution);
-            ofSetColor(color);
-            ofDrawCircle(sequence.getValue(0) * fbo.getWidth(), sequence.getValue(1) * fbo.getHeight(), dimensions.get().x * fbo.getWidth());
-
-            ofDisableDepthTest();
-            fbo.end();
-        }
+        ofDisableDepthTest();
+        fbo.end();
+    }
 
     protected:
     private:
-        WaveformTracks sequence;
-        ofParameter<glm::vec2> waveformTimes;
+    WaveformTracks sequence;
+    ofParameter<glm::vec2> waveformTimes;
 };
 
 // draw cube:
 class cubeRenderer : public baseRenderer {
     public:
-        void setup(string name = "cube") {
-            baseRenderer::setup(name);
-            parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
-            resolution = 1;
-        }
+    void setup(string name = "cube") {
+        baseRenderer::setup(name);
+        parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
+        resolution = 1;
+    }
 
-        void update(ofFbo &fbo) {
-            baseRenderer::preUpdate(fbo);
+    void update(ofFbo &fbo) {
+        baseRenderer::preUpdate(fbo);
 
-            ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum() / 30.0);
-            ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum() / 30.0);
-            ofRotateZDeg(rotationSpeed.get().z * ofGetFrameNum() / 30.0);
+        ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum() / 30.0);
+        ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum() / 30.0);
+        ofRotateZDeg(rotationSpeed.get().z * ofGetFrameNum() / 30.0);
 
-            ofSetBoxResolution(resolution);
-            ofDrawBox(dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight(), dimensions.get().z * fbo.getWidth());
+        ofSetBoxResolution(resolution);
+        ofDrawBox(dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight(), dimensions.get().z * fbo.getWidth());
 
-            baseRenderer::postUpdate(fbo);
-        }
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
-        ofParameter<glm::vec3> rotationSpeed;
+    ofParameter<glm::vec3> rotationSpeed;
 };
 
 // draw sphere:
 class sphereRenderer : public baseRenderer {
     public:
-        void setup(string name = "sphere") {
-            baseRenderer::setup(name);
-            parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 0.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
-        }
+    void setup(string name = "sphere") {
+        baseRenderer::setup(name);
+        parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 0.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
+    }
 
-        void update(ofFbo &fbo) {
-            baseRenderer::preUpdate(fbo);
+    void update(ofFbo &fbo) {
+        baseRenderer::preUpdate(fbo);
 
-            ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum() / 30.0);
-            ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum() / 30.0);
-            ofRotateZDeg(rotationSpeed.get().z * ofGetFrameNum() / 30.0);
+        ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum() / 30.0);
+        ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum() / 30.0);
+        ofRotateZDeg(rotationSpeed.get().z * ofGetFrameNum() / 30.0);
 
-            ofSetSphereResolution(resolution);
-            ofDrawSphere(dimensions.get().x * fbo.getWidth());
+        ofSetSphereResolution(resolution);
+        ofDrawSphere(dimensions.get().x * fbo.getWidth());
 
-            baseRenderer::postUpdate(fbo);
-        }
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
-        ofParameter<float> radius;
-        ofParameter<glm::vec3> rotationSpeed;
+    ofParameter<float> radius;
+    ofParameter<glm::vec3> rotationSpeed;
 };
 
 // draw cylinder:
 class cylinderRenderer : public baseRenderer {
     public:
-        void setup(string name = "cylinder") {
-            baseRenderer::setup(name);
-            parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
-        }
+    void setup(string name = "cylinder") {
+        baseRenderer::setup(name);
+        parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
+    }
 
-        void update(ofFbo &fbo) {
-            baseRenderer::preUpdate(fbo);
+    void update(ofFbo &fbo) {
+        baseRenderer::preUpdate(fbo);
 
-            ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum() / 30.0);
-            ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum() / 30.0);
-            ofRotateZDeg(rotationSpeed.get().z * ofGetFrameNum() / 30.0);
+        ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum() / 30.0);
+        ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum() / 30.0);
+        ofRotateZDeg(rotationSpeed.get().z * ofGetFrameNum() / 30.0);
 
-            ofSetCylinderResolution(resolution, 1);
-            ofDrawCylinder(dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight());
+        ofSetCylinderResolution(resolution, 1);
+        ofDrawCylinder(dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight());
 
-            baseRenderer::postUpdate(fbo);
-        }
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
-        ofParameter<glm::vec3> rotationSpeed;
+    ofParameter<glm::vec3> rotationSpeed;
 };
 
 // draw cone:
 class coneRenderer : public baseRenderer {
     public:
-        void setup(string name = "cone") {
-            baseRenderer::setup(name);
-            parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(360.0, 360.0, 360.0)));
-            sequence.addSequence("rotation");
-            sequence.addStep(0, SIN, 8.0, 1);
-            sequence.addStep(0, SIN, 4.0, 1);
-            sequence.addStep(0, SIN, 2.0, 1);
-            sequence.addStep(0, SIN, 2.0, 1);
-            sequence.addSequence("size");
-            sequence.addStep(1, TANH, 16.0, 1);
-        }
+    void setup(string name = "cone") {
+        baseRenderer::setup(name);
+        parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(360.0, 360.0, 360.0)));
+        sequence.addSequence("rotation");
+        sequence.addStep(0, SIN, 8.0, 1);
+        sequence.addStep(0, SIN, 4.0, 1);
+        sequence.addStep(0, SIN, 2.0, 1);
+        sequence.addStep(0, SIN, 2.0, 1);
+        sequence.addSequence("size");
+        sequence.addStep(1, TANH, 16.0, 1);
+    }
 
-        void update(ofFbo &fbo) {
-            sequence.changeStepDuration(0,0, rotationSpeed.get().x);
-            sequence.changeStepDuration(0,1, rotationSpeed.get().x/2.0);
-            sequence.changeStepDuration(0,2, rotationSpeed.get().x/4.0);
-            sequence.changeStepDuration(0,3, rotationSpeed.get().x/4.0);
-            sequence.changeStepDuration(1,0, rotationSpeed.get().y);
-            sequence.update();
-            baseRenderer::preUpdate(fbo);
+    void update(ofFbo &fbo) {
+        sequence.changeStepDuration(0, 0, rotationSpeed.get().x);
+        sequence.changeStepDuration(0, 1, rotationSpeed.get().x / 2.0);
+        sequence.changeStepDuration(0, 2, rotationSpeed.get().x / 4.0);
+        sequence.changeStepDuration(0, 3, rotationSpeed.get().x / 4.0);
+        sequence.changeStepDuration(1, 0, rotationSpeed.get().y);
+        sequence.update();
+        baseRenderer::preUpdate(fbo);
 
-            ofPushMatrix();
-            ofScale(1.0 + sequence.getValue(1) * dimensions.get().z );
-            // ofRotateXDeg(waveX.getValue() * 360.0);
-            ofRotateYDeg(sequence.getValue(0) * 360.0);
-            // ofRotateZDeg(waveZ.getValue() * 360.0);
+        ofPushMatrix();
+        ofScale(1.0 + sequence.getValue(1) * dimensions.get().z);
+        // ofRotateXDeg(waveX.getValue() * 360.0);
+        ofRotateYDeg(sequence.getValue(0) * 360.0);
+        // ofRotateZDeg(waveZ.getValue() * 360.0);
 
-            ofSetConeResolution(resolution, 1, 1);
-            ofDrawCone(dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight());
-            ofPopMatrix();
+        ofSetConeResolution(resolution, 1, 1);
+        ofDrawCone(dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight());
+        ofPopMatrix();
 
-            baseRenderer::postUpdate(fbo);
-        }
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
-        WaveformTracks sequence;
-        ofParameter<glm::vec3> rotationSpeed;
+    WaveformTracks sequence;
+    ofParameter<glm::vec3> rotationSpeed;
 };
 
 // draw noise:
 class noiseRenderer : public baseRenderer {
     public:
-        void setup(float w = 10, float h = 10, string name = "noise") {
-            noiseCanvasWidth = w;
-            noiseCanvasHeight = h;
-            baseRenderer::setup(name);
+    void setup(float w = 10, float h = 10, string name = "noise") {
+        noiseCanvasWidth = w;
+        noiseCanvasHeight = h;
+        baseRenderer::setup(name);
 
-            parameters.remove("dimensions");
-            parameters.remove("fill");
-            parameters.remove("lighting");
-            parameters.remove("resolution");
-            parameters.remove("rotation");
-            parameters.remove("lineWidth");
+        parameters.remove("dimensions");
+        parameters.remove("fill");
+        parameters.remove("lighting");
+        parameters.remove("resolution");
+        parameters.remove("rotation");
+        parameters.remove("lineWidth");
 
-            parameters.add(noiseX.set("x multiplier", 100.0, 0.001, 500.0));
-            parameters.add(noiseY.set("y multiplier", 100.0, 0.001, 500.0));
-            parameters.add(noiseZ.set("z multiplier", 200.0, 0.001, 500.0));
-            parameters.add(alpha.set("alpha blending", false));
+        parameters.add(noiseX.set("x multiplier", 100.0, 0.001, 500.0));
+        parameters.add(noiseY.set("y multiplier", 100.0, 0.001, 500.0));
+        parameters.add(noiseZ.set("z multiplier", 200.0, 0.001, 500.0));
+        parameters.add(alpha.set("alpha blending", false));
 
-            noiseBuffer.allocate(noiseCanvasWidth, noiseCanvasHeight, OF_IMAGE_COLOR_ALPHA);
-            noiseBuffer.update();
+        noiseBuffer.allocate(noiseCanvasWidth, noiseCanvasHeight, OF_IMAGE_COLOR_ALPHA);
+        noiseBuffer.update();
 
-            bufferPixels = noiseBuffer.getPixels().getData();
-            size = noiseBuffer.getPixels().size();
+        bufferPixels = noiseBuffer.getPixels().getData();
+        size = noiseBuffer.getPixels().size();
+    }
+
+    void update(ofFbo &fbo) {
+
+        if ((!fbo.isAllocated()) || (!enabled)) {
+            return;
         }
 
-        void update(ofFbo &fbo) {
-
-            if ((!fbo.isAllocated()) || (!enabled)) {
-                return;
+        // new optimized(?) code
+        if (alpha) {
+            for (i = 0, i_n = 0; i < size; i++) {
+                x = i_n % (size_t)noiseCanvasWidth;
+                y = i_n / (size_t)noiseCanvasWidth;
+                noiseValue = ofNoise(x / noiseX + position.get().x, y / noiseY + position.get().y, ofGetFrameNum() / noiseZ + position.get().z) * 255.0;
+                bufferPixels[i++] = 255;      // r
+                bufferPixels[i++] = 255;      // g
+                bufferPixels[i++] = 255;      // b
+                bufferPixels[i] = noiseValue; // a
+                i_n++;
             }
-
-            // new optimized(?) code
-            if (alpha) {
-                for (i = 0, i_n = 0; i < size; i++) {
-                    x = i_n % (size_t)noiseCanvasWidth;
-                    y = i_n / (size_t)noiseCanvasWidth;
-                    noiseValue = ofNoise(x / noiseX + position.get().x, y / noiseY + position.get().y, ofGetFrameNum() / noiseZ + position.get().z) * 255.0;
-                    bufferPixels[i++] = 255;      // r
-                    bufferPixels[i++] = 255;      // g
-                    bufferPixels[i++] = 255;      // b
-                    bufferPixels[i] = noiseValue; // a
-                    i_n++;
-                }
-            } else {
-                for (i = 0, i_n = 0; i < size; i++) {
-                    x = i_n % (size_t)noiseCanvasWidth;
-                    y = i_n / (size_t)noiseCanvasWidth;
-                    noiseValue = ofNoise(x / noiseX + position.get().x, y / noiseY + position.get().y, ofGetFrameNum() / noiseZ + position.get().z) * 255.0;
-                    bufferPixels[i++] = noiseValue; // r
-                    bufferPixels[i++] = noiseValue; // g
-                    bufferPixels[i++] = noiseValue; // b
-                    bufferPixels[i] = 255;          // a
-                    i_n++;
-                }
+        } else {
+            for (i = 0, i_n = 0; i < size; i++) {
+                x = i_n % (size_t)noiseCanvasWidth;
+                y = i_n / (size_t)noiseCanvasWidth;
+                noiseValue = ofNoise(x / noiseX + position.get().x, y / noiseY + position.get().y, ofGetFrameNum() / noiseZ + position.get().z) * 255.0;
+                bufferPixels[i++] = noiseValue; // r
+                bufferPixels[i++] = noiseValue; // g
+                bufferPixels[i++] = noiseValue; // b
+                bufferPixels[i] = 255;          // a
+                i_n++;
             }
-            noiseBuffer.update();
-
-            /* old code for reference
-            for (int y = 0; y < noiseBuffer.getHeight(); y++) {
-                for (int x = 0; x < noiseBuffer.getWidth(); x++) {
-                    //noiseBuffer.setColor(x, y, ofColor(ofNoise(x/noiseX+ position.get().x, y/noiseY + position.get().y, ofGetFrameNum()/noiseZ + position.get().z)*255.0));
-                }
-            }
-            noiseBuffer.update();
-            */
-
-            fbo.begin();
-            ofSetColor(color);
-            ofSetRectMode(OF_RECTMODE_CORNER);
-            noiseBuffer.draw(0, 0, fbo.getWidth(), fbo.getHeight());
-            fbo.end();
         }
+        noiseBuffer.update();
+
+        /* old code for reference
+        for (int y = 0; y < noiseBuffer.getHeight(); y++) {
+            for (int x = 0; x < noiseBuffer.getWidth(); x++) {
+                //noiseBuffer.setColor(x, y, ofColor(ofNoise(x/noiseX+ position.get().x, y/noiseY + position.get().y, ofGetFrameNum()/noiseZ + position.get().z)*255.0));
+            }
+        }
+        noiseBuffer.update();
+        */
+
+        fbo.begin();
+        ofSetColor(color);
+        ofSetRectMode(OF_RECTMODE_CORNER);
+        noiseBuffer.draw(0, 0, fbo.getWidth(), fbo.getHeight());
+        fbo.end();
+    }
 
     protected:
     private:
-        float noiseCanvasWidth = 10;
-        float noiseCanvasHeight = 10;
+    float noiseCanvasWidth = 10;
+    float noiseCanvasHeight = 10;
 
-        ofParameter<float> noiseX;
-        ofParameter<float> noiseY;
-        ofParameter<float> noiseZ;
-        ofParameter<bool> alpha = false;
+    ofParameter<float> noiseX;
+    ofParameter<float> noiseY;
+    ofParameter<float> noiseZ;
+    ofParameter<bool> alpha = false;
 
-        ofImage noiseBuffer;
-        unsigned char *bufferPixels;
-        unsigned char noiseValue;
-        size_t i, i_n;
-        size_t size;
-        int x, y;
+    ofImage noiseBuffer;
+    unsigned char *bufferPixels;
+    unsigned char noiseValue;
+    size_t i, i_n;
+    size_t size;
+    int x, y;
 };
 
 // draw days of type G:
 class doTypeGRenderer : public baseRenderer {
     public:
-        void setup(string name = "dot g") {
-            baseRenderer::setup(name);
-            lighting = false;
-            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+    void setup(string name = "dot g") {
+        baseRenderer::setup(name);
+        lighting = false;
+        // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
 
-            myfont.load("fonts/Hack.ttf", 82);
-            font2.setup("fonts/Hack.ttf", 1.0, 1024 * 1, false, 8, 4.0);
+        myfont.load("fonts/Hack.ttf", 82);
+        font2.setup("fonts/Hack.ttf", 1.0, 1024 * 1, false, 8, 4.0);
 
-            sequence.addSequence();
-            sequence.addStep(0, SIN, 2.0, 1);
-            sequence.addSequence();
-            sequence.addStep(1, COS, 4.0, 1);
-            sequence.reset();
-        }
+        sequence.addSequence();
+        sequence.addStep(0, SIN, 2.0, 1);
+        sequence.addSequence();
+        sequence.addStep(1, COS, 4.0, 1);
+        sequence.reset();
+    }
 
-        void update(ofFbo &fbo) {
+    void update(ofFbo &fbo) {
 
-            sequence.update();
+        sequence.update();
 
-            baseRenderer::preUpdate(fbo);
-            font2.setSize(dimensions.get().x * fbo.getHeight());
-            font2.drawString("hi!!", 0, 0);
-            baseRenderer::postUpdate(fbo);
-        }
+        baseRenderer::preUpdate(fbo);
+        font2.setSize(dimensions.get().x * fbo.getHeight());
+        font2.drawString("hi!!", 0, 0);
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
-        ofTrueTypeFont myfont;
-        ofxFontStash font2;
-        WaveformTracks sequence;
-        ofParameter<glm::vec2> waveformTimes;
+    ofTrueTypeFont myfont;
+    ofxFontStash font2;
+    WaveformTracks sequence;
+    ofParameter<glm::vec2> waveformTimes;
 };
 
 // draw days of type H:
 class doTypeHRenderer : public baseRenderer {
     public:
-        void setup(string name = "dot h") {
-            baseRenderer::setup(name);
-            lighting = false;
-            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+    void setup(string name = "dot h") {
+        baseRenderer::setup(name);
+        lighting = false;
+        // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
 
-            sequence.addSequence("legs");
-            sequence.addStep(0, RISE, 2.0, 1);
-            sequence.addStep(0, HOLD, 2.0, 1);
-            sequence.addStep(0, FALL, 2.0, 1);
-            sequence.addStep(0, HOLD, 2.0, 1);
-            sequence.addStep(0, HOLD, 2.0, 1);
-            sequence.addStep(0, RISE, 2.0, 1);
-            sequence.addStep(0, FALL, 2.0, 1);
-            sequence.addStep(0, HOLD, 2.0, 1);
-            sequence.addStep(0, HOLD, 2.0, 1);
-            sequence.addSequence("serif");
-            sequence.addStep(1, RISE, 2.0, 1);
-            sequence.addStep(1, HOLD, 2.0, 1);
-            sequence.addStep(1, FALL, 2.0, 1);
-            sequence.addStep(1, HOLD, 2.0, 1);
-            sequence.addStep(1, RISE, 2.0, 1);
-            sequence.addStep(1, HOLD, 2.0, 1);
-            sequence.addStep(1, HOLD, 2.0, 1);
-            sequence.addStep(1, FALL, 2.0, 1);
-            sequence.addStep(1, HOLD, 2.0, 1);
-            sequence.reset();
-        }
+        sequence.addSequence("legs");
+        sequence.addStep(0, RISE, 2.0, 1);
+        sequence.addStep(0, HOLD, 2.0, 1);
+        sequence.addStep(0, FALL, 2.0, 1);
+        sequence.addStep(0, HOLD, 2.0, 1);
+        sequence.addStep(0, HOLD, 2.0, 1);
+        sequence.addStep(0, RISE, 2.0, 1);
+        sequence.addStep(0, FALL, 2.0, 1);
+        sequence.addStep(0, HOLD, 2.0, 1);
+        sequence.addStep(0, HOLD, 2.0, 1);
+        sequence.addSequence("serif");
+        sequence.addStep(1, RISE, 2.0, 1);
+        sequence.addStep(1, HOLD, 2.0, 1);
+        sequence.addStep(1, FALL, 2.0, 1);
+        sequence.addStep(1, HOLD, 2.0, 1);
+        sequence.addStep(1, RISE, 2.0, 1);
+        sequence.addStep(1, HOLD, 2.0, 1);
+        sequence.addStep(1, HOLD, 2.0, 1);
+        sequence.addStep(1, FALL, 2.0, 1);
+        sequence.addStep(1, HOLD, 2.0, 1);
+        sequence.reset();
+    }
 
-        void update(ofFbo &fbo) {
+    void update(ofFbo &fbo) {
 
-            sequence.update();
-            scale = fbo.getWidth();
+        sequence.update();
+        scale = fbo.getWidth();
 
-            baseRenderer::preUpdate(fbo);
+        baseRenderer::preUpdate(fbo);
 
-            ofTranslate(0, 0, -2.0 * scale);
-            // ofRotateZDeg(180);
-            ofPushMatrix();
-            // ofTranslate(-1.0, -1.0);
-            ofSetRectMode(OF_RECTMODE_CENTER);
-            ofScale(scale * dimensions.get().x, scale * dimensions.get().y);
+        ofTranslate(0, 0, -2.0 * scale);
+        // ofRotateZDeg(180);
+        ofPushMatrix();
+        // ofTranslate(-1.0, -1.0);
+        ofSetRectMode(OF_RECTMODE_CENTER);
+        ofScale(scale * dimensions.get().x, scale * dimensions.get().y);
 
-            ofDisableDepthTest();
+        ofDisableDepthTest();
 
-            // horizontal center
-            ofDrawRectangle(0, 0, 5, 1);
-            // vertical legs
-            ofDrawRectangle(2, 0, 1 + sequence.getValue("legs") * 2.0, 3);
-            ofDrawRectangle(-2, 0, 1 + sequence.getValue("legs") * 2.0, 3);
-            // bottom serif
-            ofDrawRectangle(-2, -2, 1 + sequence.getValue("serif") * 2.0, 1);
-            ofDrawRectangle(2, -2, 1 + sequence.getValue("serif") * 2.0, 1);
-            // top serif
-            ofDrawRectangle(-2, 2, 1 + sequence.getValue("serif") * 2.0, 1);
-            ofDrawRectangle(2, 2, 1 + sequence.getValue("serif") * 2.0, 1);
+        // horizontal center
+        ofDrawRectangle(0, 0, 5, 1);
+        // vertical legs
+        ofDrawRectangle(2, 0, 1 + sequence.getValue("legs") * 2.0, 3);
+        ofDrawRectangle(-2, 0, 1 + sequence.getValue("legs") * 2.0, 3);
+        // bottom serif
+        ofDrawRectangle(-2, -2, 1 + sequence.getValue("serif") * 2.0, 1);
+        ofDrawRectangle(2, -2, 1 + sequence.getValue("serif") * 2.0, 1);
+        // top serif
+        ofDrawRectangle(-2, 2, 1 + sequence.getValue("serif") * 2.0, 1);
+        ofDrawRectangle(2, 2, 1 + sequence.getValue("serif") * 2.0, 1);
 
-            ofSetRectMode(OF_RECTMODE_CORNER);
-            ofPopMatrix();
+        ofSetRectMode(OF_RECTMODE_CORNER);
+        ofPopMatrix();
 
-            baseRenderer::postUpdate(fbo);
-        }
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
-        float scale;
-        WaveformTracks sequence;
-        ofParameter<glm::vec2> waveformTimes;
+    float scale;
+    WaveformTracks sequence;
+    ofParameter<glm::vec2> waveformTimes;
 };
 
 // draw days of type K:
 class doTypeKRenderer : public baseRenderer {
     public:
-        void setup(string name = "dot k") {
-            baseRenderer::setup(name);
-            lighting = false;
+    void setup(string name = "dot k") {
+        baseRenderer::setup(name);
+        lighting = false;
 
-            lines = lineLoader::loadJson("paths/klines.json");
-            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
-            parameters.add(color2.set("colorPoints", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
-            parameters.add(drawPoints.set("drawPoints", false, false, true));
+        lines = lineLoader::loadJson("paths/klines.json");
+        // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+        parameters.add(color2.set("colorPoints", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+        parameters.add(drawPoints.set("drawPoints", false, false, true));
 
-            sequence.addSequence();
-            sequence.addStep(0, COS, 8.0, 1);
-            sequence.addStep(0, HOLD, 4.0, 1);
-            sequence.addSequence();
-            sequence.addStep(1, SIN, 8.0, 1);
-            sequence.addStep(1, SIN, 4.0, 1);
-            sequence.reset();
+        sequence.addSequence();
+        sequence.addStep(0, COS, 8.0, 1);
+        sequence.addStep(0, HOLD, 4.0, 1);
+        sequence.addSequence();
+        sequence.addStep(1, SIN, 8.0, 1);
+        sequence.addStep(1, SIN, 4.0, 1);
+        sequence.reset();
 
-            wave.setTime(8.0);
-            wave.setWaveform(NOISE);
-            wave.reset();
-        }
+        wave.setTime(8.0);
+        wave.setWaveform(NOISE);
+        wave.reset();
+    }
 
-        void update(ofFbo &fbo) {
+    void update(ofFbo &fbo) {
 
-            sequence.update();
-            wave.update();
-            scale = fbo.getWidth();
+        sequence.update();
+        wave.update();
+        scale = fbo.getWidth();
 
-            baseRenderer::preUpdate(fbo);
+        baseRenderer::preUpdate(fbo);
 
-            // ofTranslate(0, 0, -2.0*scale);
-            ofRotateXDeg(180);
-            ofPushMatrix();
-            // ofTranslate(-1.0, -1.0);
-            // ofScale(scale * dimensions.get().x, scale * dimensions.get().y);
+        // ofTranslate(0, 0, -2.0*scale);
+        ofRotateXDeg(180);
+        ofPushMatrix();
+        // ofTranslate(-1.0, -1.0);
+        // ofScale(scale * dimensions.get().x, scale * dimensions.get().y);
 
-            ofDisableDepthTest();
+        ofDisableDepthTest();
 
-            ofSetColor(color);
-            ofDrawCircle(lines[1].getPointAtPercent(sequence.getValue(1 % sequence.size())), ((sequence.getValue(1) - 0.5) * 3.0) * scale * (dimensions.get().x / 5.0));
-            ofDrawCircle(lines[0].getPointAtPercent(sequence.getValue(0 % sequence.size())), (1 + wave.getValue(NOISE)) * scale * dimensions.get().x / 5.0);
+        ofSetColor(color);
+        ofDrawCircle(lines[1].getPointAtPercent(sequence.getValue(1 % sequence.size())), ((sequence.getValue(1) - 0.5) * 3.0) * scale * (dimensions.get().x / 5.0));
+        ofDrawCircle(lines[0].getPointAtPercent(sequence.getValue(0 % sequence.size())), (1 + wave.getValueForWaveform(NOISE)) * scale * dimensions.get().x / 5.0);
 
-            for (int i = 0; i < lines.size(); i++) {
-                if (drawPoints) {
-                    for (int j = 0; j < lines[i].size(); j++) {
-                        ofSetColor(color2, wave.getValue(NOISE, i * 20.0) * 255.0);
-                        ofDrawCircle(lines[i][j], scale * dimensions.get().y / 5.0);
-                    }
+        for (int i = 0; i < lines.size(); i++) {
+            if (drawPoints) {
+                for (int j = 0; j < lines[i].size(); j++) {
+                    ofSetColor(color2, wave.getValueForWaveform(NOISE, i * 20.0) * 255.0);
+                    ofDrawCircle(lines[i][j], scale * dimensions.get().y / 5.0);
                 }
-                lines[i].draw();
             }
-
-            ofPopMatrix();
-            baseRenderer::postUpdate(fbo);
+            lines[i].draw();
         }
+
+        ofPopMatrix();
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
-        float scale;
-        WaveformTracks sequence;
-        Waveforms wave;
-        ofParameter<glm::vec2> waveformTimes;
-        ofParameter<bool> drawPoints;
-        ofParameter<ofColor> color2;
-        vector<ofPolyline> lines;
+    float scale;
+    WaveformTracks sequence;
+    Waveforms wave;
+    ofParameter<glm::vec2> waveformTimes;
+    ofParameter<bool> drawPoints;
+    ofParameter<ofColor> color2;
+    vector<ofPolyline> lines;
 };
 
 // NOTE: letter L
 // draw days of type l:
 class doTypeLRenderer : public baseRenderer {
     public:
-        void setup(string name = "dot l") {
-            baseRenderer::setup(name);
-            lighting = false;
+    void setup(string name = "dot l") {
+        baseRenderer::setup(name);
+        lighting = false;
 
-            lines = lineLoader::loadJson("paths/llines.json");
-            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
-            parameters.add(color2.set("colorPoints", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
-            parameters.add(drawPoints.set("drawPoints", false, false, true));
-            parameters.add(numParticles.set("particles", 1, 0, 1000));
+        lines = lineLoader::loadJson("paths/llines.json");
+        // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+        parameters.add(color2.set("colorPoints", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+        parameters.add(drawPoints.set("drawPoints", false, false, true));
+        parameters.add(numParticles.set("particles", 1, 0, 1000));
 
-            sequence.addSequence();
-            sequence.addStep(0, SIN, 8.0, 1);
-            sequence.addSequence();
-            sequence.addStep(1, SIN, 1.0, 1);
-            sequence.reset();
+        sequence.addSequence();
+        sequence.addStep(0, SIN, 8.0, 1);
+        sequence.addSequence();
+        sequence.addStep(1, SIN, 1.0, 1);
+        sequence.reset();
 
-            wave.setTime(8.0);
-            wave.setWaveform(LIN);
-            wave.reset();
+        wave.setTime(8.0);
+        wave.setWaveform(LIN);
+        wave.reset();
 
-            wave2.setTime(4.0);
-            wave2.setWaveform(SIN);
-            wave2.reset();
+        wave2.setTime(4.0);
+        wave2.setWaveform(SIN);
+        wave2.reset();
+    }
+
+    void update(ofFbo &fbo) {
+
+        sequence.update();
+        wave.update();
+        scale = fbo.getWidth();
+
+        baseRenderer::preUpdate(fbo);
+
+        // ofTranslate(0, 0, -2.0*scale);
+        ofRotateXDeg(180);
+        ofPushMatrix();
+        // ofTranslate(-1.0, -1.0);
+        // ofScale(scale * dimensions.get().x, scale * dimensions.get().y);
+
+        ofDisableDepthTest();
+
+        ofSetColor(color);
+        for (int i = 0; i < numParticles; i++) {
+            ofDrawCircle(lines[0].getPointAtPercent(wave.getValueForWaveform(NOISE, i)) * (1 + wave2.getValueForWaveform(SIN, i)), scale * dimensions.get().x / 5.0);
         }
 
-        void update(ofFbo &fbo) {
-
-            sequence.update();
-            wave.update();
-            scale = fbo.getWidth();
-
-            baseRenderer::preUpdate(fbo);
-
-            // ofTranslate(0, 0, -2.0*scale);
-            ofRotateXDeg(180);
-            ofPushMatrix();
-            // ofTranslate(-1.0, -1.0);
-            // ofScale(scale * dimensions.get().x, scale * dimensions.get().y);
-
-            ofDisableDepthTest();
-
-            ofSetColor(color);
-            for (int i = 0; i < numParticles; i++) {
-                ofDrawCircle(lines[0].getPointAtPercent(wave.getValue(NOISE, i)) * (1 + wave2.getValue(SIN, i)), scale * dimensions.get().x / 5.0);
-            }
-
-            for (int i = 0; i < lines.size(); i++) {
-                if (drawPoints) {
-                    for (int j = 0; j < lines[i].size(); j++) {
-                        ofSetColor(color2, wave.getValue(NOISE, i * 20.0) * 255.0);
-                        ofDrawCircle(lines[i][j], scale * dimensions.get().y / 5.0);
-                    }
+        for (int i = 0; i < lines.size(); i++) {
+            if (drawPoints) {
+                for (int j = 0; j < lines[i].size(); j++) {
+                    ofSetColor(color2, wave.getValueForWaveform(NOISE, i * 20.0) * 255.0);
+                    ofDrawCircle(lines[i][j], scale * dimensions.get().y / 5.0);
                 }
-                // lines[i].draw();
             }
-
-            ofPopMatrix();
-            baseRenderer::postUpdate(fbo);
+            // lines[i].draw();
         }
+
+        ofPopMatrix();
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
-        float scale;
-        WaveformTracks sequence;
-        Waveforms wave;
-        Waveforms wave2;
-        ofParameter<glm::vec2> waveformTimes;
-        ofParameter<bool> drawPoints;
-        ofParameter<ofColor> color2;
-        ofParameter<int> numParticles;
-        vector<ofPolyline> lines;
+    float scale;
+    WaveformTracks sequence;
+    Waveforms wave;
+    Waveforms wave2;
+    ofParameter<glm::vec2> waveformTimes;
+    ofParameter<bool> drawPoints;
+    ofParameter<ofColor> color2;
+    ofParameter<int> numParticles;
+    vector<ofPolyline> lines;
 };
 
 // NOTE: letter N0
 // draw days of type 0:
 class doTypeN0Renderer : public baseRenderer {
     public:
-        void setup(string name = "dot n0") {
-            baseRenderer::setup(name);
-            lighting = false;
+    void setup(string name = "dot n0") {
+        baseRenderer::setup(name);
+        lighting = false;
 
-            lines = lineLoader::loadJson("paths/lines_n0.json");
-            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
-            parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
-            parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
-            parameters.add(drawPoints.set("drawPoints", false, false, true));
-            parameters.add(numParticles.set("particles", 1, 0, 1000));
+        lines = lineLoader::loadJson("paths/lines_n0.json");
+        // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+        parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+        parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+        parameters.add(drawPoints.set("drawPoints", false, false, true));
+        parameters.add(numParticles.set("particles", 1, 0, 1000));
 
-            sequence.addSequence();
-            sequence.addStep(0, SIN, 8.0, 1);
-            sequence.addSequence();
-            sequence.addStep(1, SIN, 1.0, 1);
-            sequence.reset();
+        sequence.addSequence();
+        sequence.addStep(0, SIN, 8.0, 1);
+        sequence.addSequence();
+        sequence.addStep(1, SIN, 1.0, 1);
+        sequence.reset();
 
-            wave.setTime(8.0);
-            wave.setWaveform(LIN);
-            wave.reset();
+        wave.setTime(8.0);
+        wave.setWaveform(LIN);
+        wave.reset();
 
-            wave2.setTime(4.0);
-            wave2.setWaveform(SIN);
-            wave2.reset();
+        wave2.setTime(4.0);
+        wave2.setWaveform(SIN);
+        wave2.reset();
 
-            noise1.setTime(2.0);
-            noise1.setWaveform(NOISE);
-            noise1.reset();
+        noise1.setTime(2.0);
+        noise1.setWaveform(NOISE);
+        noise1.reset();
 
-            noise2.setTime(1.0);
-            noise2.setWaveform(NOISE);
-            noise2.reset();
-        }
+        noise2.setTime(1.0);
+        noise2.setWaveform(NOISE);
+        noise2.reset();
+    }
 
-        void update(ofFbo &fbo) {
+    void update(ofFbo &fbo) {
 
-            sequence.update();
-            wave.update();
-            scale = fbo.getWidth();
+        sequence.update();
+        wave.update();
+        scale = fbo.getWidth();
 
-            baseRenderer::preUpdate(fbo);
+        baseRenderer::preUpdate(fbo);
 
-            // ofTranslate(0, 0, -2.0*scale);
-            ofRotateXDeg(180);
-            ofPushMatrix();
+        // ofTranslate(0, 0, -2.0*scale);
+        ofRotateXDeg(180);
+        ofPushMatrix();
 
-            ofDisableDepthTest();
-            ofVec3f pos;
+        ofDisableDepthTest();
+        ofVec3f pos;
 
-            if (drawPoints) {
-                for (int i = 0; i < lines.size(); i++) {
-                    for (int j = 0; j < lines[0].size(); j++) {
-                        ofSetColor(color3, wave.getValue(NOISE, i * 20.0) * 255.0);
-                        pos = lines[0][j];
-                        pos.x = pos.x + (noise1.getValue(NOISE, j) * 2.0 - 1.0) * dimensions.get().z * scale;
-                        pos.y = pos.y + (noise2.getValue(NOISE, j) * 2.0 - 1.0) * dimensions.get().z * scale;
-                        ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
-                    }
+        if (drawPoints) {
+            for (int i = 0; i < lines.size(); i++) {
+                for (int j = 0; j < lines[0].size(); j++) {
+                    ofSetColor(color3, wave.getValueForWaveform(NOISE, i * 20.0) * 255.0);
+                    pos = lines[0][j];
+                    pos.x = pos.x + (noise1.getValueForWaveform(NOISE, j) * 2.0 - 1.0) * dimensions.get().z * scale;
+                    pos.y = pos.y + (noise2.getValueForWaveform(NOISE, j) * 2.0 - 1.0) * dimensions.get().z * scale;
+                    ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
                 }
             }
-
-            ofSetColor(color);
-            for (int i = 0; i < numParticles; i++) {
-                ofSetColor(color, ofMap(i, 0, numParticles, 0, 255));
-                pos = lines[0].getPointAtPercent(wave.getValue(LIN, i));
-                pos.x = pos.x + (noise1.getValue(NOISE, i / 2.0) * 2.0 - 1.0) * dimensions.get().z * scale;
-                pos.y = pos.y + (noise2.getValue(NOISE, i / 2.0) * 2.0 - 1.0) * dimensions.get().z * scale;
-                ofDrawCircle(pos, scale * dimensions.get().x / 5.0);
-            }
-            ofSetColor(color2);
-            for (int i = 0; i < numParticles / 2.0; i++) {
-                ofSetColor(color2, ofMap(i, 0, numParticles / 2.0, 0, 255));
-                pos = lines[1].getPointAtPercent(wave.getValue(SIN, i));
-                pos.x = pos.x + (noise1.getValue(NOISE, i / 4.0) * 2.0 - 1.0) * dimensions.get().z * scale;
-                pos.y = pos.y + (noise2.getValue(NOISE, i / 4.0) * 2.0 - 1.0) * dimensions.get().z * scale;
-                ofDrawCircle(pos, scale * dimensions.get().x / 5.0);
-            }
-
-            ofPopMatrix();
-            baseRenderer::postUpdate(fbo);
         }
+
+        ofSetColor(color);
+        for (int i = 0; i < numParticles; i++) {
+            ofSetColor(color, ofMap(i, 0, numParticles, 0, 255));
+            pos = lines[0].getPointAtPercent(wave.getValueForWaveform(LIN, i));
+            pos.x = pos.x + (noise1.getValueForWaveform(NOISE, i / 2.0) * 2.0 - 1.0) * dimensions.get().z * scale;
+            pos.y = pos.y + (noise2.getValueForWaveform(NOISE, i / 2.0) * 2.0 - 1.0) * dimensions.get().z * scale;
+            ofDrawCircle(pos, scale * dimensions.get().x / 5.0);
+        }
+        ofSetColor(color2);
+        for (int i = 0; i < numParticles / 2.0; i++) {
+            ofSetColor(color2, ofMap(i, 0, numParticles / 2.0, 0, 255));
+            pos = lines[1].getPointAtPercent(wave.getValueForWaveform(SIN, i));
+            pos.x = pos.x + (noise1.getValueForWaveform(NOISE, i / 4.0) * 2.0 - 1.0) * dimensions.get().z * scale;
+            pos.y = pos.y + (noise2.getValueForWaveform(NOISE, i / 4.0) * 2.0 - 1.0) * dimensions.get().z * scale;
+            ofDrawCircle(pos, scale * dimensions.get().x / 5.0);
+        }
+
+        ofPopMatrix();
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
-        ofTrueTypeFont myfont;
-        ofxFontStash font2;
-        float scale;
-        WaveformTracks sequence;
-        Waveforms wave;
-        Waveforms wave2;
-        Waveforms noise1;
-        Waveforms noise2;
-        ofParameter<glm::vec2> waveformTimes;
-        ofParameter<bool> drawPoints;
-        ofParameter<ofColor> color2;
-        ofParameter<ofColor> color3;
-        ofParameter<int> numParticles;
-        vector<ofPolyline> lines;
+    ofTrueTypeFont myfont;
+    ofxFontStash font2;
+    float scale;
+    WaveformTracks sequence;
+    Waveforms wave;
+    Waveforms wave2;
+    Waveforms noise1;
+    Waveforms noise2;
+    ofParameter<glm::vec2> waveformTimes;
+    ofParameter<bool> drawPoints;
+    ofParameter<ofColor> color2;
+    ofParameter<ofColor> color3;
+    ofParameter<int> numParticles;
+    vector<ofPolyline> lines;
 };
 
 // NOTE: letter N1
 // draw days of type 0:
 class doTypeN1Renderer : public baseRenderer {
     public:
-        void setup(string name = "dot n1") {
-            baseRenderer::setup(name);
-            lighting = false;
+    void setup(string name = "dot n1") {
+        baseRenderer::setup(name);
+        lighting = false;
 
-            lines = lineLoader::loadJson("paths/lines_n1.json");
-            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
-            parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
-            parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
-            parameters.add(drawPoints.set("drawPoints", false, false, true));
-            parameters.add(numParticles.set("particles", 1, 0, 1000));
+        lines = lineLoader::loadJson("paths/lines_n1.json");
+        // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+        parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+        parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+        parameters.add(drawPoints.set("drawPoints", false, false, true));
+        parameters.add(numParticles.set("particles", 1, 0, 1000));
 
-            sequence.addSequence();
-            sequence.addStep(0, SIN, 8.0, 1);
-            sequence.addSequence();
-            sequence.addStep(1, SIN, 1.0, 1);
-            sequence.reset();
+        sequence.addSequence();
+        sequence.addStep(0, SIN, 8.0, 1);
+        sequence.addSequence();
+        sequence.addStep(1, SIN, 1.0, 1);
+        sequence.reset();
 
-            wave.setTime(4.0);
-            wave.setWaveform(LIN);
-            wave.reset();
+        wave.setTime(4.0);
+        wave.setWaveform(LIN);
+        wave.reset();
 
-            wave2.setTime(2.0);
-            wave2.setWaveform(SIN);
-            wave2.reset();
+        wave2.setTime(2.0);
+        wave2.setWaveform(SIN);
+        wave2.reset();
 
-            noise1.setTime(1.0);
-            noise1.setWaveform(SIN);
-            noise1.reset();
+        noise1.setTime(1.0);
+        noise1.setWaveform(SIN);
+        noise1.reset();
 
-            noise2.setTime(0.5);
-            noise2.setWaveform(NOISE);
-            noise2.reset();
-        }
+        noise2.setTime(0.5);
+        noise2.setWaveform(NOISE);
+        noise2.reset();
+    }
 
-        void update(ofFbo &fbo) {
+    void update(ofFbo &fbo) {
 
-            sequence.update();
-            wave.update();
-            scale = fbo.getWidth();
+        sequence.update();
+        wave.update();
+        scale = fbo.getWidth();
 
-            baseRenderer::preUpdate(fbo);
+        baseRenderer::preUpdate(fbo);
 
-            // ofTranslate(0, 0, -2.0*scale);
-            ofRotateXDeg(180);
-            ofPushMatrix();
+        // ofTranslate(0, 0, -2.0*scale);
+        ofRotateXDeg(180);
+        ofPushMatrix();
 
-            ofDisableDepthTest();
-            ofVec3f pos;
+        ofDisableDepthTest();
+        ofVec3f pos;
 
-            if (drawPoints) {
-                for (int i = 0; i < lines.size(); i++) {
-                    for (int j = 0; j < lines[0].size(); j++) {
-                        ofSetColor(color3, wave.getValue(NOISE, i * 20.0) * 255.0);
-                        pos = lines[0][j];
-                        pos.x = pos.x + (noise1.getValue(NOISE, j) * 2.0 - 1.0) * dimensions.get().z * scale;
-                        // pos.y = pos.y + (noise2.getValue(NOISE, j)*2.0-1.0) * dimensions.get().z*scale;
-                        ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
-                    }
+        if (drawPoints) {
+            for (int i = 0; i < lines.size(); i++) {
+                for (int j = 0; j < lines[0].size(); j++) {
+                    ofSetColor(color3, wave.getValueForWaveform(NOISE, i * 20.0) * 255.0);
+                    pos = lines[0][j];
+                    pos.x = pos.x + (noise1.getValueForWaveform(NOISE, j) * 2.0 - 1.0) * dimensions.get().z * scale;
+                    // pos.y = pos.y + (noise2.getValueForWaveform(NOISE, j)*2.0-1.0) * dimensions.get().z*scale;
+                    ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
                 }
             }
-
-            ofSetColor(color);
-            for (int i = 0; i < numParticles; i++) {
-                ofSetColor(color, ofMap(i, 0, numParticles, 0, 255));
-                pos = lines[0].getPointAtPercent(wave.getValue(LIN, i));
-                pos.x = pos.x + (noise1.getValue(NOISE, i / 2.0) * 2.0 - 1.0) * dimensions.get().z * scale;
-                // pos.y = pos.y + (noise2.getValue(NOISE, i/2.0)*2.0-1.0) * dimensions.get().z*scale;
-                ofDrawCircle(pos, scale * dimensions.get().x / 5.0);
-            }
-
-            ofPopMatrix();
-            baseRenderer::postUpdate(fbo);
         }
+
+        ofSetColor(color);
+        for (int i = 0; i < numParticles; i++) {
+            ofSetColor(color, ofMap(i, 0, numParticles, 0, 255));
+            pos = lines[0].getPointAtPercent(wave.getValueForWaveform(LIN, i));
+            pos.x = pos.x + (noise1.getValueForWaveform(NOISE, i / 2.0) * 2.0 - 1.0) * dimensions.get().z * scale;
+            // pos.y = pos.y + (noise2.getValueForWaveform(NOISE, i/2.0)*2.0-1.0) * dimensions.get().z*scale;
+            ofDrawCircle(pos, scale * dimensions.get().x / 5.0);
+        }
+
+        ofPopMatrix();
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
-        ofTrueTypeFont myfont;
-        ofxFontStash font2;
-        float scale;
-        WaveformTracks sequence;
-        Waveforms wave;
-        Waveforms wave2;
-        Waveforms noise1;
-        Waveforms noise2;
-        ofParameter<glm::vec2> waveformTimes;
-        ofParameter<bool> drawPoints;
-        ofParameter<ofColor> color2;
-        ofParameter<ofColor> color3;
-        ofParameter<int> numParticles;
-        vector<ofPolyline> lines;
+    ofTrueTypeFont myfont;
+    ofxFontStash font2;
+    float scale;
+    WaveformTracks sequence;
+    Waveforms wave;
+    Waveforms wave2;
+    Waveforms noise1;
+    Waveforms noise2;
+    ofParameter<glm::vec2> waveformTimes;
+    ofParameter<bool> drawPoints;
+    ofParameter<ofColor> color2;
+    ofParameter<ofColor> color3;
+    ofParameter<int> numParticles;
+    vector<ofPolyline> lines;
 };
 
 // NOTE: letter N2
 // draw days of type 0:
 class doTypeN2Renderer : public baseRenderer {
     public:
-        void setup(string name = "dot n2") {
-            baseRenderer::setup(name);
-            lighting = false;
+    void setup(string name = "dot n2") {
+        baseRenderer::setup(name);
+        lighting = false;
 
-            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
-            parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
-            parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
-            parameters.add(drawPoints.set("drawPoints", false, false, true));
-            parameters.add(waveScaler.set("scale", 1, 0, 1));
+        // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+        parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+        parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+        parameters.add(drawPoints.set("drawPoints", false, false, true));
+        parameters.add(waveScaler.set("scale", 1, 0, 1));
 
-            sequence.addSequence();
-            sequence.addStep(0, SIN, 8.0, 1);
-            sequence.addSequence();
-            sequence.addStep(1, SIN, 1.0, 1);
-            sequence.reset();
+        sequence.addSequence();
+        sequence.addStep(0, SIN, 8.0, 1);
+        sequence.addSequence();
+        sequence.addStep(1, SIN, 1.0, 1);
+        sequence.reset();
 
-            wave.setTime(8.0);
-            wave.setWaveform(SIN);
-            wave.reset();
+        wave.setTime(8.0);
+        wave.setWaveform(SIN);
+        wave.reset();
 
-            wave2.setTime(4.0);
-            wave2.setWaveform(SIN);
-            wave2.reset();
+        wave2.setTime(4.0);
+        wave2.setWaveform(SIN);
+        wave2.reset();
 
-            noise1.setTime(8.0);
-            noise1.setWaveform(COS);
-            noise1.reset();
+        noise1.setTime(8.0);
+        noise1.setWaveform(COS);
+        noise1.reset();
 
-            noise2.setTime(4.0);
-            noise2.setWaveform(COS);
-            noise2.reset();
+        noise2.setTime(4.0);
+        noise2.setWaveform(COS);
+        noise2.reset();
+    }
+
+    void update(ofFbo &fbo) {
+
+        sequence.update();
+        wave.update();
+        wave2.update();
+        noise1.update();
+        noise2.update();
+        scale = fbo.getWidth();
+
+        baseRenderer::preUpdate(fbo);
+
+        // ofTranslate(0, 0, -2.0*scale);
+        ofRotateXDeg(180);
+        ofPushMatrix();
+
+        ofDisableDepthTest();
+        ofVec3f pos;
+
+        // split the screen into 3 parts
+        float part = (fbo.getWidth() / 2.0) * (dimensions.get().x);
+
+        for (int i = 0; i < fbo.getHeight(); i++) {
+            ofSetColor(color);
+            pos = ofVec3f(-part, -part + i, 0);
+            pos.x = pos.x + ((noise1.getValueForWaveform(SIN, i * waveScaler) * 2.0 - 1.0) + (noise2.getValueForWaveform(SIN, i * waveScaler) * 2.0 - 1.0)) * dimensions.get().z * scale;
+            ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
         }
 
-        void update(ofFbo &fbo) {
-
-            sequence.update();
-            wave.update();
-            wave2.update();
-            noise1.update();
-            noise2.update();
-            scale = fbo.getWidth();
-
-            baseRenderer::preUpdate(fbo);
-
-            // ofTranslate(0, 0, -2.0*scale);
-            ofRotateXDeg(180);
-            ofPushMatrix();
-
-            ofDisableDepthTest();
-            ofVec3f pos;
-
-            // split the screen into 3 parts
-            float part = (fbo.getWidth() / 2.0) * (dimensions.get().x);
-
-            for (int i = 0; i < fbo.getHeight(); i++) {
-                ofSetColor(color);
-                pos = ofVec3f(-part, -part + i, 0);
-                pos.x = pos.x + ((noise1.getValue(SIN, i * waveScaler) * 2.0 - 1.0) + (noise2.getValue(SIN, i * waveScaler) * 2.0 - 1.0)) * dimensions.get().z * scale;
-                ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
-            }
-
-            for (int i = 0; i < fbo.getHeight(); i++) {
-                ofSetColor(color2);
-                pos = ofVec3f(part, -part + i, 0);
-                pos.x = pos.x + ((wave.getValue(COS, i * waveScaler) * 2.0 - 1.0) + (wave2.getValue(COS, i * waveScaler) * 2.0 - 1.0)) * dimensions.get().z * scale;
-                ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
-            }
-
-            ofPopMatrix();
-            baseRenderer::postUpdate(fbo);
+        for (int i = 0; i < fbo.getHeight(); i++) {
+            ofSetColor(color2);
+            pos = ofVec3f(part, -part + i, 0);
+            pos.x = pos.x + ((wave.getValueForWaveform(COS, i * waveScaler) * 2.0 - 1.0) + (wave2.getValueForWaveform(COS, i * waveScaler) * 2.0 - 1.0)) * dimensions.get().z * scale;
+            ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
         }
+
+        ofPopMatrix();
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
-        float scale;
-        WaveformTracks sequence;
-        Waveforms wave;
-        Waveforms wave2;
-        Waveforms noise1;
-        Waveforms noise2;
-        ofParameter<glm::vec2> waveformTimes;
-        ofParameter<bool> drawPoints;
-        ofParameter<ofColor> color2;
-        ofParameter<ofColor> color3;
-        ofParameter<float> waveScaler;
+    float scale;
+    WaveformTracks sequence;
+    Waveforms wave;
+    Waveforms wave2;
+    Waveforms noise1;
+    Waveforms noise2;
+    ofParameter<glm::vec2> waveformTimes;
+    ofParameter<bool> drawPoints;
+    ofParameter<ofColor> color2;
+    ofParameter<ofColor> color3;
+    ofParameter<float> waveScaler;
 };
 
 // NOTE: letter N3
 // draw days of type 0:
 class doTypeN3Renderer : public baseRenderer {
     public:
-        void setup(string name = "dot n3") {
-            baseRenderer::setup(name);
-            lighting = false;
+    void setup(string name = "dot n3") {
+        baseRenderer::setup(name);
+        lighting = false;
 
-            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
-            parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
-            parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
-            parameters.add(drawPoints.set("drawPoints", false, false, true));
-            parameters.add(waveScaler.set("scale", 1, 0, 1));
+        // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+        parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+        parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+        parameters.add(drawPoints.set("drawPoints", false, false, true));
+        parameters.add(waveScaler.set("scale", 1, 0, 1));
 
-            sequence.addSequence();
-            sequence.addStep(0, SIN, 8.0, 1);
-            sequence.addSequence();
-            sequence.addStep(1, SIN, 1.0, 1);
-            sequence.reset();
+        sequence.addSequence();
+        sequence.addStep(0, SIN, 8.0, 1);
+        sequence.addSequence();
+        sequence.addStep(1, SIN, 1.0, 1);
+        sequence.reset();
 
-            wave.setTime(8.0);
-            wave.setWaveform(SIN);
-            wave.reset();
+        wave.setTime(8.0);
+        wave.setWaveform(SIN);
+        wave.reset();
 
-            wave2.setTime(4.0);
-            wave2.setWaveform(SIN);
-            wave2.reset();
+        wave2.setTime(4.0);
+        wave2.setWaveform(SIN);
+        wave2.reset();
 
-            noise1.setTime(8.0);
-            noise1.setWaveform(COS);
-            noise1.reset();
+        noise1.setTime(8.0);
+        noise1.setWaveform(COS);
+        noise1.reset();
 
-            noise2.setTime(4.0);
-            noise2.setWaveform(COS);
-            noise2.reset();
-        }
+        noise2.setTime(4.0);
+        noise2.setWaveform(COS);
+        noise2.reset();
+    }
 
-        void update(ofFbo &fbo) {
+    void update(ofFbo &fbo) {
 
-            sequence.update();
-            wave.update();
-            wave2.update();
-            noise1.update();
-            noise2.update();
-            scale = fbo.getWidth() * (dimensions.get().x);
+        sequence.update();
+        wave.update();
+        wave2.update();
+        noise1.update();
+        noise2.update();
+        scale = fbo.getWidth() * (dimensions.get().x);
 
-            baseRenderer::preUpdate(fbo);
+        baseRenderer::preUpdate(fbo);
 
-            // ofTranslate(0, 0, -2.0*scale);
-            ofRotateXDeg(180);
-            ofPushMatrix();
+        // ofTranslate(0, 0, -2.0*scale);
+        ofRotateXDeg(180);
+        ofPushMatrix();
 
-            ofDisableDepthTest();
-            ofVec3f pos;
+        ofDisableDepthTest();
+        ofVec3f pos;
 
-            // split the screen into 3 parts
-            float part = (fbo.getWidth() / 2.0) * (dimensions.get().x);
+        // split the screen into 3 parts
+        float part = (fbo.getWidth() / 2.0) * (dimensions.get().x);
 
-            ofSetColor(color, wave.getValue(NOISE, 1.0 * 20.0) * 255.0);
-            pos = ofVec3f(0, -1, 0) * scale;
-            pos.x = pos.x + (noise1.getValue(SIN, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
-            pos.y = pos.y + (noise2.getValue(COS, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
-            ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
+        ofSetColor(color, wave.getValueForWaveform(NOISE, 1.0 * 20.0) * 255.0);
+        pos = ofVec3f(0, -1, 0) * scale;
+        pos.x = pos.x + (noise1.getValueForWaveform(SIN, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
+        pos.y = pos.y + (noise2.getValueForWaveform(COS, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
+        ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
 
-            ofSetColor(color2, wave.getValue(NOISE, 2.0 * 20.0) * 255.0);
-            pos = ofVec3f(1, 1, 0) * scale;
-            pos.x = pos.x + (noise2.getValue(SIN, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
-            pos.y = pos.y + (noise1.getValue(COS, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
-            ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
+        ofSetColor(color2, wave.getValueForWaveform(NOISE, 2.0 * 20.0) * 255.0);
+        pos = ofVec3f(1, 1, 0) * scale;
+        pos.x = pos.x + (noise2.getValueForWaveform(SIN, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
+        pos.y = pos.y + (noise1.getValueForWaveform(COS, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
+        ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
 
-            ofSetColor(color3, wave.getValue(NOISE, 3.0 * 20.0) * 255.0);
-            pos = ofVec3f(-1, 1, 0) * scale;
-            pos.x = pos.x + (wave.getValue(SIN, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
-            pos.y = pos.y + (wave2.getValue(COS, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
-            ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
+        ofSetColor(color3, wave.getValueForWaveform(NOISE, 3.0 * 20.0) * 255.0);
+        pos = ofVec3f(-1, 1, 0) * scale;
+        pos.x = pos.x + (wave.getValueForWaveform(SIN, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
+        pos.y = pos.y + (wave2.getValueForWaveform(COS, 1.0 * waveScaler) * 2.0 - 1.0) * dimensions.get().z * scale;
+        ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
 
-            ofPopMatrix();
-            baseRenderer::postUpdate(fbo);
-        }
+        ofPopMatrix();
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
-        float scale;
-        WaveformTracks sequence;
-        Waveforms wave;
-        Waveforms wave2;
-        Waveforms noise1;
-        Waveforms noise2;
-        ofParameter<glm::vec2> waveformTimes;
-        ofParameter<bool> drawPoints;
-        ofParameter<ofColor> color2;
-        ofParameter<ofColor> color3;
-        ofParameter<float> waveScaler;
+    float scale;
+    WaveformTracks sequence;
+    Waveforms wave;
+    Waveforms wave2;
+    Waveforms noise1;
+    Waveforms noise2;
+    ofParameter<glm::vec2> waveformTimes;
+    ofParameter<bool> drawPoints;
+    ofParameter<ofColor> color2;
+    ofParameter<ofColor> color3;
+    ofParameter<float> waveScaler;
 };
 
 // NOTE: letter N8
 // draw days of type 8:
 class doTypeN8Renderer : public baseRenderer {
     public:
-        void setup(string name = "dot n8") {
-            baseRenderer::setup(name);
-            lighting = false;
+    void setup(string name = "dot n8") {
+        baseRenderer::setup(name);
+        lighting = false;
 
-            // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
-            parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
-            parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
-            parameters.add(drawPoints.set("drawPoints", false, false, true));
-            parameters.add(waveScaler.set("scale", 1, 0, 1));
-            parameters.add(numParticles.set("particles", 100, 1, 1000));
+        // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
+        parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+        parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
+        parameters.add(drawPoints.set("drawPoints", false, false, true));
+        parameters.add(waveScaler.set("scale", 1, 0, 1));
+        parameters.add(numParticles.set("particles", 100, 1, 1000));
 
-            sequence.addSequence();
-            sequence.addStep(0, SIN, 8.0, 1);
-            sequence.addSequence();
-            sequence.addStep(1, SIN, 1.0, 1);
-            sequence.reset();
+        lfo.setTime(8.0);
+        lfo.setWaveform(LIN);
+        lfo.reset();
 
-            lfo.setTime(8.0);
-            lfo.setWaveform(LIN);
-            lfo.reset();
+        wave.setTime(4.0);
+        wave.setWaveform(SIN);
+        wave.setPhaseOffset(PI);
+        wave.reset();
 
-            wave.setTime(4.0);
-            wave.setWaveform(SIN);
-            wave.setPhaseOffset(PI);
-            wave.reset();
+        wave2.setTime(8.0);
+        wave2.setWaveform(SIN);
+        wave2.setPhaseOffset(PI);
+        wave2.reset();
 
-            wave2.setTime(8.0);
-            wave2.setWaveform(SIN);
-            wave2.setPhaseOffset(PI);
-            wave2.reset();
+        noise1.setTime(4.0);
+        noise1.setWaveform(TRI);
+        noise1.reset();
 
-            noise1.setTime(4.0);
-            noise1.setWaveform(TRI);
-            noise1.reset();
+        noise2.setTime(8.0);
+        noise2.setWaveform(TRI);
+        // noise2.setPhaseOffset(PI);
+        noise2.reset();
+    }
 
-            noise2.setTime(8.0);
-            noise2.setWaveform(TRI);
-            //noise2.setPhaseOffset(PI);
-            noise2.reset();
-        }
+    void update(ofFbo &fbo) {
 
-        void update(ofFbo &fbo) {
+        lfo.update();
+        wave.update();
+        wave2.update();
+        noise1.update();
+        noise2.update();
+        scale = fbo.getWidth();
+        radius = (1 + lfo.getValue() * 2.0) * dimensions.get().z * scale;
 
-            lfo.update();
-            sequence.update();
-            wave.update();
-            wave2.update();
-            noise1.update();
-            noise2.update();
-            scale = fbo.getWidth();
-            radius = (1 + lfo.getValue()*2.0) * dimensions.get().z * scale;
+        baseRenderer::preUpdate(fbo);
 
-            baseRenderer::preUpdate(fbo);
-
-            // ofTranslate(0, 0, -2.0*scale);
-            ofRotateXDeg(180);
-            ofPushMatrix();
+        // ofTranslate(0, 0, -2.0*scale);
+        ofRotateXDeg(180);
+        ofPushMatrix();
 
         ofSetCircleResolution(resolution);
 
-            ofDisableDepthTest();
-            ofVec3f pos;
+        ofDisableDepthTest();
+        ofVec3f pos;
 
-            for (int i = 0; i < numParticles; i++) {
-                ofSetColor(color, ofMap(i, 0, numParticles, 0, 255));
-                pos.x = (noise1.getValue(TAN_SIN, i * waveScaler) * 2.0 - 1.0) * dimensions.get().x * scale;
-                pos.y = (noise2.getValue(TRI, i * waveScaler) * 2.0 - 1.0) * dimensions.get().y * scale;
-                ofDrawCircle(pos, radius);
-            }
-
-            for (int i = 0; i < numParticles; i++) {
-                ofSetColor(color2, ofMap(i, 0, numParticles, 0, 255));
-                pos.x = (wave.getValue(TAN_SIN, i * waveScaler) * 2.0 - 1.0) * dimensions.get().x * scale;
-                pos.y = (wave2.getValue(TRI, i * waveScaler) * 2.0 - 1.0) * dimensions.get().y * scale;
-                ofDrawCircle(pos, radius);
-            }
-
-            ofPopMatrix();
-            baseRenderer::postUpdate(fbo);
+        for (int i = 0; i < numParticles; i++) {
+            ofSetColor(color, ofMap(i, 0, numParticles, 0, 255));
+            pos.x = (noise1.getValueForWaveform(TAN_SIN, i * waveScaler) * 2.0 - 1.0) * dimensions.get().x * scale;
+            pos.y = (noise2.getValueForWaveform(TRI, i * waveScaler) * 2.0 - 1.0) * dimensions.get().y * scale;
+            ofDrawCircle(pos, radius);
         }
+
+        for (int i = 0; i < numParticles; i++) {
+            ofSetColor(color2, ofMap(i, 0, numParticles, 0, 255));
+            pos.x = (wave.getValueForWaveform(TAN_SIN, i * waveScaler) * 2.0 - 1.0) * dimensions.get().x * scale;
+            pos.y = (wave2.getValueForWaveform(TRI, i * waveScaler) * 2.0 - 1.0) * dimensions.get().y * scale;
+            ofDrawCircle(pos, radius);
+        }
+
+        ofPopMatrix();
+        baseRenderer::postUpdate(fbo);
+    }
 
     protected:
     private:
-        float scale;
-        float radius;
-        WaveformTracks sequence;
-        Waveforms lfo;
-        Waveforms wave;
-        Waveforms wave2;
-        Waveforms noise1;
-        Waveforms noise2;
-        ofParameter<glm::vec2> waveformTimes;
-        ofParameter<bool> drawPoints;
-        ofParameter<ofColor> color2;
-        ofParameter<ofColor> color3;
-        ofParameter<float> waveScaler;
-        ofParameter<int> numParticles;
+    float scale;
+    float radius;
+    // WaveformTracks sequence;
+    Waveforms lfo;
+    Waveforms wave;
+    Waveforms wave2;
+    Waveforms noise1;
+    Waveforms noise2;
+    ofParameter<glm::vec2> waveformTimes;
+    ofParameter<bool> drawPoints;
+    ofParameter<ofColor> color2;
+    ofParameter<ofColor> color3;
+    ofParameter<float> waveScaler;
+    ofParameter<int> numParticles;
 };
