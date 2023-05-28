@@ -37,7 +37,7 @@ class baseRenderer {
 
     virtual void reset(){};
 
-    virtual void draw(){};
+    virtual void draw(float x, float y, float h, float w){};
 
     void loadTexture(string path) {
         ofLoadImage(texture, path);

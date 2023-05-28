@@ -115,14 +115,16 @@ void ofApp::setup() {
     renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_N2_RENDERER));
     guiRenderer.add(renderersVec.back()->parameters);
 
-
-    renderersVec.emplace_back(RendererFactory::newRenderer(CIRCLE_RENDERER));
-    guiRenderer.add(renderersVec.back()->parameters);
-
     */
 
-    renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_N8_RENDERER));
-    guiRenderer.add(renderersVec.back()->parameters);
+    renderersVec.emplace_back(RendererFactory::newRenderer(RECT_RENDERER));
+
+    renderersVec.emplace_back(RendererFactory::newRenderer(LUA_RENDERER));
+
+    // add all of the gui parameters to the gui renderer
+    for (auto &r : renderersVec) {
+        guiRenderer.add(r->parameters);
+    }
 
     // noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");
     // noise.setup(20, 20, "noiseSphere");
@@ -494,7 +496,7 @@ void ofApp::loadFont() {
     dir.sort();
 
     if (dir.size() <= 0) {
-        ofLogError("No fonts found in in bin/data/fonts directory");
+        ofLogError("ofApp::loadFont") << "No fonts found in in bin/data/fonts directory";
         std::exit(-1);
     }
 

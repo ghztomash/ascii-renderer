@@ -60,6 +60,7 @@ class ofApp : public ofBaseApp {
 
     bool drawGui = true;
 
+    // TODO: load from file
     vector<string> characterSets = {
         "░▒█",
         " ∴∵∶∷/:_◜◞◠+*`=?!¬░▒▄▀█",

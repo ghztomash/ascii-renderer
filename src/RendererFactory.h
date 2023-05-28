@@ -81,6 +81,14 @@ class RendererFactory {
                     return obj;
                     break;
                 }
+            case LUA_RENDERER:
+                {
+                    shared_ptr<luaRenderer> obj;
+                    obj = make_shared<luaRenderer>();
+                    obj->setup();
+                    return obj;
+                    break;
+                }
             case DOTYPE_G_RENDERER:
                 {
                     shared_ptr<doTypeGRenderer> obj =

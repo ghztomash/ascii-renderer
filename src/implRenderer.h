@@ -3,6 +3,7 @@
 #include "baseRenderer.h"
 #include "lineLoader.h"
 #include "ofGraphics.h"
+#include "ofxLua.h"
 #include "ofxWaveforms.h"
 #include <algorithm>
 
@@ -14,7 +15,8 @@
 #endif
 
 const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "circwaves", "cube", "sphere",
-                                       "cylinder", "cone", "noise", "dotype-g", "dotype-h", "dotype-k", "dotype-l",
+                                       "cylinder", "cone", "noise", "lua",
+                                       "dotype-g", "dotype-h", "dotype-k", "dotype-l",
                                        "dotype-n0", "dotype-n1", "dotype-n2", "dotype-n3", "dotype-n8"};
 
 enum RendererType {
@@ -27,6 +29,7 @@ enum RendererType {
     CYLINDER_RENDERER,
     CONE_RENDERER,
     NOISE_RENDERER,
+    LUA_RENDERER,
     DOTYPE_G_RENDERER,
     DOTYPE_H_RENDERER,
     DOTYPE_K_RENDERER,
@@ -1112,4 +1115,74 @@ class doTypeN8Renderer : public baseRenderer {
     ofParameter<ofColor> color3;
     ofParameter<float> waveScaler;
     ofParameter<int> numParticles;
+};
+
+// NOTE: LUA Renderer
+class luaRenderer : public baseRenderer {
+    public:
+    void setup(string name = "lua") {
+        ofSetLogLevel("ofxLua", OF_LOG_VERBOSE);
+        baseRenderer::setup(name);
+        parameters.remove("resolution");
+        lighting = false;
+        populateScripts();
+
+        parameters.add(currentScriptParam.set("script", 0, 0, scripts.size() - 1));
+
+        reloadScript();
+    }
+
+    void update(ofFbo &fbo) {
+        lua.scriptUpdate();
+
+        baseRenderer::preUpdate(fbo);
+        ofSetRectMode(OF_RECTMODE_CENTER);
+        lua.scriptDraw();
+        ofSetRectMode(OF_RECTMODE_CORNER);
+        baseRenderer::postUpdate(fbo);
+    }
+
+    // script control
+    void loadScript(std::string &script) {
+        ofLogNotice("luaRenderer::loadScript") << "Loading script: " << script;
+        lua.scriptExit();
+        lua.init();
+        lua.doScript(script, true);
+        lua.scriptSetup();
+    }
+
+    void reloadScript() {
+        loadScript(scripts[currentScript]);
+    }
+
+    protected:
+    private:
+    void populateScripts() {
+        ofDirectory dir("scripts/");
+        dir.allowExt("lua");
+        dir.listDir();
+        dir.sort();
+        if (dir.size() <= 0) {
+            ofLogError("luaRenderer::populateScripts") << "No scripts found in in bin/data/scripts/ directory";
+            std::exit(-1);
+        }
+
+        for (size_t i = 0; i < dir.size(); i++) {
+            ofLogNotice("luaRenderer") << "adding script: " << dir.getName(i);
+            scripts.push_back(dir.getPath(i));
+        }
+
+        dir.close();
+    }
+
+    // ofxLua error callback
+    //--------------------------------------------------------------
+    void errorReceived(std::string &msg) {
+        ofLogError("luaRenderer") << "Got a script error: " << msg;
+    }
+
+    ofxLua lua;
+    vector<std::string> scripts;
+    size_t currentScript = 0;
+    ofParameter<int> currentScriptParam;
 };
