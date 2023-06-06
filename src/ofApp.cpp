@@ -117,14 +117,15 @@ void ofApp::setup() {
 
     */
 
-    renderersVec.emplace_back(RendererFactory::newRenderer(RECT_RENDERER));
-
+    // TODO: hot reload lua scripts
     renderersVec.emplace_back(RendererFactory::newRenderer(LUA_RENDERER));
 
     // add all of the gui parameters to the gui renderer
     for (auto &r : renderersVec) {
         guiRenderer.add(r->parameters);
     }
+
+    //guiRenderer.minimizeAll();
 
     // noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");
     // noise.setup(20, 20, "noiseSphere");
@@ -403,6 +404,7 @@ void ofApp::mouseExited(int x, int y) {}
 void ofApp::windowResized(int w, int h) {
     // get the screen size to draw the fbo
     screenSize = ofGetWidth() < ofGetHeight() ? ofGetWidth() : ofGetHeight();
+    guiRenderer.setPosition(screenSize * 1.5 + 10, 10);
 }
 
 //--------------------------------------------------------------

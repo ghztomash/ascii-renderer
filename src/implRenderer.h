@@ -1118,25 +1118,75 @@ class doTypeN8Renderer : public baseRenderer {
 };
 
 // NOTE: LUA Renderer
-class luaRenderer : public baseRenderer {
+class luaRenderer : public baseRenderer, ofxLuaListener {
     public:
     void setup(string name = "lua") {
         ofSetLogLevel("ofxLua", OF_LOG_VERBOSE);
         baseRenderer::setup(name);
-        parameters.remove("resolution");
         lighting = false;
         populateScripts();
 
-        parameters.add(currentScriptParam.set("script", 0, 0, scripts.size() - 1));
+        parameters.add(currentScriptParam.set("current script", 0, 0, scripts.size() - 1));
+        parameters.add(particles.set("particles", 100, 1, 1000));
+        currentScriptParam.addListener(this, &luaRenderer::scriptChanged);
+
+        // listen to error events
+        lua.addListener(this);
 
         reloadScript();
     }
 
     void update(ofFbo &fbo) {
+        // update lua variables
+        if (lua.isTable("canvasSize")) {
+            if (lua.pushTable("canvasSize")) {
+                if (lua.isNumber("w"))
+                    lua.setNumber("w", fbo.getWidth());
+                if (lua.isNumber("h"))
+                    lua.setNumber("h", fbo.getHeight());
+                lua.popTable();
+            }
+        }
+        if (lua.isTable("dimensions")) {
+            if (lua.pushTable("dimensions")) {
+                if (lua.isNumber("x"))
+                    lua.setNumber("x", dimensions.get().x * fbo.getWidth());
+                if (lua.isNumber("y"))
+                    lua.setNumber("y", dimensions.get().y * fbo.getHeight());
+                if (lua.isNumber("z"))
+                    lua.setNumber("z", dimensions.get().z * fbo.getWidth());
+                lua.popTable();
+            }
+        }
+        if (lua.isTable("color")) {
+            if (lua.pushTable("color")) {
+                if (lua.isNumber("r"))
+                    lua.setNumber("r", color.get().r);
+                if (lua.isNumber("g"))
+                    lua.setNumber("g", color.get().g);
+                if (lua.isNumber("b"))
+                    lua.setNumber("b", color.get().b);
+                if (lua.isNumber("a"))
+                    lua.setNumber("a", color.get().a);
+                lua.popTable();
+            }
+        }
+        if (lua.isTable("modulation")) {
+            if (lua.pushTable("modulation")) {
+                lua.popTable();
+            }
+        }
+        if (lua.isNumber("resolution"))
+            lua.setNumber("resolution", resolution);
+        if (lua.isNumber("particles"))
+            lua.setNumber("particles", particles);
+
+        // update lua
         lua.scriptUpdate();
 
         baseRenderer::preUpdate(fbo);
         ofSetRectMode(OF_RECTMODE_CENTER);
+        // draw lua
         lua.scriptDraw();
         ofSetRectMode(OF_RECTMODE_CORNER);
         baseRenderer::postUpdate(fbo);
@@ -1145,9 +1195,13 @@ class luaRenderer : public baseRenderer {
     // script control
     void loadScript(std::string &script) {
         ofLogNotice("luaRenderer::loadScript") << "Loading script: " << script;
+        // close the lua state
         lua.scriptExit();
+        // init the lua state
         lua.init();
+        // run script
         lua.doScript(script, true);
+        // call script setup()
         lua.scriptSetup();
     }
 
@@ -1178,11 +1232,17 @@ class luaRenderer : public baseRenderer {
     // ofxLua error callback
     //--------------------------------------------------------------
     void errorReceived(std::string &msg) {
-        ofLogError("luaRenderer") << "Got a script error: " << msg;
+        ofLogError("luaRenderer") << "script error: " << msg;
+    }
+
+    void scriptChanged(int &script) {
+        currentScript = script;
+        reloadScript();
     }
 
     ofxLua lua;
     vector<std::string> scripts;
     size_t currentScript = 0;
+    ofParameter<int> particles;
     ofParameter<int> currentScriptParam;
 };
