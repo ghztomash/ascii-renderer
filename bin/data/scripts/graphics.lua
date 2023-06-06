@@ -1,4 +1,7 @@
 ----------------------------------------------------
+require("common.variables")
+
+----------------------------------------------------
 function setup()
     print("lua script setup")
 end
@@ -10,9 +13,13 @@ end
 ----------------------------------------------------
 function draw()
     -- RECTANGLES
-    for i = 0, 200 do
-        of.setColor(of.random(0, 255), of.random(0, 255), of.random(0, 255))
-        of.drawRectangle(of.random(-150, 150), of.random(-150, 150),
-            of.random(10, 20), of.random(10, 20))
+    local c = of.Color(color.r, color.g, color.b, color.a)
+
+    for i = 0, particles do
+        c:setBrightness(of.random(32, 255))
+        c:setSaturation(of.random(32, 255))
+        of.setColor(c)
+        of.drawRectangle(of.random(-dimensions.z, dimensions.z), of.random(-dimensions.z, dimensions.z),
+            of.random(10, dimensions.x), of.random(10, dimensions.y))
     end
 end
