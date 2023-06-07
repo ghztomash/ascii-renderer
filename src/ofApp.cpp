@@ -32,6 +32,9 @@ void ofApp::setup() {
     loadFont();
     TS_STOP("loadFont");
 
+    // load character sets from data/charsets
+    loadCharacterSets("charsets.txt");
+
     // setup gui elements
     gui.setup();
     gui.add(size.setup("size", 48, 10, 450));
@@ -66,8 +69,6 @@ void ofApp::setup() {
 
     characterSetSize = ofUTF8Length(characterSets[currentCharacterSet]);
     // useful to take out single UTF8 characters out of a string
-    ofLog() << "charset: " << characterSets[currentCharacterSet]
-            << " len:" << characterSetSize;
 
     sortCharacterSet(false);
 
@@ -125,7 +126,7 @@ void ofApp::setup() {
         guiRenderer.add(r->parameters);
     }
 
-    //guiRenderer.minimizeAll();
+    // guiRenderer.minimizeAll();
 
     // noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");
     // noise.setup(20, 20, "noiseSphere");
@@ -344,7 +345,7 @@ void ofApp::keyReleased(int key) {
         case 'v':
         case 'V':
             makeVideo();
-            saveDescriptiom();
+            saveDescription();
             break;
         // sort character set
         case 's':
@@ -966,7 +967,7 @@ int ofApp::secondsToFrames(float seconds) {
 }
 
 //--------------------------------------------------------------
-void ofApp::saveDescriptiom() {
+void ofApp::saveDescription() {
     ofFile descriptionFile("data/captures/" + projectName + "/desc.txt", ofFile::WriteOnly, false);
     descriptionFile.create();
     descriptionFile << "project: " + projectName << '\n';
@@ -977,4 +978,31 @@ void ofApp::saveDescriptiom() {
     descriptionFile << "char set: " + characterSets[currentCharacterSet] << '\n';
     descriptionFile << "tags: #ascii #asciiart #petscii #petsciiart #creativecoding" << '\n';
     descriptionFile.close();
+}
+
+//--------------------------------------------------------------
+void ofApp::loadCharacterSets(string filename) {
+    characterSets.clear();
+    characterSets.push_back("░▒█"); // default character set
+
+    // load character sets from file
+    ofFile file(filename);
+    if (!file.exists()) {
+        ofLogError("ofApp::loadCharacterSets") << "file not found: " << filename;
+        return;
+    }
+    ofBuffer buffer(file);
+
+    if (buffer.size()) {
+        for (ofBuffer::Line it = buffer.getLines().begin(), end = buffer.getLines().end(); it != end; ++it) {
+            string line = *it;
+            // make sure its not a empty line
+            if (line.empty() == false) {
+                characterSets.push_back(line);
+            }
+        }
+    } else {
+        ofLogError("ofApp::loadCharacterSets") << "empty file: " << filename;
+    }
+    ofLog() << "loaded " << characterSets.size() << " character sets";
 }
