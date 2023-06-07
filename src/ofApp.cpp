@@ -262,7 +262,7 @@ void ofApp::draw() {
 
     TS_START("debugBuffer");
     // draw debug buffer
-    if (fboCanvas.isAllocated() && debugBuffer) {
+    if (fboCanvas.isAllocated() && debugBuffer && !fullScreen) {
         ofSetColor(ofColor::white);
 
         fboCanvas.draw(zoom ? screenSize : fboWidth, 0, screenSize / 2.0,
@@ -274,7 +274,7 @@ void ofApp::draw() {
     TS_STOP("debugBuffer");
 
     TS_START("debugStuff");
-    if (debugBuffer) {
+    if (debugBuffer && !fullScreen) {
         drawTheme(zoom ? screenSize : fboWidth, screenSize / 2.0, charWidth);
         ofSetColor(ofColor::white);
         if (fboCharacterBuffer.isAllocated()) {
@@ -303,7 +303,7 @@ void ofApp::draw() {
     }
     TS_STOP("debugStuff");
 
-    if (drawGui) {
+    if (drawGui && !fullScreen) {
         gui.draw();
         guiRenderer.draw();
     }
@@ -357,6 +357,17 @@ void ofApp::keyReleased(int key) {
         case 'Z':
             zoom = !zoom;
             break;
+        case 'f':
+        case 'F':
+            fullScreen = !fullScreen;
+            if (fullScreen) {
+                // TODO: resize the fboBuffers to fill the screen
+                ofHideCursor();
+            } else {
+                ofShowCursor();
+            }
+            ofToggleFullscreen();
+            break;
         // change projectName
         case 'p':
         case 'P':
@@ -375,6 +386,7 @@ void ofApp::keyReleased(int key) {
                 "v: generate video\n"
                 "s: sort character set\n"
                 "z: change fit screen\n"
+                "f: toggle fullscreen\n"
                 "p: change projectName\n"
                 "?: show this help\n");
             break;

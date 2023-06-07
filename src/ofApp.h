@@ -133,6 +133,8 @@ class ofApp : public ofBaseApp {
     int recordedFramesCount;
     bool recording = false;
 
+    bool fullScreen = false;
+
     ImageSaverThread saverThread;
     // declare ring buffer of ofBufferObject pointers
     ofBufferObject ringBuffer[NUM_BUFFERS];
