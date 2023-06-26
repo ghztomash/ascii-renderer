@@ -1,11 +1,8 @@
 #pragma once
-#include "Waveforms.h"
 #include "baseRenderer.h"
 #include "lineLoader.h"
-#include "ofGraphics.h"
 #include "ofxLua.h"
 #include "ofxWaveforms.h"
-#include <algorithm>
 
 #ifdef MEASURE_PERFORMANCE
 #include "ofxTimeMeasurements.h"
@@ -1130,6 +1127,13 @@ class luaRenderer : public baseRenderer, ofxLuaListener {
         parameters.add(particles.set("particles", 100, 1, 1000));
         currentScriptParam.addListener(this, &luaRenderer::scriptChanged);
 
+        // test modulation sources
+        sequence.addSequence();
+        sequence.addStep(0, SIN, 8.0, 1);
+        sequence.addStep(0, SIN, 2.0, 1);
+        sequence.addSequence();
+        sequence.addStep(1, SIN, 4.0, 1);
+
         // listen to error events
         lua.addListener(this);
 
@@ -1137,6 +1141,10 @@ class luaRenderer : public baseRenderer, ofxLuaListener {
     }
 
     void update(ofFbo &fbo) {
+        // update modulation sources
+        sequence.update();
+        wave.update();
+
         // update lua variables
         if (lua.isTable("canvasSize")) {
             if (lua.pushTable("canvasSize")) {
@@ -1171,11 +1179,18 @@ class luaRenderer : public baseRenderer, ofxLuaListener {
                 lua.popTable();
             }
         }
-        if (lua.isTable("modulation")) {
-            if (lua.pushTable("modulation")) {
-                lua.popTable();
+
+        // TODO: optimize this
+        // convert from vector<float> to vector<lua_Number>
+        if (!sequence.getValues().empty()) {
+            modulation.clear();
+            modulation.reserve(sequence.getValues().size());
+            for (int i = 0; i < sequence.getValues().size(); i++) {
+                modulation.push_back(sequence.getValues()[i]);
             }
+            lua.setNumberVector("modulation", modulation);
         }
+
         if (lua.isNumber("resolution"))
             lua.setNumber("resolution", resolution);
         if (lua.isNumber("particles"))
@@ -1232,7 +1247,7 @@ class luaRenderer : public baseRenderer, ofxLuaListener {
     // ofxLua error callback
     //--------------------------------------------------------------
     void errorReceived(std::string &msg) {
-        ofLogError("luaRenderer") << "script error: " << msg;
+        ofLogError("luaRenderer") << "script error:\n" << msg;
     }
 
     void scriptChanged(int &script) {
@@ -1245,4 +1260,9 @@ class luaRenderer : public baseRenderer, ofxLuaListener {
     size_t currentScript = 0;
     ofParameter<int> particles;
     ofParameter<int> currentScriptParam;
+
+    // modulation sources
+    vector<lua_Number> modulation;
+    WaveformTracks sequence;
+    Waveforms wave;
 };
