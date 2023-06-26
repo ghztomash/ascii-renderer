@@ -1,6 +1,8 @@
 # Some general ignore patterns
 bin/*
 !bin/data/generate_loop.sh
+src/waveforms_syntax.txt
+src/waveforms_symbols.txt
 
 build/
 obj/

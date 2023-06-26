@@ -1114,6 +1114,11 @@ class doTypeN8Renderer : public baseRenderer {
     ofParameter<int> numParticles;
 };
 
+// declare LUA module bindings for ofxWaveforms
+extern "C" {
+    int luaopen_waveforms(lua_State *L);
+}
+
 // NOTE: LUA Renderer
 class luaRenderer : public baseRenderer, ofxLuaListener {
     public:
@@ -1214,6 +1219,8 @@ class luaRenderer : public baseRenderer, ofxLuaListener {
         lua.scriptExit();
         // init the lua state
         lua.init();
+        // load additional bindings
+        luaopen_waveforms(lua);
         // run script
         lua.doScript(script, true);
         // call script setup()
@@ -1247,7 +1254,8 @@ class luaRenderer : public baseRenderer, ofxLuaListener {
     // ofxLua error callback
     //--------------------------------------------------------------
     void errorReceived(std::string &msg) {
-        ofLogError("luaRenderer") << "script error:\n" << msg;
+        ofLogError("luaRenderer") << "script error:\n"
+                                  << msg;
     }
 
     void scriptChanged(int &script) {
