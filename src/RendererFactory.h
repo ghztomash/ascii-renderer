@@ -25,30 +25,6 @@ class RendererFactory {
                     return obj;
                     break;
                 }
-            case SPHERE_RENDERER:
-                {
-                    shared_ptr<sphereRenderer> obj;
-                    obj = make_shared<sphereRenderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
-            case CYLINDER_RENDERER:
-                {
-                    shared_ptr<cylinderRenderer> obj;
-                    obj = make_shared<cylinderRenderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
-            case CONE_RENDERER:
-                {
-                    shared_ptr<coneRenderer> obj;
-                    obj = make_shared<coneRenderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
             case NOISE_RENDERER:
                 {
                     shared_ptr<noiseRenderer> obj;

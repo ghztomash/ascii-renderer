@@ -11,17 +11,14 @@
 #define TIME_SAMPLE_STOP ;
 #endif
 
-const vector<string> RENDERER_NAMES = {"circmouse", "circwaves", "sphere",
-                                       "cylinder", "cone", "noise", "lua",
+const vector<string> RENDERER_NAMES = {"circmouse", "circwaves", 
+                                       "noise", "lua",
                                        "dotype-g", "dotype-h", "dotype-k", "dotype-l",
                                        "dotype-n0", "dotype-n1", "dotype-n2", "dotype-n3", "dotype-n8"};
 
 enum RendererType {
     CIRC_MOUSE_RENDERER,
     CIRC_WAVES_RENDERER,
-    SPHERE_RENDERER,
-    CYLINDER_RENDERER,
-    CONE_RENDERER,
     NOISE_RENDERER,
     LUA_RENDERER,
     DOTYPE_G_RENDERER,
@@ -34,50 +31,6 @@ enum RendererType {
     DOTYPE_N3_RENDERER,
     DOTYPE_N8_RENDERER,
 };
-/*
-// old renderers for reference
-// draw rectangle:
-class rectRenderer : public baseRenderer {
-    public:
-    void setup(string name = "rect") {
-        baseRenderer::setup(name);
-        parameters.remove("resolution");
-        lighting = false;
-    }
-
-    void update(ofFbo &fbo) {
-        baseRenderer::preUpdate(fbo);
-        ofSetRectMode(OF_RECTMODE_CENTER);
-        ofDrawRectangle(0, 0, dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight());
-        ofSetRectMode(OF_RECTMODE_CORNER);
-        baseRenderer::postUpdate(fbo);
-    }
-
-    protected:
-    private:
-};
-
-// draw circle:
-class circRenderer : public baseRenderer {
-    public:
-    void setup(string name = "circ") {
-        baseRenderer::setup(name);
-        lighting = false;
-    }
-
-    void update(ofFbo &fbo) {
-        baseRenderer::preUpdate(fbo);
-
-        ofSetCircleResolution(resolution);
-        ofDrawCircle(0, 0, dimensions.get().x * fbo.getWidth());
-
-        baseRenderer::postUpdate(fbo);
-    }
-
-    protected:
-    private:
-};
-*/
 
 // draw circle:
 class circMouseRenderer : public baseRenderer {
@@ -158,102 +111,6 @@ class circWavesRenderer : public baseRenderer {
     private:
     WaveformTracks sequence;
     ofParameter<glm::vec2> waveformTimes;
-};
-
-// draw sphere:
-class sphereRenderer : public baseRenderer {
-    public:
-    void setup(string name = "sphere") {
-        baseRenderer::setup(name);
-        parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 0.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
-    }
-
-    void update(ofFbo &fbo) {
-        baseRenderer::preUpdate(fbo);
-
-        ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum() / 30.0);
-        ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum() / 30.0);
-        ofRotateZDeg(rotationSpeed.get().z * ofGetFrameNum() / 30.0);
-
-        ofSetSphereResolution(resolution);
-        ofDrawSphere(dimensions.get().x * fbo.getWidth());
-
-        baseRenderer::postUpdate(fbo);
-    }
-
-    protected:
-    private:
-    ofParameter<float> radius;
-    ofParameter<glm::vec3> rotationSpeed;
-};
-
-// draw cylinder:
-class cylinderRenderer : public baseRenderer {
-    public:
-    void setup(string name = "cylinder") {
-        baseRenderer::setup(name);
-        parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
-    }
-
-    void update(ofFbo &fbo) {
-        baseRenderer::preUpdate(fbo);
-
-        ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum() / 30.0);
-        ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum() / 30.0);
-        ofRotateZDeg(rotationSpeed.get().z * ofGetFrameNum() / 30.0);
-
-        ofSetCylinderResolution(resolution, 1);
-        ofDrawCylinder(dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight());
-
-        baseRenderer::postUpdate(fbo);
-    }
-
-    protected:
-    private:
-    ofParameter<glm::vec3> rotationSpeed;
-};
-
-// draw cone:
-class coneRenderer : public baseRenderer {
-    public:
-    void setup(string name = "cone") {
-        baseRenderer::setup(name);
-        parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(360.0, 360.0, 360.0)));
-        sequence.addSequence("rotation");
-        sequence.addStep(0, SIN, 8.0, 1);
-        sequence.addStep(0, SIN, 4.0, 1);
-        sequence.addStep(0, SIN, 2.0, 1);
-        sequence.addStep(0, SIN, 2.0, 1);
-        sequence.addSequence("size");
-        sequence.addStep(1, TANH, 16.0, 1);
-    }
-
-    void update(ofFbo &fbo) {
-        sequence.changeStepDuration(0, 0, rotationSpeed.get().x);
-        sequence.changeStepDuration(0, 1, rotationSpeed.get().x / 2.0);
-        sequence.changeStepDuration(0, 2, rotationSpeed.get().x / 4.0);
-        sequence.changeStepDuration(0, 3, rotationSpeed.get().x / 4.0);
-        sequence.changeStepDuration(1, 0, rotationSpeed.get().y);
-        sequence.update();
-        baseRenderer::preUpdate(fbo);
-
-        ofPushMatrix();
-        ofScale(1.0 + sequence.getValue(1) * dimensions.get().z);
-        // ofRotateXDeg(waveX.getValue() * 360.0);
-        ofRotateYDeg(sequence.getValue(0) * 360.0);
-        // ofRotateZDeg(waveZ.getValue() * 360.0);
-
-        ofSetConeResolution(resolution, 1, 1);
-        ofDrawCone(dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight());
-        ofPopMatrix();
-
-        baseRenderer::postUpdate(fbo);
-    }
-
-    protected:
-    private:
-    WaveformTracks sequence;
-    ofParameter<glm::vec3> rotationSpeed;
 };
 
 // draw noise:
