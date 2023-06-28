@@ -9,22 +9,6 @@ class RendererFactory {
         shared_ptr<baseRenderer> obj;
 
         switch (type) {
-            case RECT_RENDERER:
-                {
-                    shared_ptr<rectRenderer> obj;
-                    obj = make_shared<rectRenderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
-            case CIRCLE_RENDERER:
-                {
-                    shared_ptr<circRenderer> obj;
-                    obj = make_shared<circRenderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
             case CIRC_MOUSE_RENDERER:
                 {
                     shared_ptr<circMouseRenderer> obj;

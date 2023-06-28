@@ -11,14 +11,12 @@
 #define TIME_SAMPLE_STOP ;
 #endif
 
-const vector<string> RENDERER_NAMES = {"rect", "circ", "circmouse", "circwaves", "cube", "sphere",
+const vector<string> RENDERER_NAMES = {"circmouse", "circwaves", "cube", "sphere",
                                        "cylinder", "cone", "noise", "lua",
                                        "dotype-g", "dotype-h", "dotype-k", "dotype-l",
                                        "dotype-n0", "dotype-n1", "dotype-n2", "dotype-n3", "dotype-n8"};
 
 enum RendererType {
-    RECT_RENDERER,
-    CIRCLE_RENDERER,
     CIRC_MOUSE_RENDERER,
     CIRC_WAVES_RENDERER,
     CUBE_RENDERER,
@@ -37,7 +35,8 @@ enum RendererType {
     DOTYPE_N3_RENDERER,
     DOTYPE_N8_RENDERER,
 };
-
+/*
+// old renderers for reference
 // draw rectangle:
 class rectRenderer : public baseRenderer {
     public:
@@ -79,6 +78,7 @@ class circRenderer : public baseRenderer {
     protected:
     private:
 };
+*/
 
 // draw circle:
 class circMouseRenderer : public baseRenderer {
