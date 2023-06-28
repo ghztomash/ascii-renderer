@@ -1,7 +1,9 @@
 %module waveforms
 %{
     // include any needed headers here
-	#include "Waveforms.h"
+    #include "Waveforms.h"
+    #include "WaveformSequence.h"
+    #include "WaveformTracks.h"
 %}
 
 // include support for some common C++ STL types you might be using,
@@ -19,3 +21,5 @@ typedef std::string string;
 // note the '%' instead of '#' as '%include' is a SWIG
 // command to wrap code in the given header
 %include "Waveforms.h"
+%include "WaveformSequence.h"
+%include "WaveformTracks.h"

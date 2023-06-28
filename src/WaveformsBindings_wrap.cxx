@@ -2715,14 +2715,19 @@ SWIG_Lua_dostring(lua_State *L, const char *str) {
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define SWIGTYPE_p_WaveformProperties swig_types[0]
-#define SWIGTYPE_p_Waveforms swig_types[1]
-#define SWIGTYPE_p_ofColor swig_types[2]
-#define SWIGTYPE_p_ofPolyline swig_types[3]
-#define SWIGTYPE_p_std__functionT_void_fF_t swig_types[4]
-#define SWIGTYPE_p_std__string swig_types[5]
-#define SWIGTYPE_p_vectorT_WaveformProperties_t swig_types[6]
-static swig_type_info *swig_types[8];
-static swig_module_info swig_module = {swig_types, 7, 0, 0, 0, 0};
+#define SWIGTYPE_p_WaveformSequence swig_types[1]
+#define SWIGTYPE_p_WaveformTracks swig_types[2]
+#define SWIGTYPE_p_Waveforms swig_types[3]
+#define SWIGTYPE_p_ofColor swig_types[4]
+#define SWIGTYPE_p_ofJson swig_types[5]
+#define SWIGTYPE_p_ofPolyline swig_types[6]
+#define SWIGTYPE_p_shared_ptrT_ofAbstractParameter_t swig_types[7]
+#define SWIGTYPE_p_std__functionT_void_fF_t swig_types[8]
+#define SWIGTYPE_p_std__string swig_types[9]
+#define SWIGTYPE_p_vectorT_WaveformProperties_t swig_types[10]
+#define SWIGTYPE_p_vectorT_float_t swig_types[11]
+static swig_type_info *swig_types[13];
+static swig_module_info swig_module = {swig_types, 12, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -2740,7 +2745,9 @@ typedef struct{} LANGUAGE_OBJ;
 
 
     // include any needed headers here
-	#include "Waveforms.h"
+    #include "Waveforms.h"
+    #include "WaveformSequence.h"
+    #include "WaveformTracks.h"
 
 
 #include <typeinfo>
@@ -4070,6 +4077,1379 @@ static swig_lua_class *swig_Waveforms_bases[] = {0};
 static const char *swig_Waveforms_base_names[] = {0};
 static swig_lua_class _wrap_class_Waveforms = { "Waveforms", "Waveforms", &SWIGTYPE_p_Waveforms,_proxy__wrap_new_Waveforms, swig_delete_Waveforms, swig_Waveforms_methods, swig_Waveforms_attributes, &swig_Waveforms_Sf_SwigStatic, swig_Waveforms_meta, swig_Waveforms_bases, swig_Waveforms_base_names };
 
+static int _wrap_new_WaveformSequence__SWIG_0(lua_State* L) { int SWIG_arg = 0; string arg1 ; float arg2 ; bool arg3 ;
+  WaveformSequence *result = 0 ; SWIG_check_num_args("WaveformSequence::WaveformSequence",3,3)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("WaveformSequence::WaveformSequence",1,"string");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::WaveformSequence",2,"float");
+  if(!lua_isboolean(L,3)) SWIG_fail_arg("WaveformSequence::WaveformSequence",3,"bool");
+  (&arg1)->assign(lua_tostring(L,1),lua_rawlen(L,1)); arg2 = (float)lua_tonumber(L, 2); arg3 = (lua_toboolean(L, 3)!=0);
+  result = (WaveformSequence *)new WaveformSequence(arg1,arg2,arg3);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_WaveformSequence,1); SWIG_arg++;  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_new_WaveformSequence__SWIG_1(lua_State* L) { int SWIG_arg = 0; string arg1 ; float arg2 ;
+  WaveformSequence *result = 0 ; SWIG_check_num_args("WaveformSequence::WaveformSequence",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("WaveformSequence::WaveformSequence",1,"string");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::WaveformSequence",2,"float");
+  (&arg1)->assign(lua_tostring(L,1),lua_rawlen(L,1)); arg2 = (float)lua_tonumber(L, 2);
+  result = (WaveformSequence *)new WaveformSequence(arg1,arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_WaveformSequence,1); SWIG_arg++;  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_new_WaveformSequence__SWIG_2(lua_State* L) { int SWIG_arg = 0; string arg1 ; WaveformSequence *result = 0 ;
+  SWIG_check_num_args("WaveformSequence::WaveformSequence",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("WaveformSequence::WaveformSequence",1,"string");
+  (&arg1)->assign(lua_tostring(L,1),lua_rawlen(L,1)); result = (WaveformSequence *)new WaveformSequence(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_WaveformSequence,1); SWIG_arg++;  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_new_WaveformSequence__SWIG_3(lua_State* L) { int SWIG_arg = 0; WaveformSequence *result = 0 ;
+  SWIG_check_num_args("WaveformSequence::WaveformSequence",0,0) result = (WaveformSequence *)new WaveformSequence();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_WaveformSequence,1); SWIG_arg++;  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_new_WaveformSequence(lua_State* L) { int argc; int argv[4]={ 1,2,3,4} ; argc = lua_gettop(L); if (argc == 0) {
+    return _wrap_new_WaveformSequence__SWIG_3(L);}  if (argc == 1) { int _v; { _v = lua_isstring(L,argv[0]); }  if (_v) {
+      return _wrap_new_WaveformSequence__SWIG_2(L);}  }  if (argc == 2) { int _v; { _v = lua_isstring(L,argv[0]); }  if (_v) { {
+        _v = lua_isnumber(L,argv[1]); }  if (_v) { return _wrap_new_WaveformSequence__SWIG_1(L);}  }  }  if (argc == 3) {
+    int _v; { _v = lua_isstring(L,argv[0]); }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { {
+          _v = lua_isboolean(L,argv[2]); }  if (_v) { return _wrap_new_WaveformSequence__SWIG_0(L);}  }  }  } 
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'new_WaveformSequence'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformSequence::WaveformSequence(string,float,bool)\n"
+  "    WaveformSequence::WaveformSequence(string,float)\n" "    WaveformSequence::WaveformSequence(string)\n"
+  "    WaveformSequence::WaveformSequence()\n"); lua_error(L);return 0; }
+static int _wrap_WaveformSequence_add__SWIG_0(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; WAVEFORM arg2 ; float arg3 ; int arg4 ;
+  SWIG_check_num_args("WaveformSequence::add",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::add",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::add",2,"WAVEFORM");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::add",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformSequence::add",4,"int");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_add",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (WAVEFORM)(int)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); arg4 = (int)lua_tonumber(L, 4); (arg1)->add(arg2,arg3,arg4); return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_add__SWIG_1(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; WAVEFORM arg2 ; float arg3 ;
+  SWIG_check_num_args("WaveformSequence::add",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::add",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::add",2,"WAVEFORM");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::add",3,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_add",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (WAVEFORM)(int)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); (arg1)->add(arg2,arg3); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_WaveformSequence_add__SWIG_2(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; WAVEFORM arg2 ; SWIG_check_num_args("WaveformSequence::add",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::add",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::add",2,"WAVEFORM");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_add",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (WAVEFORM)(int)lua_tonumber(L, 2);
+  (arg1)->add(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_add__SWIG_3(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; SWIG_check_num_args("WaveformSequence::add",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::add",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_add",1,SWIGTYPE_p_WaveformSequence); }  (arg1)->add(); return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_add(lua_State* L) { int argc; int argv[5]={ 1,2,3,4,5} ; argc = lua_gettop(L);
+  if (argc == 1) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { return _wrap_WaveformSequence_add__SWIG_3(L);}  }  if (argc == 2) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { return _wrap_WaveformSequence_add__SWIG_2(L);}
+       }  }  if (argc == 3) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          return _wrap_WaveformSequence_add__SWIG_1(L);}  }  }  }  if (argc == 4) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { return _wrap_WaveformSequence_add__SWIG_0(L);}  }  }  }  } 
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformSequence_add'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformSequence::add(WAVEFORM,float,int)\n"
+  "    WaveformSequence::add(WAVEFORM,float)\n" "    WaveformSequence::add(WAVEFORM)\n" "    WaveformSequence::add()\n");
+  lua_error(L);return 0; }
+static int _wrap_WaveformSequence_insert__SWIG_0(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t arg2 ; WAVEFORM arg3 ; float arg4 ; int arg5 ;
+  SWIG_check_num_args("WaveformSequence::insert",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::insert",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::insert",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::insert",3,"WAVEFORM");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformSequence::insert",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("WaveformSequence::insert",5,"int");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_insert",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  arg3 = (WAVEFORM)(int)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); arg5 = (int)lua_tonumber(L, 5);
+  (arg1)->insert(arg2,arg3,arg4,arg5); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_insert__SWIG_1(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t arg2 ; WAVEFORM arg3 ; float arg4 ;
+  SWIG_check_num_args("WaveformSequence::insert",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::insert",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::insert",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::insert",3,"WAVEFORM");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformSequence::insert",4,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_insert",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  arg3 = (WAVEFORM)(int)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); (arg1)->insert(arg2,arg3,arg4); return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_insert__SWIG_2(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t arg2 ; WAVEFORM arg3 ;
+  SWIG_check_num_args("WaveformSequence::insert",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::insert",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::insert",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::insert",3,"WAVEFORM");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_insert",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  arg3 = (WAVEFORM)(int)lua_tonumber(L, 3); (arg1)->insert(arg2,arg3); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_WaveformSequence_insert__SWIG_3(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t arg2 ; SWIG_check_num_args("WaveformSequence::insert",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::insert",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::insert",2,"size_t");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_insert",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  (arg1)->insert(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_insert(lua_State* L) { int argc; int argv[6]={ 1,2,3,4,5,6} ; argc = lua_gettop(L);
+  if (argc == 2) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) {
+        return _wrap_WaveformSequence_insert__SWIG_3(L);}  }  }  if (argc == 3) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          return _wrap_WaveformSequence_insert__SWIG_2(L);}  }  }  }  if (argc == 4) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { return _wrap_WaveformSequence_insert__SWIG_1(L);}  }  }  }  } 
+  if (argc == 5) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { { _v = lua_isnumber(L,argv[4]); }  if (_v) {
+              return _wrap_WaveformSequence_insert__SWIG_0(L);}  }  }  }  }  } 
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformSequence_insert'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformSequence::insert(size_t,WAVEFORM,float,int)\n"
+  "    WaveformSequence::insert(size_t,WAVEFORM,float)\n" "    WaveformSequence::insert(size_t,WAVEFORM)\n"
+  "    WaveformSequence::insert(size_t)\n"); lua_error(L);return 0; }
+static int _wrap_WaveformSequence_remove(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  size_t arg2 ; SWIG_check_num_args("WaveformSequence::remove",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::remove",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::remove",2,"size_t");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_remove",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  (arg1)->remove(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_clear(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  SWIG_check_num_args("WaveformSequence::clear",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::clear",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_clear",1,SWIGTYPE_p_WaveformSequence); }  (arg1)->clear(); return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_addRandomSequence__SWIG_0(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; float arg2 ; float arg3 ; bool arg4 ;
+  SWIG_check_num_args("WaveformSequence::addRandomSequence",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::addRandomSequence",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::addRandomSequence",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::addRandomSequence",3,"float");
+  if(!lua_isboolean(L,4)) SWIG_fail_arg("WaveformSequence::addRandomSequence",4,"bool");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_addRandomSequence",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); arg4 = (lua_toboolean(L, 4)!=0); (arg1)->addRandomSequence(arg2,arg3,arg4); return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_addRandomSequence__SWIG_1(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; float arg2 ; float arg3 ;
+  SWIG_check_num_args("WaveformSequence::addRandomSequence",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::addRandomSequence",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::addRandomSequence",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::addRandomSequence",3,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_addRandomSequence",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); (arg1)->addRandomSequence(arg2,arg3); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_WaveformSequence_addRandomSequence__SWIG_2(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; float arg2 ; SWIG_check_num_args("WaveformSequence::addRandomSequence",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::addRandomSequence",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::addRandomSequence",2,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_addRandomSequence",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (float)lua_tonumber(L, 2);
+  (arg1)->addRandomSequence(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_addRandomSequence__SWIG_3(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; SWIG_check_num_args("WaveformSequence::addRandomSequence",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::addRandomSequence",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_addRandomSequence",1,SWIGTYPE_p_WaveformSequence); }  (arg1)->addRandomSequence();
+  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_addRandomSequence(lua_State* L) { int argc; int argv[5]={ 1,2,3,4,5} ; argc = lua_gettop(L);
+  if (argc == 1) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { return _wrap_WaveformSequence_addRandomSequence__SWIG_3(L);}  }  if (argc == 2) { int _v;
+    { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) {
+        return _wrap_WaveformSequence_addRandomSequence__SWIG_2(L);}  }  }  if (argc == 3) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          return _wrap_WaveformSequence_addRandomSequence__SWIG_1(L);}  }  }  }  if (argc == 4) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isboolean(L,argv[3]); }  if (_v) { return _wrap_WaveformSequence_addRandomSequence__SWIG_0(L);}  }  }  }  }
+   SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformSequence_addRandomSequence'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformSequence::addRandomSequence(float,float,bool)\n"
+  "    WaveformSequence::addRandomSequence(float,float)\n" "    WaveformSequence::addRandomSequence(float)\n"
+  "    WaveformSequence::addRandomSequence()\n"); lua_error(L);return 0; }
+static int _wrap_WaveformSequence_insertRandomSequence__SWIG_0(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t arg2 ; float arg3 ; float arg4 ; bool arg5 ;
+  SWIG_check_num_args("WaveformSequence::insertRandomSequence",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",4,"float");
+  if(!lua_isboolean(L,5)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",5,"bool");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_insertRandomSequence",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); arg5 = (lua_toboolean(L, 5)!=0);
+  (arg1)->insertRandomSequence(arg2,arg3,arg4,arg5); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_insertRandomSequence__SWIG_1(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t arg2 ; float arg3 ; float arg4 ;
+  SWIG_check_num_args("WaveformSequence::insertRandomSequence",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",4,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_insertRandomSequence",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); (arg1)->insertRandomSequence(arg2,arg3,arg4);
+  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_insertRandomSequence__SWIG_2(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t arg2 ; float arg3 ;
+  SWIG_check_num_args("WaveformSequence::insertRandomSequence",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",3,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_insertRandomSequence",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); (arg1)->insertRandomSequence(arg2,arg3); return SWIG_arg; if(0) SWIG_fail; fail:
+  lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_insertRandomSequence__SWIG_3(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t arg2 ;
+  SWIG_check_num_args("WaveformSequence::insertRandomSequence",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::insertRandomSequence",2,"size_t");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_insertRandomSequence",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  (arg1)->insertRandomSequence(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_insertRandomSequence(lua_State* L) { int argc; int argv[6]={ 1,2,3,4,5,6} ;
+  argc = lua_gettop(L); if (argc == 2) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) {
+        return _wrap_WaveformSequence_insertRandomSequence__SWIG_3(L);}  }  }  if (argc == 3) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          return _wrap_WaveformSequence_insertRandomSequence__SWIG_2(L);}  }  }  }  if (argc == 4) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { return _wrap_WaveformSequence_insertRandomSequence__SWIG_1(L);}  }  }  }
+     }  if (argc == 5) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { { _v = lua_isboolean(L,argv[4]); }  if (_v) {
+              return _wrap_WaveformSequence_insertRandomSequence__SWIG_0(L);}  }  }  }  }  } 
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformSequence_insertRandomSequence'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformSequence::insertRandomSequence(size_t,float,float,bool)\n"
+  "    WaveformSequence::insertRandomSequence(size_t,float,float)\n"
+  "    WaveformSequence::insertRandomSequence(size_t,float)\n" "    WaveformSequence::insertRandomSequence(size_t)\n");
+  lua_error(L);return 0; }
+static int _wrap_WaveformSequence_setLooping(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  bool arg2 ; SWIG_check_num_args("WaveformSequence::setLooping",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::setLooping",1,"WaveformSequence *");
+  if(!lua_isboolean(L,2)) SWIG_fail_arg("WaveformSequence::setLooping",2,"bool");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_setLooping",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (lua_toboolean(L, 2)!=0);
+  (arg1)->setLooping(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_setPhaseOffset(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; float arg2 ; SWIG_check_num_args("WaveformSequence::setPhaseOffset",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::setPhaseOffset",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::setPhaseOffset",2,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_setPhaseOffset",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (float)lua_tonumber(L, 2);
+  (arg1)->setPhaseOffset(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_setUpdateRate(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; float arg2 ; SWIG_check_num_args("WaveformSequence::setUpdateRate",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::setUpdateRate",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::setUpdateRate",2,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_setUpdateRate",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (float)lua_tonumber(L, 2);
+  (arg1)->setUpdateRate(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_setChaos(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  float arg2 ; SWIG_check_num_args("WaveformSequence::setChaos",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::setChaos",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::setChaos",2,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_setChaos",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (float)lua_tonumber(L, 2);
+  (arg1)->setChaos(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_setEosCallback(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; std::function< void () > arg2 ; std::function< void () > *argp2 ;
+  SWIG_check_num_args("WaveformSequence::setEosCallback",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::setEosCallback",1,"WaveformSequence *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("WaveformSequence::setEosCallback",2,"std::function< void () >");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_setEosCallback",1,SWIGTYPE_p_WaveformSequence); } 
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_std__functionT_void_fF_t,0))){
+    SWIG_fail_ptr("WaveformSequence_setEosCallback",2,SWIGTYPE_p_std__functionT_void_fF_t); }  arg2 = *argp2;
+  (arg1)->setEosCallback(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_addParameterReference__SWIG_0(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; shared_ptr< ofAbstractParameter > arg2 ; int arg3 ;
+  shared_ptr< ofAbstractParameter > *argp2 ; SWIG_check_num_args("WaveformSequence::addParameterReference",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::addParameterReference",1,"WaveformSequence *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("WaveformSequence::addParameterReference",2,"shared_ptr< ofAbstractParameter >");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::addParameterReference",3,"int");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_addParameterReference",1,SWIGTYPE_p_WaveformSequence); } 
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_shared_ptrT_ofAbstractParameter_t,0))){
+    SWIG_fail_ptr("WaveformSequence_addParameterReference",2,SWIGTYPE_p_shared_ptrT_ofAbstractParameter_t); }  arg2 = *argp2;
+  arg3 = (int)lua_tonumber(L, 3); (arg1)->addParameterReference(arg2,arg3); return SWIG_arg; if(0) SWIG_fail; fail:
+  lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_addParameterReference__SWIG_1(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; shared_ptr< ofAbstractParameter > arg2 ;
+  shared_ptr< ofAbstractParameter > *argp2 ; SWIG_check_num_args("WaveformSequence::addParameterReference",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::addParameterReference",1,"WaveformSequence *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("WaveformSequence::addParameterReference",2,"shared_ptr< ofAbstractParameter >");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_addParameterReference",1,SWIGTYPE_p_WaveformSequence); } 
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_shared_ptrT_ofAbstractParameter_t,0))){
+    SWIG_fail_ptr("WaveformSequence_addParameterReference",2,SWIGTYPE_p_shared_ptrT_ofAbstractParameter_t); }  arg2 = *argp2;
+  (arg1)->addParameterReference(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_addParameterReference(lua_State* L) { int argc; int argv[4]={ 1,2,3,4} ; argc = lua_gettop(L);
+  if (argc == 2) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_shared_ptrT_ofAbstractParameter_t, SWIG_POINTER_NO_NULL)) {
+          _v = 0; }  else { _v = 1; }  }  if (_v) { return _wrap_WaveformSequence_addParameterReference__SWIG_1(L);}  }  } 
+  if (argc == 3) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_shared_ptrT_ofAbstractParameter_t, SWIG_POINTER_NO_NULL)) {
+          _v = 0; }  else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          return _wrap_WaveformSequence_addParameterReference__SWIG_0(L);}  }  }  } 
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformSequence_addParameterReference'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformSequence::addParameterReference(shared_ptr< ofAbstractParameter >,int)\n"
+  "    WaveformSequence::addParameterReference(shared_ptr< ofAbstractParameter >)\n"); lua_error(L);return 0; }
+static int _wrap_WaveformSequence_changeStepWaveform(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t arg2 ; WAVEFORM arg3 ;
+  SWIG_check_num_args("WaveformSequence::changeStepWaveform",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::changeStepWaveform",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::changeStepWaveform",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::changeStepWaveform",3,"WAVEFORM");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_changeStepWaveform",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  arg3 = (WAVEFORM)(int)lua_tonumber(L, 3); (arg1)->changeStepWaveform(arg2,arg3); return SWIG_arg; if(0) SWIG_fail; fail:
+  lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_changeStepDuration__SWIG_0(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t arg2 ; float arg3 ;
+  SWIG_check_num_args("WaveformSequence::changeStepDuration",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::changeStepDuration",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::changeStepDuration",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::changeStepDuration",3,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_changeStepDuration",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); (arg1)->changeStepDuration(arg2,arg3); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_WaveformSequence_changeStepDuration__SWIG_1(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t arg2 ;
+  SWIG_check_num_args("WaveformSequence::changeStepDuration",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::changeStepDuration",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::changeStepDuration",2,"size_t");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_changeStepDuration",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  (arg1)->changeStepDuration(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_changeStepDuration(lua_State* L) { int argc; int argv[4]={ 1,2,3,4} ; argc = lua_gettop(L);
+  if (argc == 2) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) {
+        return _wrap_WaveformSequence_changeStepDuration__SWIG_1(L);}  }  }  if (argc == 3) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          return _wrap_WaveformSequence_changeStepDuration__SWIG_0(L);}  }  }  } 
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformSequence_changeStepDuration'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformSequence::changeStepDuration(size_t,float)\n"
+  "    WaveformSequence::changeStepDuration(size_t)\n"); lua_error(L);return 0; }
+static int _wrap_WaveformSequence_update(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  SWIG_check_num_args("WaveformSequence::update",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::update",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_update",1,SWIGTYPE_p_WaveformSequence); }  (arg1)->update(); return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_reset(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  SWIG_check_num_args("WaveformSequence::reset",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::reset",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_reset",1,SWIGTYPE_p_WaveformSequence); }  (arg1)->reset(); return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_start(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  SWIG_check_num_args("WaveformSequence::start",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::start",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_start",1,SWIGTYPE_p_WaveformSequence); }  (arg1)->start(); return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_stop(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  SWIG_check_num_args("WaveformSequence::stop",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::stop",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_stop",1,SWIGTYPE_p_WaveformSequence); }  (arg1)->stop(); return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_rewind(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  SWIG_check_num_args("WaveformSequence::rewind",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::rewind",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_rewind",1,SWIGTYPE_p_WaveformSequence); }  (arg1)->rewind(); return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_seek(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  float arg2 ; SWIG_check_num_args("WaveformSequence::seek",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::seek",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::seek",2,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_seek",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (float)lua_tonumber(L, 2);
+  (arg1)->seek(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_draw__SWIG_0(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; float arg2 ; float arg3 ; float arg4 ; float arg5 ; ofColor arg6 ;
+  ofColor arg7 ; bool arg8 ; bool arg9 ; ofColor *argp6 ; ofColor *argp7 ; SWIG_check_num_args("WaveformSequence::draw",9,9)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::draw",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::draw",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::draw",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformSequence::draw",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("WaveformSequence::draw",5,"float");
+  if(!lua_isuserdata(L,6)) SWIG_fail_arg("WaveformSequence::draw",6,"ofColor");
+  if(!lua_isuserdata(L,7)) SWIG_fail_arg("WaveformSequence::draw",7,"ofColor");
+  if(!lua_isboolean(L,8)) SWIG_fail_arg("WaveformSequence::draw",8,"bool");
+  if(!lua_isboolean(L,9)) SWIG_fail_arg("WaveformSequence::draw",9,"bool");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_draw",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); arg5 = (float)lua_tonumber(L, 5);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&argp6,SWIGTYPE_p_ofColor,0))){
+    SWIG_fail_ptr("WaveformSequence_draw",6,SWIGTYPE_p_ofColor); }  arg6 = *argp6;
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,7,(void**)&argp7,SWIGTYPE_p_ofColor,0))){
+    SWIG_fail_ptr("WaveformSequence_draw",7,SWIGTYPE_p_ofColor); }  arg7 = *argp7; arg8 = (lua_toboolean(L, 8)!=0);
+  arg9 = (lua_toboolean(L, 9)!=0); (arg1)->draw(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9); return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_draw__SWIG_1(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; float arg2 ; float arg3 ; float arg4 ; float arg5 ; ofColor arg6 ;
+  ofColor arg7 ; bool arg8 ; ofColor *argp6 ; ofColor *argp7 ; SWIG_check_num_args("WaveformSequence::draw",8,8)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::draw",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::draw",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::draw",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformSequence::draw",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("WaveformSequence::draw",5,"float");
+  if(!lua_isuserdata(L,6)) SWIG_fail_arg("WaveformSequence::draw",6,"ofColor");
+  if(!lua_isuserdata(L,7)) SWIG_fail_arg("WaveformSequence::draw",7,"ofColor");
+  if(!lua_isboolean(L,8)) SWIG_fail_arg("WaveformSequence::draw",8,"bool");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_draw",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); arg5 = (float)lua_tonumber(L, 5);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&argp6,SWIGTYPE_p_ofColor,0))){
+    SWIG_fail_ptr("WaveformSequence_draw",6,SWIGTYPE_p_ofColor); }  arg6 = *argp6;
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,7,(void**)&argp7,SWIGTYPE_p_ofColor,0))){
+    SWIG_fail_ptr("WaveformSequence_draw",7,SWIGTYPE_p_ofColor); }  arg7 = *argp7; arg8 = (lua_toboolean(L, 8)!=0);
+  (arg1)->draw(arg2,arg3,arg4,arg5,arg6,arg7,arg8); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_draw__SWIG_2(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; float arg2 ; float arg3 ; float arg4 ; float arg5 ; ofColor arg6 ;
+  ofColor arg7 ; ofColor *argp6 ; ofColor *argp7 ; SWIG_check_num_args("WaveformSequence::draw",7,7)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::draw",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::draw",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::draw",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformSequence::draw",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("WaveformSequence::draw",5,"float");
+  if(!lua_isuserdata(L,6)) SWIG_fail_arg("WaveformSequence::draw",6,"ofColor");
+  if(!lua_isuserdata(L,7)) SWIG_fail_arg("WaveformSequence::draw",7,"ofColor");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_draw",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); arg5 = (float)lua_tonumber(L, 5);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&argp6,SWIGTYPE_p_ofColor,0))){
+    SWIG_fail_ptr("WaveformSequence_draw",6,SWIGTYPE_p_ofColor); }  arg6 = *argp6;
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,7,(void**)&argp7,SWIGTYPE_p_ofColor,0))){
+    SWIG_fail_ptr("WaveformSequence_draw",7,SWIGTYPE_p_ofColor); }  arg7 = *argp7; (arg1)->draw(arg2,arg3,arg4,arg5,arg6,arg7);
+  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_draw__SWIG_3(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; float arg2 ; float arg3 ; float arg4 ; float arg5 ; ofColor arg6 ;
+  ofColor *argp6 ; SWIG_check_num_args("WaveformSequence::draw",6,6)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::draw",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::draw",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::draw",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformSequence::draw",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("WaveformSequence::draw",5,"float");
+  if(!lua_isuserdata(L,6)) SWIG_fail_arg("WaveformSequence::draw",6,"ofColor");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_draw",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); arg5 = (float)lua_tonumber(L, 5);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&argp6,SWIGTYPE_p_ofColor,0))){
+    SWIG_fail_ptr("WaveformSequence_draw",6,SWIGTYPE_p_ofColor); }  arg6 = *argp6; (arg1)->draw(arg2,arg3,arg4,arg5,arg6);
+  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_draw__SWIG_4(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; float arg2 ; float arg3 ; float arg4 ; float arg5 ;
+  SWIG_check_num_args("WaveformSequence::draw",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::draw",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::draw",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::draw",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformSequence::draw",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("WaveformSequence::draw",5,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_draw",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); arg5 = (float)lua_tonumber(L, 5);
+  (arg1)->draw(arg2,arg3,arg4,arg5); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_draw(lua_State* L) { int argc; int argv[10]={ 1,2,3,4,5,6,7,8,9,10} ; argc = lua_gettop(L);
+  if (argc == 5) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { { _v = lua_isnumber(L,argv[4]); }  if (_v) {
+              return _wrap_WaveformSequence_draw__SWIG_4(L);}  }  }  }  }  }  if (argc == 6) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { { _v = lua_isnumber(L,argv[4]); }  if (_v) { { void *ptr;
+                if (lua_isuserdata(L,argv[5])==0 || SWIG_ConvertPtr(L,argv[5], (void **) &ptr, SWIGTYPE_p_ofColor, SWIG_POINTER_NO_NULL)) {
+                  _v = 0; }  else { _v = 1; }  }  if (_v) { return _wrap_WaveformSequence_draw__SWIG_3(L);}  }  }  }  }  }  } 
+  if (argc == 7) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { { _v = lua_isnumber(L,argv[4]); }  if (_v) { { void *ptr;
+                if (lua_isuserdata(L,argv[5])==0 || SWIG_ConvertPtr(L,argv[5], (void **) &ptr, SWIGTYPE_p_ofColor, SWIG_POINTER_NO_NULL)) {
+                  _v = 0; }  else { _v = 1; }  }  if (_v) { { void *ptr;
+                  if (lua_isuserdata(L,argv[6])==0 || SWIG_ConvertPtr(L,argv[6], (void **) &ptr, SWIGTYPE_p_ofColor, SWIG_POINTER_NO_NULL)) {
+                    _v = 0; }  else { _v = 1; }  }  if (_v) { return _wrap_WaveformSequence_draw__SWIG_2(L);}  }  }  }  }  }  }
+     }  if (argc == 8) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { { _v = lua_isnumber(L,argv[4]); }  if (_v) { { void *ptr;
+                if (lua_isuserdata(L,argv[5])==0 || SWIG_ConvertPtr(L,argv[5], (void **) &ptr, SWIGTYPE_p_ofColor, SWIG_POINTER_NO_NULL)) {
+                  _v = 0; }  else { _v = 1; }  }  if (_v) { { void *ptr;
+                  if (lua_isuserdata(L,argv[6])==0 || SWIG_ConvertPtr(L,argv[6], (void **) &ptr, SWIGTYPE_p_ofColor, SWIG_POINTER_NO_NULL)) {
+                    _v = 0; }  else { _v = 1; }  }  if (_v) { { _v = lua_isboolean(L,argv[7]); }  if (_v) {
+                    return _wrap_WaveformSequence_draw__SWIG_1(L);}  }  }  }  }  }  }  }  }  if (argc == 9) { int _v; {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformSequence, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { { _v = lua_isnumber(L,argv[4]); }  if (_v) { { void *ptr;
+                if (lua_isuserdata(L,argv[5])==0 || SWIG_ConvertPtr(L,argv[5], (void **) &ptr, SWIGTYPE_p_ofColor, SWIG_POINTER_NO_NULL)) {
+                  _v = 0; }  else { _v = 1; }  }  if (_v) { { void *ptr;
+                  if (lua_isuserdata(L,argv[6])==0 || SWIG_ConvertPtr(L,argv[6], (void **) &ptr, SWIGTYPE_p_ofColor, SWIG_POINTER_NO_NULL)) {
+                    _v = 0; }  else { _v = 1; }  }  if (_v) { { _v = lua_isboolean(L,argv[7]); }  if (_v) { {
+                      _v = lua_isboolean(L,argv[8]); }  if (_v) { return _wrap_WaveformSequence_draw__SWIG_0(L);}  }  }  }  }  }
+           }  }  }  }  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformSequence_draw'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformSequence::draw(float,float,float,float,ofColor,ofColor,bool,bool)\n"
+  "    WaveformSequence::draw(float,float,float,float,ofColor,ofColor,bool)\n"
+  "    WaveformSequence::draw(float,float,float,float,ofColor,ofColor)\n"
+  "    WaveformSequence::draw(float,float,float,float,ofColor)\n" "    WaveformSequence::draw(float,float,float,float)\n");
+  lua_error(L);return 0; }
+static int _wrap_WaveformSequence_getValue(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  float result; SWIG_check_num_args("WaveformSequence::getValue",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::getValue",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_getValue",1,SWIGTYPE_p_WaveformSequence); }  result = (float)(arg1)->getValue();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_isRunning(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  bool result; SWIG_check_num_args("WaveformSequence::isRunning",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::isRunning",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_isRunning",1,SWIGTYPE_p_WaveformSequence); }  result = (bool)(arg1)->isRunning();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++; return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_isLooping(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  bool result; SWIG_check_num_args("WaveformSequence::isLooping",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::isLooping",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_isLooping",1,SWIGTYPE_p_WaveformSequence); }  result = (bool)(arg1)->isLooping();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++; return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_getName(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  string result; SWIG_check_num_args("WaveformSequence::getName",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::getName",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_getName",1,SWIGTYPE_p_WaveformSequence); }  result = (arg1)->getName();
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++; return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_WaveformSequence_getStepsCount(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t result; SWIG_check_num_args("WaveformSequence::getStepsCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::getStepsCount",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_getStepsCount",1,SWIGTYPE_p_WaveformSequence); }  result = (arg1)->getStepsCount();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_getCurrentStep(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t result; SWIG_check_num_args("WaveformSequence::getCurrentStep",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::getCurrentStep",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_getCurrentStep",1,SWIGTYPE_p_WaveformSequence); }  result = (arg1)->getCurrentStep();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_getParametersCount(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t result;
+  SWIG_check_num_args("WaveformSequence::getParametersCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::getParametersCount",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_getParametersCount",1,SWIGTYPE_p_WaveformSequence); } 
+  result = (arg1)->getParametersCount(); lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_getTotalDuration(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; float result; SWIG_check_num_args("WaveformSequence::getTotalDuration",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::getTotalDuration",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_getTotalDuration",1,SWIGTYPE_p_WaveformSequence); } 
+  result = (float)(arg1)->getTotalDuration(); lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_getStepDuration(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t arg2 ; float result;
+  SWIG_check_num_args("WaveformSequence::getStepDuration",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::getStepDuration",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::getStepDuration",2,"size_t");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_getStepDuration",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  result = (float)(arg1)->getStepDuration(arg2); lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_getStepWaveform(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; size_t arg2 ; WAVEFORM result;
+  SWIG_check_num_args("WaveformSequence::getStepWaveform",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::getStepWaveform",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::getStepWaveform",2,"size_t");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_getStepWaveform",1,SWIGTYPE_p_WaveformSequence); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  result = (WAVEFORM)(arg1)->getStepWaveform(arg2); lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++; return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_generatePreview(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; float arg2 ; float arg3 ;
+  SWIG_check_num_args("WaveformSequence::generatePreview",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::generatePreview",1,"WaveformSequence *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformSequence::generatePreview",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformSequence::generatePreview",3,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_generatePreview",1,SWIGTYPE_p_WaveformSequence); }  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); (arg1)->generatePreview(arg2,arg3); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_WaveformSequence_getProgress(lua_State* L) { int SWIG_arg = 0;
+  WaveformSequence *arg1 = (WaveformSequence *) 0 ; float result; SWIG_check_num_args("WaveformSequence::getProgress",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::getProgress",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_getProgress",1,SWIGTYPE_p_WaveformSequence); }  result = (float)(arg1)->getProgress();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_getJson(lua_State* L) { int SWIG_arg = 0; WaveformSequence *arg1 = (WaveformSequence *) 0 ;
+  ofJson result; SWIG_check_num_args("WaveformSequence::getJson",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformSequence::getJson",1,"WaveformSequence *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformSequence_getJson",1,SWIGTYPE_p_WaveformSequence); }  result = (arg1)->getJson(); {
+    ofJson * resultptr = new ofJson((const ofJson &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_ofJson,1); SWIG_arg++; }  return SWIG_arg; if(0) SWIG_fail; fail:
+  lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_saveJsonFile(lua_State* L) { int SWIG_arg = 0; string arg1 ; ofJson arg2 ; ofJson *argp2 ;
+  bool result; SWIG_check_num_args("WaveformSequence::saveJsonFile",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("WaveformSequence::saveJsonFile",1,"string");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("WaveformSequence::saveJsonFile",2,"ofJson");
+  (&arg1)->assign(lua_tostring(L,1),lua_rawlen(L,1)); if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_ofJson,0))){
+    SWIG_fail_ptr("WaveformSequence_saveJsonFile",2,SWIGTYPE_p_ofJson); }  arg2 = *argp2;
+  result = (bool)WaveformSequence::saveJsonFile(arg1,arg2); lua_pushboolean(L,(int)(result!=0)); SWIG_arg++; return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformSequence_sequenceFromFile(lua_State* L) { int SWIG_arg = 0; string arg1 ;
+  WaveformSequence *result = 0 ; SWIG_check_num_args("WaveformSequence::sequenceFromFile",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("WaveformSequence::sequenceFromFile",1,"string");
+  (&arg1)->assign(lua_tostring(L,1),lua_rawlen(L,1)); result = (WaveformSequence *)WaveformSequence::sequenceFromFile(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_WaveformSequence,0); SWIG_arg++;  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_WaveformSequence_sequenceFromJson(lua_State* L) { int SWIG_arg = 0; ofJson arg1 ; ofJson *argp1 ;
+  WaveformSequence *result = 0 ; SWIG_check_num_args("WaveformSequence::sequenceFromJson",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WaveformSequence::sequenceFromJson",1,"ofJson");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&argp1,SWIGTYPE_p_ofJson,0))){
+    SWIG_fail_ptr("WaveformSequence_sequenceFromJson",1,SWIGTYPE_p_ofJson); }  arg1 = *argp1;
+  result = (WaveformSequence *)WaveformSequence::sequenceFromJson(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_WaveformSequence,0); SWIG_arg++;  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static void swig_delete_WaveformSequence(void *obj) {
+WaveformSequence *arg1 = (WaveformSequence *) obj;
+delete arg1;
+}
+static int _proxy__wrap_new_WaveformSequence(lua_State *L) {
+    assert(lua_istable(L,1));
+    lua_pushcfunction(L,_wrap_new_WaveformSequence);
+    assert(!lua_isnil(L,-1));
+    lua_replace(L,1); /* replace our table with real constructor */
+    lua_call(L,lua_gettop(L)-1,1);
+    return 1;
+}
+static swig_lua_attribute swig_WaveformSequence_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_method swig_WaveformSequence_methods[]= {
+    { "add", _wrap_WaveformSequence_add},
+    { "insert", _wrap_WaveformSequence_insert},
+    { "remove", _wrap_WaveformSequence_remove},
+    { "clear", _wrap_WaveformSequence_clear},
+    { "addRandomSequence", _wrap_WaveformSequence_addRandomSequence},
+    { "insertRandomSequence", _wrap_WaveformSequence_insertRandomSequence},
+    { "setLooping", _wrap_WaveformSequence_setLooping},
+    { "setPhaseOffset", _wrap_WaveformSequence_setPhaseOffset},
+    { "setUpdateRate", _wrap_WaveformSequence_setUpdateRate},
+    { "setChaos", _wrap_WaveformSequence_setChaos},
+    { "setEosCallback", _wrap_WaveformSequence_setEosCallback},
+    { "addParameterReference", _wrap_WaveformSequence_addParameterReference},
+    { "changeStepWaveform", _wrap_WaveformSequence_changeStepWaveform},
+    { "changeStepDuration", _wrap_WaveformSequence_changeStepDuration},
+    { "update", _wrap_WaveformSequence_update},
+    { "reset", _wrap_WaveformSequence_reset},
+    { "start", _wrap_WaveformSequence_start},
+    { "stop", _wrap_WaveformSequence_stop},
+    { "rewind", _wrap_WaveformSequence_rewind},
+    { "seek", _wrap_WaveformSequence_seek},
+    { "draw", _wrap_WaveformSequence_draw},
+    { "getValue", _wrap_WaveformSequence_getValue},
+    { "isRunning", _wrap_WaveformSequence_isRunning},
+    { "isLooping", _wrap_WaveformSequence_isLooping},
+    { "getName", _wrap_WaveformSequence_getName},
+    { "getStepsCount", _wrap_WaveformSequence_getStepsCount},
+    { "getCurrentStep", _wrap_WaveformSequence_getCurrentStep},
+    { "getParametersCount", _wrap_WaveformSequence_getParametersCount},
+    { "getTotalDuration", _wrap_WaveformSequence_getTotalDuration},
+    { "getStepDuration", _wrap_WaveformSequence_getStepDuration},
+    { "getStepWaveform", _wrap_WaveformSequence_getStepWaveform},
+    { "generatePreview", _wrap_WaveformSequence_generatePreview},
+    { "getProgress", _wrap_WaveformSequence_getProgress},
+    { "getJson", _wrap_WaveformSequence_getJson},
+    {0,0}
+};
+static swig_lua_method swig_WaveformSequence_meta[] = {
+    {0,0}
+};
+
+static swig_lua_attribute swig_WaveformSequence_Sf_SwigStatic_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_const_info swig_WaveformSequence_Sf_SwigStatic_constants[]= {
+    {0,0,0,0,0,0}
+};
+static swig_lua_method swig_WaveformSequence_Sf_SwigStatic_methods[]= {
+    { "saveJsonFile", _wrap_WaveformSequence_saveJsonFile},
+    { "sequenceFromFile", _wrap_WaveformSequence_sequenceFromFile},
+    { "sequenceFromJson", _wrap_WaveformSequence_sequenceFromJson},
+    {0,0}
+};
+static swig_lua_class* swig_WaveformSequence_Sf_SwigStatic_classes[]= {
+    0
+};
+
+static swig_lua_namespace swig_WaveformSequence_Sf_SwigStatic = {
+    "WaveformSequence",
+    swig_WaveformSequence_Sf_SwigStatic_methods,
+    swig_WaveformSequence_Sf_SwigStatic_attributes,
+    swig_WaveformSequence_Sf_SwigStatic_constants,
+    swig_WaveformSequence_Sf_SwigStatic_classes,
+    0
+};
+static swig_lua_class *swig_WaveformSequence_bases[] = {0};
+static const char *swig_WaveformSequence_base_names[] = {0};
+static swig_lua_class _wrap_class_WaveformSequence = { "WaveformSequence", "WaveformSequence", &SWIGTYPE_p_WaveformSequence,_proxy__wrap_new_WaveformSequence, swig_delete_WaveformSequence, swig_WaveformSequence_methods, swig_WaveformSequence_attributes, &swig_WaveformSequence_Sf_SwigStatic, swig_WaveformSequence_meta, swig_WaveformSequence_bases, swig_WaveformSequence_base_names };
+
+static int _wrap_new_WaveformTracks__SWIG_0(lua_State* L) { int SWIG_arg = 0; float arg1 ; WaveformTracks *result = 0 ;
+  SWIG_check_num_args("WaveformTracks::WaveformTracks",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WaveformTracks::WaveformTracks",1,"float"); arg1 = (float)lua_tonumber(L, 1);
+  result = (WaveformTracks *)new WaveformTracks(arg1); SWIG_NewPointerObj(L,result,SWIGTYPE_p_WaveformTracks,1); SWIG_arg++; 
+  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_new_WaveformTracks__SWIG_1(lua_State* L) { int SWIG_arg = 0; WaveformTracks *result = 0 ;
+  SWIG_check_num_args("WaveformTracks::WaveformTracks",0,0) result = (WaveformTracks *)new WaveformTracks();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_WaveformTracks,1); SWIG_arg++;  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_new_WaveformTracks(lua_State* L) { int argc; int argv[2]={ 1,2} ; argc = lua_gettop(L); if (argc == 0) {
+    return _wrap_new_WaveformTracks__SWIG_1(L);}  if (argc == 1) { int _v; { _v = lua_isnumber(L,argv[0]); }  if (_v) {
+      return _wrap_new_WaveformTracks__SWIG_0(L);}  } 
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'new_WaveformTracks'\n" "  Possible C/C++ prototypes are:\n"
+  "    WaveformTracks::WaveformTracks(float)\n" "    WaveformTracks::WaveformTracks()\n"); lua_error(L);return 0; }
+static int _wrap_WaveformTracks_addSequence__SWIG_0(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; string arg2 ; bool arg3 ; std::function< void () > arg4 ;
+  shared_ptr< ofAbstractParameter > arg5 ; std::function< void () > *argp4 ; shared_ptr< ofAbstractParameter > *argp5 ;
+  SWIG_check_num_args("WaveformTracks::addSequence",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addSequence",1,"WaveformTracks *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("WaveformTracks::addSequence",2,"string");
+  if(!lua_isboolean(L,3)) SWIG_fail_arg("WaveformTracks::addSequence",3,"bool");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("WaveformTracks::addSequence",4,"std::function< void () >");
+  if(!lua_isuserdata(L,5)) SWIG_fail_arg("WaveformTracks::addSequence",5,"shared_ptr< ofAbstractParameter >");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addSequence",1,SWIGTYPE_p_WaveformTracks); } 
+  (&arg2)->assign(lua_tostring(L,2),lua_rawlen(L,2)); arg3 = (lua_toboolean(L, 3)!=0);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_std__functionT_void_fF_t,0))){
+    SWIG_fail_ptr("WaveformTracks_addSequence",4,SWIGTYPE_p_std__functionT_void_fF_t); }  arg4 = *argp4;
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&argp5,SWIGTYPE_p_shared_ptrT_ofAbstractParameter_t,0))){
+    SWIG_fail_ptr("WaveformTracks_addSequence",5,SWIGTYPE_p_shared_ptrT_ofAbstractParameter_t); }  arg5 = *argp5;
+  (arg1)->addSequence(arg2,arg3,arg4,arg5); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addSequence__SWIG_1(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; string arg2 ; bool arg3 ; std::function< void () > arg4 ;
+  std::function< void () > *argp4 ; SWIG_check_num_args("WaveformTracks::addSequence",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addSequence",1,"WaveformTracks *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("WaveformTracks::addSequence",2,"string");
+  if(!lua_isboolean(L,3)) SWIG_fail_arg("WaveformTracks::addSequence",3,"bool");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("WaveformTracks::addSequence",4,"std::function< void () >");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addSequence",1,SWIGTYPE_p_WaveformTracks); } 
+  (&arg2)->assign(lua_tostring(L,2),lua_rawlen(L,2)); arg3 = (lua_toboolean(L, 3)!=0);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_std__functionT_void_fF_t,0))){
+    SWIG_fail_ptr("WaveformTracks_addSequence",4,SWIGTYPE_p_std__functionT_void_fF_t); }  arg4 = *argp4;
+  (arg1)->addSequence(arg2,arg3,arg4); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addSequence__SWIG_2(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; string arg2 ; bool arg3 ; SWIG_check_num_args("WaveformTracks::addSequence",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addSequence",1,"WaveformTracks *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("WaveformTracks::addSequence",2,"string");
+  if(!lua_isboolean(L,3)) SWIG_fail_arg("WaveformTracks::addSequence",3,"bool");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addSequence",1,SWIGTYPE_p_WaveformTracks); } 
+  (&arg2)->assign(lua_tostring(L,2),lua_rawlen(L,2)); arg3 = (lua_toboolean(L, 3)!=0); (arg1)->addSequence(arg2,arg3);
+  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addSequence__SWIG_3(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; string arg2 ; SWIG_check_num_args("WaveformTracks::addSequence",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addSequence",1,"WaveformTracks *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("WaveformTracks::addSequence",2,"string");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addSequence",1,SWIGTYPE_p_WaveformTracks); } 
+  (&arg2)->assign(lua_tostring(L,2),lua_rawlen(L,2)); (arg1)->addSequence(arg2); return SWIG_arg; if(0) SWIG_fail; fail:
+  lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addSequence__SWIG_4(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; SWIG_check_num_args("WaveformTracks::addSequence",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addSequence",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addSequence",1,SWIGTYPE_p_WaveformTracks); }  (arg1)->addSequence(); return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addSequence__SWIG_5(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; WaveformSequence arg2 ; WaveformSequence *argp2 ;
+  SWIG_check_num_args("WaveformTracks::addSequence",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addSequence",1,"WaveformTracks *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("WaveformTracks::addSequence",2,"WaveformSequence");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addSequence",1,SWIGTYPE_p_WaveformTracks); } 
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_WaveformSequence,0))){
+    SWIG_fail_ptr("WaveformTracks_addSequence",2,SWIGTYPE_p_WaveformSequence); }  arg2 = *argp2; (arg1)->addSequence(arg2);
+  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addSequence(lua_State* L) { int argc; int argv[6]={ 1,2,3,4,5,6} ; argc = lua_gettop(L);
+  if (argc == 1) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { return _wrap_WaveformTracks_addSequence__SWIG_4(L);}  }  if (argc == 2) { int _v; {
+      void *ptr; if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) {
+        _v = 0; }  else { _v = 1; }  }  if (_v) { { void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_WaveformSequence, SWIG_POINTER_NO_NULL)) {
+          _v = 0; }  else { _v = 1; }  }  if (_v) { return _wrap_WaveformTracks_addSequence__SWIG_5(L);}  }  }  if (argc == 2) {
+    int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isstring(L,argv[1]); }  if (_v) {
+        return _wrap_WaveformTracks_addSequence__SWIG_3(L);}  }  }  if (argc == 3) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isstring(L,argv[1]); }  if (_v) { { _v = lua_isboolean(L,argv[2]); }  if (_v) {
+          return _wrap_WaveformTracks_addSequence__SWIG_2(L);}  }  }  }  if (argc == 4) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isstring(L,argv[1]); }  if (_v) { { _v = lua_isboolean(L,argv[2]); }  if (_v) {
+          { void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_std__functionT_void_fF_t, SWIG_POINTER_NO_NULL)) {
+              _v = 0; }  else { _v = 1; }  }  if (_v) { return _wrap_WaveformTracks_addSequence__SWIG_1(L);}  }  }  }  } 
+  if (argc == 5) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isstring(L,argv[1]); }  if (_v) { { _v = lua_isboolean(L,argv[2]); }  if (_v) {
+          { void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_std__functionT_void_fF_t, SWIG_POINTER_NO_NULL)) {
+              _v = 0; }  else { _v = 1; }  }  if (_v) { { void *ptr;
+              if (lua_isuserdata(L,argv[4])==0 || SWIG_ConvertPtr(L,argv[4], (void **) &ptr, SWIGTYPE_p_shared_ptrT_ofAbstractParameter_t, SWIG_POINTER_NO_NULL)) {
+                _v = 0; }  else { _v = 1; }  }  if (_v) { return _wrap_WaveformTracks_addSequence__SWIG_0(L);}  }  }  }  }  } 
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformTracks_addSequence'\n"
+  "  Possible C/C++ prototypes are:\n"
+  "    WaveformTracks::addSequence(string,bool,std::function< void () >,shared_ptr< ofAbstractParameter >)\n"
+  "    WaveformTracks::addSequence(string,bool,std::function< void () >)\n" "    WaveformTracks::addSequence(string,bool)\n"
+  "    WaveformTracks::addSequence(string)\n" "    WaveformTracks::addSequence()\n"
+  "    WaveformTracks::addSequence(WaveformSequence)\n"); lua_error(L);return 0; }
+static int _wrap_WaveformTracks_addParameterReference__SWIG_0(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; size_t arg2 ; shared_ptr< ofAbstractParameter > arg3 ;
+  shared_ptr< ofAbstractParameter > *argp3 ; SWIG_check_num_args("WaveformTracks::addParameterReference",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addParameterReference",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::addParameterReference",2,"size_t");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("WaveformTracks::addParameterReference",3,"shared_ptr< ofAbstractParameter >");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addParameterReference",1,SWIGTYPE_p_WaveformTracks); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_shared_ptrT_ofAbstractParameter_t,0))){
+    SWIG_fail_ptr("WaveformTracks_addParameterReference",3,SWIGTYPE_p_shared_ptrT_ofAbstractParameter_t); }  arg3 = *argp3;
+  (arg1)->addParameterReference(arg2,arg3); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addParameterReference__SWIG_1(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; size_t arg2 ; SWIG_check_num_args("WaveformTracks::addParameterReference",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addParameterReference",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::addParameterReference",2,"size_t");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addParameterReference",1,SWIGTYPE_p_WaveformTracks); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  (arg1)->addParameterReference(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addParameterReference__SWIG_2(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; SWIG_check_num_args("WaveformTracks::addParameterReference",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addParameterReference",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addParameterReference",1,SWIGTYPE_p_WaveformTracks); }  (arg1)->addParameterReference();
+  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addParameterReference(lua_State* L) { int argc; int argv[4]={ 1,2,3,4} ; argc = lua_gettop(L);
+  if (argc == 1) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { return _wrap_WaveformTracks_addParameterReference__SWIG_2(L);}  }  if (argc == 2) {
+    int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) {
+        return _wrap_WaveformTracks_addParameterReference__SWIG_1(L);}  }  }  if (argc == 3) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_shared_ptrT_ofAbstractParameter_t, SWIG_POINTER_NO_NULL)) {
+            _v = 0; }  else { _v = 1; }  }  if (_v) { return _wrap_WaveformTracks_addParameterReference__SWIG_0(L);}  }  }  } 
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformTracks_addParameterReference'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformTracks::addParameterReference(size_t,shared_ptr< ofAbstractParameter >)\n"
+  "    WaveformTracks::addParameterReference(size_t)\n" "    WaveformTracks::addParameterReference()\n");
+  lua_error(L);return 0; }
+static int _wrap_WaveformTracks_addStep__SWIG_0(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  size_t arg2 ; WAVEFORM arg3 ; float arg4 ; int arg5 ; SWIG_check_num_args("WaveformTracks::addStep",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addStep",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::addStep",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformTracks::addStep",3,"WAVEFORM");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformTracks::addStep",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("WaveformTracks::addStep",5,"int");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addStep",1,SWIGTYPE_p_WaveformTracks); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  arg3 = (WAVEFORM)(int)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); arg5 = (int)lua_tonumber(L, 5);
+  (arg1)->addStep(arg2,arg3,arg4,arg5); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addStep__SWIG_1(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  size_t arg2 ; WAVEFORM arg3 ; float arg4 ; SWIG_check_num_args("WaveformTracks::addStep",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addStep",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::addStep",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformTracks::addStep",3,"WAVEFORM");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformTracks::addStep",4,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addStep",1,SWIGTYPE_p_WaveformTracks); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  arg3 = (WAVEFORM)(int)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); (arg1)->addStep(arg2,arg3,arg4); return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addStep__SWIG_2(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  size_t arg2 ; WAVEFORM arg3 ; SWIG_check_num_args("WaveformTracks::addStep",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addStep",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::addStep",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformTracks::addStep",3,"WAVEFORM");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addStep",1,SWIGTYPE_p_WaveformTracks); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  arg3 = (WAVEFORM)(int)lua_tonumber(L, 3); (arg1)->addStep(arg2,arg3); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_WaveformTracks_addStep__SWIG_3(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  size_t arg2 ; SWIG_check_num_args("WaveformTracks::addStep",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addStep",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::addStep",2,"size_t");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addStep",1,SWIGTYPE_p_WaveformTracks); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  (arg1)->addStep(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addStep__SWIG_4(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  SWIG_check_num_args("WaveformTracks::addStep",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addStep",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addStep",1,SWIGTYPE_p_WaveformTracks); }  (arg1)->addStep(); return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addStep__SWIG_5(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  string arg2 ; WAVEFORM arg3 ; float arg4 ; int arg5 ; SWIG_check_num_args("WaveformTracks::addStep",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addStep",1,"WaveformTracks *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("WaveformTracks::addStep",2,"string");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformTracks::addStep",3,"WAVEFORM");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformTracks::addStep",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("WaveformTracks::addStep",5,"int");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addStep",1,SWIGTYPE_p_WaveformTracks); }  (&arg2)->assign(lua_tostring(L,2),lua_rawlen(L,2));
+  arg3 = (WAVEFORM)(int)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); arg5 = (int)lua_tonumber(L, 5);
+  (arg1)->addStep(arg2,arg3,arg4,arg5); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addStep__SWIG_6(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  string arg2 ; WAVEFORM arg3 ; float arg4 ; SWIG_check_num_args("WaveformTracks::addStep",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addStep",1,"WaveformTracks *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("WaveformTracks::addStep",2,"string");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformTracks::addStep",3,"WAVEFORM");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformTracks::addStep",4,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addStep",1,SWIGTYPE_p_WaveformTracks); }  (&arg2)->assign(lua_tostring(L,2),lua_rawlen(L,2));
+  arg3 = (WAVEFORM)(int)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); (arg1)->addStep(arg2,arg3,arg4); return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addStep__SWIG_7(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  string arg2 ; WAVEFORM arg3 ; SWIG_check_num_args("WaveformTracks::addStep",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addStep",1,"WaveformTracks *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("WaveformTracks::addStep",2,"string");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformTracks::addStep",3,"WAVEFORM");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addStep",1,SWIGTYPE_p_WaveformTracks); }  (&arg2)->assign(lua_tostring(L,2),lua_rawlen(L,2));
+  arg3 = (WAVEFORM)(int)lua_tonumber(L, 3); (arg1)->addStep(arg2,arg3); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_WaveformTracks_addStep__SWIG_8(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  string arg2 ; SWIG_check_num_args("WaveformTracks::addStep",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::addStep",1,"WaveformTracks *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("WaveformTracks::addStep",2,"string");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_addStep",1,SWIGTYPE_p_WaveformTracks); }  (&arg2)->assign(lua_tostring(L,2),lua_rawlen(L,2));
+  (arg1)->addStep(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_addStep(lua_State* L) { int argc; int argv[6]={ 1,2,3,4,5,6} ; argc = lua_gettop(L);
+  if (argc == 1) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { return _wrap_WaveformTracks_addStep__SWIG_4(L);}  }  if (argc == 2) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) {
+        return _wrap_WaveformTracks_addStep__SWIG_3(L);}  }  }  if (argc == 2) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isstring(L,argv[1]); }  if (_v) {
+        return _wrap_WaveformTracks_addStep__SWIG_8(L);}  }  }  if (argc == 3) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          return _wrap_WaveformTracks_addStep__SWIG_2(L);}  }  }  }  if (argc == 3) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isstring(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          return _wrap_WaveformTracks_addStep__SWIG_7(L);}  }  }  }  if (argc == 4) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { return _wrap_WaveformTracks_addStep__SWIG_1(L);}  }  }  }  } 
+  if (argc == 4) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isstring(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { return _wrap_WaveformTracks_addStep__SWIG_6(L);}  }  }  }  } 
+  if (argc == 5) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { { _v = lua_isnumber(L,argv[4]); }  if (_v) {
+              return _wrap_WaveformTracks_addStep__SWIG_0(L);}  }  }  }  }  }  if (argc == 5) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isstring(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { { _v = lua_isnumber(L,argv[4]); }  if (_v) {
+              return _wrap_WaveformTracks_addStep__SWIG_5(L);}  }  }  }  }  } 
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformTracks_addStep'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformTracks::addStep(size_t,WAVEFORM,float,int)\n"
+  "    WaveformTracks::addStep(size_t,WAVEFORM,float)\n" "    WaveformTracks::addStep(size_t,WAVEFORM)\n"
+  "    WaveformTracks::addStep(size_t)\n" "    WaveformTracks::addStep()\n"
+  "    WaveformTracks::addStep(string,WAVEFORM,float,int)\n" "    WaveformTracks::addStep(string,WAVEFORM,float)\n"
+  "    WaveformTracks::addStep(string,WAVEFORM)\n" "    WaveformTracks::addStep(string)\n"); lua_error(L);return 0; }
+static int _wrap_WaveformTracks_changeStepWaveform(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; size_t arg2 ; size_t arg3 ; WAVEFORM arg4 ;
+  SWIG_check_num_args("WaveformTracks::changeStepWaveform",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::changeStepWaveform",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::changeStepWaveform",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformTracks::changeStepWaveform",3,"size_t");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformTracks::changeStepWaveform",4,"WAVEFORM");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_changeStepWaveform",1,SWIGTYPE_p_WaveformTracks); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative") arg3 = (size_t)lua_tonumber(L, 3);
+  arg4 = (WAVEFORM)(int)lua_tonumber(L, 4); (arg1)->changeStepWaveform(arg2,arg3,arg4); return SWIG_arg; if(0) SWIG_fail; fail:
+  lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_changeStepDuration__SWIG_0(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; size_t arg2 ; size_t arg3 ; float arg4 ;
+  SWIG_check_num_args("WaveformTracks::changeStepDuration",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::changeStepDuration",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::changeStepDuration",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformTracks::changeStepDuration",3,"size_t");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformTracks::changeStepDuration",4,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_changeStepDuration",1,SWIGTYPE_p_WaveformTracks); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative") arg3 = (size_t)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4); (arg1)->changeStepDuration(arg2,arg3,arg4); return SWIG_arg; if(0) SWIG_fail; fail:
+  lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_changeStepDuration__SWIG_1(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; size_t arg2 ; size_t arg3 ;
+  SWIG_check_num_args("WaveformTracks::changeStepDuration",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::changeStepDuration",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::changeStepDuration",2,"size_t");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformTracks::changeStepDuration",3,"size_t");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_changeStepDuration",1,SWIGTYPE_p_WaveformTracks); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative") arg3 = (size_t)lua_tonumber(L, 3);
+  (arg1)->changeStepDuration(arg2,arg3); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_changeStepDuration(lua_State* L) { int argc; int argv[5]={ 1,2,3,4,5} ; argc = lua_gettop(L);
+  if (argc == 3) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          return _wrap_WaveformTracks_changeStepDuration__SWIG_1(L);}  }  }  }  if (argc == 4) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { return _wrap_WaveformTracks_changeStepDuration__SWIG_0(L);}  }  }  }  } 
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformTracks_changeStepDuration'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformTracks::changeStepDuration(size_t,size_t,float)\n"
+  "    WaveformTracks::changeStepDuration(size_t,size_t)\n"); lua_error(L);return 0; }
+static int _wrap_WaveformTracks_removeSequence__SWIG_0(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; size_t arg2 ; SWIG_check_num_args("WaveformTracks::removeSequence",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::removeSequence",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::removeSequence",2,"size_t");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_removeSequence",1,SWIGTYPE_p_WaveformTracks); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  (arg1)->removeSequence(arg2); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_removeSequence__SWIG_1(lua_State* L) { int SWIG_arg = 0;
+  WaveformTracks *arg1 = (WaveformTracks *) 0 ; SWIG_check_num_args("WaveformTracks::removeSequence",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::removeSequence",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_removeSequence",1,SWIGTYPE_p_WaveformTracks); }  (arg1)->removeSequence(); return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_removeSequence(lua_State* L) { int argc; int argv[3]={ 1,2,3} ; argc = lua_gettop(L);
+  if (argc == 1) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { return _wrap_WaveformTracks_removeSequence__SWIG_1(L);}  }  if (argc == 2) { int _v; {
+      void *ptr; if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) {
+        _v = 0; }  else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) {
+        return _wrap_WaveformTracks_removeSequence__SWIG_0(L);}  }  } 
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformTracks_removeSequence'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformTracks::removeSequence(size_t)\n" "    WaveformTracks::removeSequence()\n");
+  lua_error(L);return 0; }
+static int _wrap_WaveformTracks_clear(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  SWIG_check_num_args("WaveformTracks::clear",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::clear",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_clear",1,SWIGTYPE_p_WaveformTracks); }  (arg1)->clear(); return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_update(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  SWIG_check_num_args("WaveformTracks::update",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::update",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_update",1,SWIGTYPE_p_WaveformTracks); }  (arg1)->update(); return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_reset(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  SWIG_check_num_args("WaveformTracks::reset",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::reset",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_reset",1,SWIGTYPE_p_WaveformTracks); }  (arg1)->reset(); return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_seek(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  float arg2 ; SWIG_check_num_args("WaveformTracks::seek",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::seek",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::seek",2,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_seek",1,SWIGTYPE_p_WaveformTracks); }  arg2 = (float)lua_tonumber(L, 2); (arg1)->seek(arg2);
+  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_rewind(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  SWIG_check_num_args("WaveformTracks::rewind",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::rewind",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_rewind",1,SWIGTYPE_p_WaveformTracks); }  (arg1)->rewind(); return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_start(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  SWIG_check_num_args("WaveformTracks::start",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::start",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_start",1,SWIGTYPE_p_WaveformTracks); }  (arg1)->start(); return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_stop(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  SWIG_check_num_args("WaveformTracks::stop",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::stop",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_stop",1,SWIGTYPE_p_WaveformTracks); }  (arg1)->stop(); return SWIG_arg; if(0) SWIG_fail; fail:
+  lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_getValue__SWIG_0(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  size_t arg2 ; float result; SWIG_check_num_args("WaveformTracks::getValue",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::getValue",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::getValue",2,"size_t");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_getValue",1,SWIGTYPE_p_WaveformTracks); } 
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative") arg2 = (size_t)lua_tonumber(L, 2);
+  result = (float)(arg1)->getValue(arg2); lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_getValue__SWIG_1(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  float result; SWIG_check_num_args("WaveformTracks::getValue",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::getValue",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_getValue",1,SWIGTYPE_p_WaveformTracks); }  result = (float)(arg1)->getValue();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_getValue__SWIG_2(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  string arg2 ; float result; SWIG_check_num_args("WaveformTracks::getValue",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::getValue",1,"WaveformTracks *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("WaveformTracks::getValue",2,"string");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_getValue",1,SWIGTYPE_p_WaveformTracks); }  (&arg2)->assign(lua_tostring(L,2),lua_rawlen(L,2));
+  result = (float)(arg1)->getValue(arg2); lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_getValue(lua_State* L) { int argc; int argv[3]={ 1,2,3} ; argc = lua_gettop(L); if (argc == 1) {
+    int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { return _wrap_WaveformTracks_getValue__SWIG_1(L);}  }  if (argc == 2) { int _v; {
+      void *ptr; if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) {
+        _v = 0; }  else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) {
+        return _wrap_WaveformTracks_getValue__SWIG_0(L);}  }  }  if (argc == 2) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isstring(L,argv[1]); }  if (_v) {
+        return _wrap_WaveformTracks_getValue__SWIG_2(L);}  }  } 
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformTracks_getValue'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformTracks::getValue(size_t)\n" "    WaveformTracks::getValue()\n"
+  "    WaveformTracks::getValue(string)\n"); lua_error(L);return 0; }
+static int _wrap_WaveformTracks_getValues(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  vector< float > result; SWIG_check_num_args("WaveformTracks::getValues",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::getValues",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_getValues",1,SWIGTYPE_p_WaveformTracks); }  result = (arg1)->getValues(); {
+    vector< float > * resultptr = new vector< float >((const vector< float > &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_vectorT_float_t,1); SWIG_arg++; }  return SWIG_arg; if(0) SWIG_fail;
+  fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_size(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  size_t result; SWIG_check_num_args("WaveformTracks::size",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::size",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_size",1,SWIGTYPE_p_WaveformTracks); }  result = (arg1)->size();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_draw__SWIG_0(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  float arg2 ; float arg3 ; float arg4 ; float arg5 ; ofColor arg6 ; ofColor arg7 ; ofColor *argp6 ; ofColor *argp7 ;
+  SWIG_check_num_args("WaveformTracks::draw",7,7)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::draw",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::draw",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformTracks::draw",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformTracks::draw",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("WaveformTracks::draw",5,"float");
+  if(!lua_isuserdata(L,6)) SWIG_fail_arg("WaveformTracks::draw",6,"ofColor");
+  if(!lua_isuserdata(L,7)) SWIG_fail_arg("WaveformTracks::draw",7,"ofColor");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_draw",1,SWIGTYPE_p_WaveformTracks); }  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); arg5 = (float)lua_tonumber(L, 5);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&argp6,SWIGTYPE_p_ofColor,0))){
+    SWIG_fail_ptr("WaveformTracks_draw",6,SWIGTYPE_p_ofColor); }  arg6 = *argp6;
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,7,(void**)&argp7,SWIGTYPE_p_ofColor,0))){
+    SWIG_fail_ptr("WaveformTracks_draw",7,SWIGTYPE_p_ofColor); }  arg7 = *argp7; (arg1)->draw(arg2,arg3,arg4,arg5,arg6,arg7);
+  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_draw__SWIG_1(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  float arg2 ; float arg3 ; float arg4 ; float arg5 ; ofColor arg6 ; ofColor *argp6 ;
+  SWIG_check_num_args("WaveformTracks::draw",6,6)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::draw",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::draw",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformTracks::draw",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformTracks::draw",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("WaveformTracks::draw",5,"float");
+  if(!lua_isuserdata(L,6)) SWIG_fail_arg("WaveformTracks::draw",6,"ofColor");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_draw",1,SWIGTYPE_p_WaveformTracks); }  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); arg5 = (float)lua_tonumber(L, 5);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&argp6,SWIGTYPE_p_ofColor,0))){
+    SWIG_fail_ptr("WaveformTracks_draw",6,SWIGTYPE_p_ofColor); }  arg6 = *argp6; (arg1)->draw(arg2,arg3,arg4,arg5,arg6);
+  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_draw__SWIG_2(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  float arg2 ; float arg3 ; float arg4 ; float arg5 ; SWIG_check_num_args("WaveformTracks::draw",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::draw",1,"WaveformTracks *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("WaveformTracks::draw",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("WaveformTracks::draw",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("WaveformTracks::draw",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("WaveformTracks::draw",5,"float");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_draw",1,SWIGTYPE_p_WaveformTracks); }  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4); arg5 = (float)lua_tonumber(L, 5);
+  (arg1)->draw(arg2,arg3,arg4,arg5); return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_draw(lua_State* L) { int argc; int argv[8]={ 1,2,3,4,5,6,7,8} ; argc = lua_gettop(L);
+  if (argc == 5) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { { _v = lua_isnumber(L,argv[4]); }  if (_v) {
+              return _wrap_WaveformTracks_draw__SWIG_2(L);}  }  }  }  }  }  if (argc == 6) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { { _v = lua_isnumber(L,argv[4]); }  if (_v) { { void *ptr;
+                if (lua_isuserdata(L,argv[5])==0 || SWIG_ConvertPtr(L,argv[5], (void **) &ptr, SWIGTYPE_p_ofColor, SWIG_POINTER_NO_NULL)) {
+                  _v = 0; }  else { _v = 1; }  }  if (_v) { return _wrap_WaveformTracks_draw__SWIG_1(L);}  }  }  }  }  }  } 
+  if (argc == 7) { int _v; { void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_WaveformTracks, 0)) { _v = 0; }
+       else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }  if (_v) {
+          { _v = lua_isnumber(L,argv[3]); }  if (_v) { { _v = lua_isnumber(L,argv[4]); }  if (_v) { { void *ptr;
+                if (lua_isuserdata(L,argv[5])==0 || SWIG_ConvertPtr(L,argv[5], (void **) &ptr, SWIGTYPE_p_ofColor, SWIG_POINTER_NO_NULL)) {
+                  _v = 0; }  else { _v = 1; }  }  if (_v) { { void *ptr;
+                  if (lua_isuserdata(L,argv[6])==0 || SWIG_ConvertPtr(L,argv[6], (void **) &ptr, SWIGTYPE_p_ofColor, SWIG_POINTER_NO_NULL)) {
+                    _v = 0; }  else { _v = 1; }  }  if (_v) { return _wrap_WaveformTracks_draw__SWIG_0(L);}  }  }  }  }  }  }  }
+   SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'WaveformTracks_draw'\n"
+  "  Possible C/C++ prototypes are:\n" "    WaveformTracks::draw(float,float,float,float,ofColor,ofColor)\n"
+  "    WaveformTracks::draw(float,float,float,float,ofColor)\n" "    WaveformTracks::draw(float,float,float,float)\n");
+  lua_error(L);return 0; }
+static int _wrap_WaveformTracks_getJson(lua_State* L) { int SWIG_arg = 0; WaveformTracks *arg1 = (WaveformTracks *) 0 ;
+  ofJson result; SWIG_check_num_args("WaveformTracks::getJson",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("WaveformTracks::getJson",1,"WaveformTracks *");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_WaveformTracks,0))){
+    SWIG_fail_ptr("WaveformTracks_getJson",1,SWIGTYPE_p_WaveformTracks); }  result = (arg1)->getJson(); {
+    ofJson * resultptr = new ofJson((const ofJson &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_ofJson,1); SWIG_arg++; }  return SWIG_arg; if(0) SWIG_fail; fail:
+  lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_saveJsonFile(lua_State* L) { int SWIG_arg = 0; string arg1 ; ofJson arg2 ; ofJson *argp2 ;
+  bool result; SWIG_check_num_args("WaveformTracks::saveJsonFile",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("WaveformTracks::saveJsonFile",1,"string");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("WaveformTracks::saveJsonFile",2,"ofJson");
+  (&arg1)->assign(lua_tostring(L,1),lua_rawlen(L,1)); if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_ofJson,0))){
+    SWIG_fail_ptr("WaveformTracks_saveJsonFile",2,SWIGTYPE_p_ofJson); }  arg2 = *argp2;
+  result = (bool)WaveformTracks::saveJsonFile(arg1,arg2); lua_pushboolean(L,(int)(result!=0)); SWIG_arg++; return SWIG_arg;
+  if(0) SWIG_fail; fail: lua_error(L); return SWIG_arg; }
+static int _wrap_WaveformTracks_tracksFromFile(lua_State* L) { int SWIG_arg = 0; string arg1 ; WaveformTracks *result = 0 ;
+  SWIG_check_num_args("WaveformTracks::tracksFromFile",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("WaveformTracks::tracksFromFile",1,"string");
+  (&arg1)->assign(lua_tostring(L,1),lua_rawlen(L,1)); result = (WaveformTracks *)WaveformTracks::tracksFromFile(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_WaveformTracks,0); SWIG_arg++;  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static int _wrap_WaveformTracks_tracksFromJson(lua_State* L) { int SWIG_arg = 0; ofJson arg1 ; ofJson *argp1 ;
+  WaveformTracks *result = 0 ; SWIG_check_num_args("WaveformTracks::tracksFromJson",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WaveformTracks::tracksFromJson",1,"ofJson");
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&argp1,SWIGTYPE_p_ofJson,0))){
+    SWIG_fail_ptr("WaveformTracks_tracksFromJson",1,SWIGTYPE_p_ofJson); }  arg1 = *argp1;
+  result = (WaveformTracks *)WaveformTracks::tracksFromJson(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_WaveformTracks,0); SWIG_arg++;  return SWIG_arg; if(0) SWIG_fail; fail: lua_error(L);
+  return SWIG_arg; }
+static void swig_delete_WaveformTracks(void *obj) {
+WaveformTracks *arg1 = (WaveformTracks *) obj;
+delete arg1;
+}
+static int _proxy__wrap_new_WaveformTracks(lua_State *L) {
+    assert(lua_istable(L,1));
+    lua_pushcfunction(L,_wrap_new_WaveformTracks);
+    assert(!lua_isnil(L,-1));
+    lua_replace(L,1); /* replace our table with real constructor */
+    lua_call(L,lua_gettop(L)-1,1);
+    return 1;
+}
+static swig_lua_attribute swig_WaveformTracks_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_method swig_WaveformTracks_methods[]= {
+    { "addSequence", _wrap_WaveformTracks_addSequence},
+    { "addParameterReference", _wrap_WaveformTracks_addParameterReference},
+    { "addStep", _wrap_WaveformTracks_addStep},
+    { "changeStepWaveform", _wrap_WaveformTracks_changeStepWaveform},
+    { "changeStepDuration", _wrap_WaveformTracks_changeStepDuration},
+    { "removeSequence", _wrap_WaveformTracks_removeSequence},
+    { "clear", _wrap_WaveformTracks_clear},
+    { "update", _wrap_WaveformTracks_update},
+    { "reset", _wrap_WaveformTracks_reset},
+    { "seek", _wrap_WaveformTracks_seek},
+    { "rewind", _wrap_WaveformTracks_rewind},
+    { "start", _wrap_WaveformTracks_start},
+    { "stop", _wrap_WaveformTracks_stop},
+    { "getValue", _wrap_WaveformTracks_getValue},
+    { "getValues", _wrap_WaveformTracks_getValues},
+    { "size", _wrap_WaveformTracks_size},
+    { "draw", _wrap_WaveformTracks_draw},
+    { "getJson", _wrap_WaveformTracks_getJson},
+    {0,0}
+};
+static swig_lua_method swig_WaveformTracks_meta[] = {
+    {0,0}
+};
+
+static swig_lua_attribute swig_WaveformTracks_Sf_SwigStatic_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_const_info swig_WaveformTracks_Sf_SwigStatic_constants[]= {
+    {0,0,0,0,0,0}
+};
+static swig_lua_method swig_WaveformTracks_Sf_SwigStatic_methods[]= {
+    { "saveJsonFile", _wrap_WaveformTracks_saveJsonFile},
+    { "tracksFromFile", _wrap_WaveformTracks_tracksFromFile},
+    { "tracksFromJson", _wrap_WaveformTracks_tracksFromJson},
+    {0,0}
+};
+static swig_lua_class* swig_WaveformTracks_Sf_SwigStatic_classes[]= {
+    0
+};
+
+static swig_lua_namespace swig_WaveformTracks_Sf_SwigStatic = {
+    "WaveformTracks",
+    swig_WaveformTracks_Sf_SwigStatic_methods,
+    swig_WaveformTracks_Sf_SwigStatic_attributes,
+    swig_WaveformTracks_Sf_SwigStatic_constants,
+    swig_WaveformTracks_Sf_SwigStatic_classes,
+    0
+};
+static swig_lua_class *swig_WaveformTracks_bases[] = {0};
+static const char *swig_WaveformTracks_base_names[] = {0};
+static swig_lua_class _wrap_class_WaveformTracks = { "WaveformTracks", "WaveformTracks", &SWIGTYPE_p_WaveformTracks,_proxy__wrap_new_WaveformTracks, swig_delete_WaveformTracks, swig_WaveformTracks_methods, swig_WaveformTracks_attributes, &swig_WaveformTracks_Sf_SwigStatic, swig_WaveformTracks_meta, swig_WaveformTracks_bases, swig_WaveformTracks_base_names };
+
 static swig_lua_attribute swig_SwigModule_attributes[] = {
     { "waveformProperties", _wrap_waveformProperties_get, _wrap_waveformProperties_set },
     {0,0,0}
@@ -4118,12 +5498,20 @@ static swig_lua_method swig_SwigModule_methods[]= {
     { "Waveforms_getWaveformName", _wrap_Waveforms_getWaveformName},
     { "Waveforms_getWaveform", _wrap_Waveforms_getWaveform},
     { "Waveforms_getWaveformCount", _wrap_Waveforms_getWaveformCount},
+    { "WaveformSequence_saveJsonFile", _wrap_WaveformSequence_saveJsonFile},
+    { "WaveformSequence_sequenceFromFile", _wrap_WaveformSequence_sequenceFromFile},
+    { "WaveformSequence_sequenceFromJson", _wrap_WaveformSequence_sequenceFromJson},
+    { "WaveformTracks_saveJsonFile", _wrap_WaveformTracks_saveJsonFile},
+    { "WaveformTracks_tracksFromFile", _wrap_WaveformTracks_tracksFromFile},
+    { "WaveformTracks_tracksFromJson", _wrap_WaveformTracks_tracksFromJson},
     {0,0}
 };
 static swig_lua_class* swig_SwigModule_classes[]= {
 &_wrap_class_string,
 &_wrap_class_WaveformProperties,
 &_wrap_class_Waveforms,
+&_wrap_class_WaveformSequence,
+&_wrap_class_WaveformTracks,
     0
 };
 static swig_lua_namespace* swig_SwigModule_namespaces[] = {
@@ -4145,39 +5533,59 @@ static swig_lua_namespace swig_SwigModule = {
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
 static swig_type_info _swigt__p_WaveformProperties = {"_p_WaveformProperties", "WaveformProperties *", 0, 0, (void*)&_wrap_class_WaveformProperties, 0};
+static swig_type_info _swigt__p_WaveformSequence = {"_p_WaveformSequence", "WaveformSequence *", 0, 0, (void*)&_wrap_class_WaveformSequence, 0};
+static swig_type_info _swigt__p_WaveformTracks = {"_p_WaveformTracks", "WaveformTracks *", 0, 0, (void*)&_wrap_class_WaveformTracks, 0};
 static swig_type_info _swigt__p_Waveforms = {"_p_Waveforms", "Waveforms *", 0, 0, (void*)&_wrap_class_Waveforms, 0};
 static swig_type_info _swigt__p_ofColor = {"_p_ofColor", "ofColor *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_ofJson = {"_p_ofJson", "ofJson *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_ofPolyline = {"_p_ofPolyline", "ofPolyline *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_shared_ptrT_ofAbstractParameter_t = {"_p_shared_ptrT_ofAbstractParameter_t", "shared_ptr< ofAbstractParameter > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__functionT_void_fF_t = {"_p_std__functionT_void_fF_t", "std::function< void () > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *|string *", 0, 0, (void*)&_wrap_class_string, 0};
 static swig_type_info _swigt__p_vectorT_WaveformProperties_t = {"_p_vectorT_WaveformProperties_t", "vector< WaveformProperties > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_vectorT_float_t = {"_p_vectorT_float_t", "vector< float > *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_WaveformProperties,
+  &_swigt__p_WaveformSequence,
+  &_swigt__p_WaveformTracks,
   &_swigt__p_Waveforms,
   &_swigt__p_ofColor,
+  &_swigt__p_ofJson,
   &_swigt__p_ofPolyline,
+  &_swigt__p_shared_ptrT_ofAbstractParameter_t,
   &_swigt__p_std__functionT_void_fF_t,
   &_swigt__p_std__string,
   &_swigt__p_vectorT_WaveformProperties_t,
+  &_swigt__p_vectorT_float_t,
 };
 
 static swig_cast_info _swigc__p_WaveformProperties[] = {  {&_swigt__p_WaveformProperties, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_WaveformSequence[] = {  {&_swigt__p_WaveformSequence, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_WaveformTracks[] = {  {&_swigt__p_WaveformTracks, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Waveforms[] = {  {&_swigt__p_Waveforms, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ofColor[] = {  {&_swigt__p_ofColor, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_ofJson[] = {  {&_swigt__p_ofJson, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ofPolyline[] = {  {&_swigt__p_ofPolyline, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_shared_ptrT_ofAbstractParameter_t[] = {  {&_swigt__p_shared_ptrT_ofAbstractParameter_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__functionT_void_fF_t[] = {  {&_swigt__p_std__functionT_void_fF_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_vectorT_WaveformProperties_t[] = {  {&_swigt__p_vectorT_WaveformProperties_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_vectorT_float_t[] = {  {&_swigt__p_vectorT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_WaveformProperties,
+  _swigc__p_WaveformSequence,
+  _swigc__p_WaveformTracks,
   _swigc__p_Waveforms,
   _swigc__p_ofColor,
+  _swigc__p_ofJson,
   _swigc__p_ofPolyline,
+  _swigc__p_shared_ptrT_ofAbstractParameter_t,
   _swigc__p_std__functionT_void_fF_t,
   _swigc__p_std__string,
   _swigc__p_vectorT_WaveformProperties_t,
+  _swigc__p_vectorT_float_t,
 };
 
 
