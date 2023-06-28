@@ -11,7 +11,7 @@
 #define TIME_SAMPLE_STOP ;
 #endif
 
-const vector<string> RENDERER_NAMES = {"circmouse", "circwaves", "cube", "sphere",
+const vector<string> RENDERER_NAMES = {"circmouse", "circwaves", "sphere",
                                        "cylinder", "cone", "noise", "lua",
                                        "dotype-g", "dotype-h", "dotype-k", "dotype-l",
                                        "dotype-n0", "dotype-n1", "dotype-n2", "dotype-n3", "dotype-n8"};
@@ -19,7 +19,6 @@ const vector<string> RENDERER_NAMES = {"circmouse", "circwaves", "cube", "sphere
 enum RendererType {
     CIRC_MOUSE_RENDERER,
     CIRC_WAVES_RENDERER,
-    CUBE_RENDERER,
     SPHERE_RENDERER,
     CYLINDER_RENDERER,
     CONE_RENDERER,
@@ -159,33 +158,6 @@ class circWavesRenderer : public baseRenderer {
     private:
     WaveformTracks sequence;
     ofParameter<glm::vec2> waveformTimes;
-};
-
-// draw cube:
-class cubeRenderer : public baseRenderer {
-    public:
-    void setup(string name = "cube") {
-        baseRenderer::setup(name);
-        parameters.add(rotationSpeed.set("rot speed", glm::vec3(0.0, 30.0, 0), glm::vec3(-360.0, -360.0, -360.0), glm::vec3(360.0, 360.0, 360.0)));
-        resolution = 1;
-    }
-
-    void update(ofFbo &fbo) {
-        baseRenderer::preUpdate(fbo);
-
-        ofRotateXDeg(rotationSpeed.get().x * ofGetFrameNum() / 30.0);
-        ofRotateYDeg(rotationSpeed.get().y * ofGetFrameNum() / 30.0);
-        ofRotateZDeg(rotationSpeed.get().z * ofGetFrameNum() / 30.0);
-
-        ofSetBoxResolution(resolution);
-        ofDrawBox(dimensions.get().x * fbo.getWidth(), dimensions.get().y * fbo.getHeight(), dimensions.get().z * fbo.getWidth());
-
-        baseRenderer::postUpdate(fbo);
-    }
-
-    protected:
-    private:
-    ofParameter<glm::vec3> rotationSpeed;
 };
 
 // draw sphere:

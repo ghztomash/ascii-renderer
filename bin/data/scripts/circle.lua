@@ -1,5 +1,5 @@
 require("common.variables")
-name = "rectangle"
+name = "circle"
 
 ----------------------------------------------------
 function setup()
@@ -7,10 +7,11 @@ end
 
 ----------------------------------------------------
 function update()
+    of.setCircleResolution(resolution)
 end
 
 ----------------------------------------------------
 function draw()
-    -- RECTANGLES
-    of.drawRectangle(0, 0, dimensions.x, dimensions.y)
+    -- circle
+    of.drawCircle(0, 0, dimensions.x/2.0)
 end

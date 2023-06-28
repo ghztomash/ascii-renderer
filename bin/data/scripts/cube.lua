@@ -1,5 +1,5 @@
 require("common.variables")
-name = "rectangle"
+name = "cube"
 
 ----------------------------------------------------
 function setup()
@@ -7,10 +7,11 @@ end
 
 ----------------------------------------------------
 function update()
+    of.setBoxResolution(resolution)
 end
 
 ----------------------------------------------------
 function draw()
-    -- RECTANGLES
-    of.drawRectangle(0, 0, dimensions.x, dimensions.y)
+    -- cube
+    of.drawBox(dimensions.x, dimensions.y, dimensions.z)
 end

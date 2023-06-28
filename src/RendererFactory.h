@@ -25,14 +25,6 @@ class RendererFactory {
                     return obj;
                     break;
                 }
-            case CUBE_RENDERER:
-                {
-                    shared_ptr<cubeRenderer> obj;
-                    obj = make_shared<cubeRenderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
             case SPHERE_RENDERER:
                 {
                     shared_ptr<sphereRenderer> obj;
