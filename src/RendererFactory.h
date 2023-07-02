@@ -1,12 +1,31 @@
 #pragma once
+#include "ImplRenderer.h"
 
-#include "baseRenderer.h"
-#include "implRenderer.h"
+enum rendererType {
+    CIRC_MOUSE_RENDERER,
+    CIRC_WAVES_RENDERER,
+    NOISE_RENDERER,
+    LUA_RENDERER,
+    DOTYPE_G_RENDERER,
+    DOTYPE_H_RENDERER,
+    DOTYPE_K_RENDERER,
+    DOTYPE_L_RENDERER,
+    DOTYPE_N0_RENDERER,
+    DOTYPE_N1_RENDERER,
+    DOTYPE_N2_RENDERER,
+    DOTYPE_N3_RENDERER,
+    DOTYPE_N8_RENDERER,
+};
+
+const vector<std::string> RENDERER_NAMES = {"circmouse", "circwaves",
+                                            "noise", "lua",
+                                            "dotype-g", "dotype-h", "dotype-k", "dotype-l",
+                                            "dotype-n0", "dotype-n1", "dotype-n2", "dotype-n3", "dotype-n8"};
 
 class RendererFactory {
     public:
-    static shared_ptr<baseRenderer> newRenderer(RendererType type) {
-        shared_ptr<baseRenderer> obj;
+    static shared_ptr<BaseRenderer> newRenderer(rendererType type) {
+        shared_ptr<BaseRenderer> obj;
 
         switch (type) {
             case CIRC_MOUSE_RENDERER:
@@ -114,7 +133,7 @@ class RendererFactory {
                     break;
                 }
             default:
-                obj = make_shared<baseRenderer>();
+                obj = make_shared<BaseRenderer>();
                 break;
         }
         obj->setup();

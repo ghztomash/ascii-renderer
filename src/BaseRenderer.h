@@ -1,10 +1,10 @@
 #pragma once
 #include "ofMain.h"
 
-class baseRenderer {
+class BaseRenderer {
     public:
-    baseRenderer(){};
-    ~baseRenderer(){};
+    BaseRenderer(){};
+    ~BaseRenderer(){};
 
     void setup(string name = "base") {
         moduleName = name;

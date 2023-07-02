@@ -1,7 +1,7 @@
 #pragma once
 #include "ofMain.h"
 
-class lineLoader {
+class LineLoader {
     public:
     /// Load a JSON file and return a vector of ofPolylines
     static vector<ofPolyline> loadJson(string filename) {
@@ -10,7 +10,7 @@ class lineLoader {
         ofFile file(filename);
 
         if (file.exists()) {
-            ofLogNotice("lineLoader::loadJson") << file.getAbsolutePath() << " loaded";
+            ofLogNotice("LineLoader::loadJson") << file.getAbsolutePath() << " loaded";
             file >> json;
             for (auto &stroke : json) {
                 if (!stroke.empty()) {
@@ -22,7 +22,7 @@ class lineLoader {
                 }
             }
         } else {
-            ofLogNotice("lineLoader::loadJson") << filename << " does not exist";
+            ofLogNotice("LineLoader::loadJson") << filename << " does not exist";
         }
         return lines;
     };
@@ -48,10 +48,10 @@ class lineLoader {
         }
 
         if (ofSaveJson(filename, json)) {
-            ofLogNotice("lineLoader::saveJson") << filename << " saved";
+            ofLogNotice("LineLoader::saveJson") << filename << " saved";
             return true;
         } else {
-            ofLogNotice("lineLoader::saveJson") << filename << " could not be saved";
+            ofLogNotice("LineLoader::saveJson") << filename << " could not be saved";
             return false;
         }
     };

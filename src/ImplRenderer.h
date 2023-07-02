@@ -1,6 +1,6 @@
 #pragma once
-#include "baseRenderer.h"
-#include "lineLoader.h"
+#include "BaseRenderer.h"
+#include "LineLoader.h"
 #include "ofxLua.h"
 #include "ofxWaveforms.h"
 
@@ -11,32 +11,11 @@
 #define TIME_SAMPLE_STOP ;
 #endif
 
-const vector<string> RENDERER_NAMES = {"circmouse", "circwaves", 
-                                       "noise", "lua",
-                                       "dotype-g", "dotype-h", "dotype-k", "dotype-l",
-                                       "dotype-n0", "dotype-n1", "dotype-n2", "dotype-n3", "dotype-n8"};
-
-enum RendererType {
-    CIRC_MOUSE_RENDERER,
-    CIRC_WAVES_RENDERER,
-    NOISE_RENDERER,
-    LUA_RENDERER,
-    DOTYPE_G_RENDERER,
-    DOTYPE_H_RENDERER,
-    DOTYPE_K_RENDERER,
-    DOTYPE_L_RENDERER,
-    DOTYPE_N0_RENDERER,
-    DOTYPE_N1_RENDERER,
-    DOTYPE_N2_RENDERER,
-    DOTYPE_N3_RENDERER,
-    DOTYPE_N8_RENDERER,
-};
-
 // draw circle:
-class circMouseRenderer : public baseRenderer {
+class circMouseRenderer : public BaseRenderer {
     public:
     void setup(float offX = 0, float offY = 0, string name = "circ mouse") {
-        baseRenderer::setup(name);
+        BaseRenderer::setup(name);
         lighting = false;
         offsetX = offX;
         offsetY = offY;
@@ -71,10 +50,10 @@ class circMouseRenderer : public baseRenderer {
 };
 
 // draw wavefor circle:
-class circWavesRenderer : public baseRenderer {
+class circWavesRenderer : public BaseRenderer {
     public:
     void setup(string name = "circ wave") {
-        baseRenderer::setup(name);
+        BaseRenderer::setup(name);
         lighting = false;
         // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
 
@@ -114,12 +93,12 @@ class circWavesRenderer : public baseRenderer {
 };
 
 // draw noise:
-class noiseRenderer : public baseRenderer {
+class noiseRenderer : public BaseRenderer {
     public:
     void setup(float w = 10, float h = 10, string name = "noise") {
         noiseCanvasWidth = w;
         noiseCanvasHeight = h;
-        baseRenderer::setup(name);
+        BaseRenderer::setup(name);
 
         parameters.remove("dimensions");
         parameters.remove("fill");
@@ -207,10 +186,10 @@ class noiseRenderer : public baseRenderer {
 };
 
 // draw days of type G:
-class doTypeGRenderer : public baseRenderer {
+class doTypeGRenderer : public BaseRenderer {
     public:
     void setup(string name = "dot g") {
-        baseRenderer::setup(name);
+        BaseRenderer::setup(name);
         lighting = false;
         // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
 
@@ -228,10 +207,10 @@ class doTypeGRenderer : public baseRenderer {
 
         sequence.update();
 
-        baseRenderer::preUpdate(fbo);
+        BaseRenderer::preUpdate(fbo);
         font2.setSize(dimensions.get().x * fbo.getHeight());
         font2.drawString("hi!!", 0, 0);
-        baseRenderer::postUpdate(fbo);
+        BaseRenderer::postUpdate(fbo);
     }
 
     protected:
@@ -243,10 +222,10 @@ class doTypeGRenderer : public baseRenderer {
 };
 
 // draw days of type H:
-class doTypeHRenderer : public baseRenderer {
+class doTypeHRenderer : public BaseRenderer {
     public:
     void setup(string name = "dot h") {
-        baseRenderer::setup(name);
+        BaseRenderer::setup(name);
         lighting = false;
         // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
 
@@ -278,7 +257,7 @@ class doTypeHRenderer : public baseRenderer {
         sequence.update();
         scale = fbo.getWidth();
 
-        baseRenderer::preUpdate(fbo);
+        BaseRenderer::preUpdate(fbo);
 
         ofTranslate(0, 0, -2.0 * scale);
         // ofRotateZDeg(180);
@@ -304,7 +283,7 @@ class doTypeHRenderer : public baseRenderer {
         ofSetRectMode(OF_RECTMODE_CORNER);
         ofPopMatrix();
 
-        baseRenderer::postUpdate(fbo);
+        BaseRenderer::postUpdate(fbo);
     }
 
     protected:
@@ -315,13 +294,13 @@ class doTypeHRenderer : public baseRenderer {
 };
 
 // draw days of type K:
-class doTypeKRenderer : public baseRenderer {
+class doTypeKRenderer : public BaseRenderer {
     public:
     void setup(string name = "dot k") {
-        baseRenderer::setup(name);
+        BaseRenderer::setup(name);
         lighting = false;
 
-        lines = lineLoader::loadJson("paths/klines.json");
+        lines = LineLoader::loadJson("paths/klines.json");
         // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
         parameters.add(color2.set("colorPoints", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
         parameters.add(drawPoints.set("drawPoints", false, false, true));
@@ -345,7 +324,7 @@ class doTypeKRenderer : public baseRenderer {
         wave.update();
         scale = fbo.getWidth();
 
-        baseRenderer::preUpdate(fbo);
+        BaseRenderer::preUpdate(fbo);
 
         // ofTranslate(0, 0, -2.0*scale);
         ofRotateXDeg(180);
@@ -370,7 +349,7 @@ class doTypeKRenderer : public baseRenderer {
         }
 
         ofPopMatrix();
-        baseRenderer::postUpdate(fbo);
+        BaseRenderer::postUpdate(fbo);
     }
 
     protected:
@@ -386,13 +365,13 @@ class doTypeKRenderer : public baseRenderer {
 
 // NOTE: letter L
 // draw days of type l:
-class doTypeLRenderer : public baseRenderer {
+class doTypeLRenderer : public BaseRenderer {
     public:
     void setup(string name = "dot l") {
-        baseRenderer::setup(name);
+        BaseRenderer::setup(name);
         lighting = false;
 
-        lines = lineLoader::loadJson("paths/llines.json");
+        lines = LineLoader::loadJson("paths/llines.json");
         // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
         parameters.add(color2.set("colorPoints", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
         parameters.add(drawPoints.set("drawPoints", false, false, true));
@@ -419,7 +398,7 @@ class doTypeLRenderer : public baseRenderer {
         wave.update();
         scale = fbo.getWidth();
 
-        baseRenderer::preUpdate(fbo);
+        BaseRenderer::preUpdate(fbo);
 
         // ofTranslate(0, 0, -2.0*scale);
         ofRotateXDeg(180);
@@ -445,7 +424,7 @@ class doTypeLRenderer : public baseRenderer {
         }
 
         ofPopMatrix();
-        baseRenderer::postUpdate(fbo);
+        BaseRenderer::postUpdate(fbo);
     }
 
     protected:
@@ -463,13 +442,13 @@ class doTypeLRenderer : public baseRenderer {
 
 // NOTE: letter N0
 // draw days of type 0:
-class doTypeN0Renderer : public baseRenderer {
+class doTypeN0Renderer : public BaseRenderer {
     public:
     void setup(string name = "dot n0") {
-        baseRenderer::setup(name);
+        BaseRenderer::setup(name);
         lighting = false;
 
-        lines = lineLoader::loadJson("paths/lines_n0.json");
+        lines = LineLoader::loadJson("paths/lines_n0.json");
         // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
         parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
         parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
@@ -505,7 +484,7 @@ class doTypeN0Renderer : public baseRenderer {
         wave.update();
         scale = fbo.getWidth();
 
-        baseRenderer::preUpdate(fbo);
+        BaseRenderer::preUpdate(fbo);
 
         // ofTranslate(0, 0, -2.0*scale);
         ofRotateXDeg(180);
@@ -544,7 +523,7 @@ class doTypeN0Renderer : public baseRenderer {
         }
 
         ofPopMatrix();
-        baseRenderer::postUpdate(fbo);
+        BaseRenderer::postUpdate(fbo);
     }
 
     protected:
@@ -567,13 +546,13 @@ class doTypeN0Renderer : public baseRenderer {
 
 // NOTE: letter N1
 // draw days of type 0:
-class doTypeN1Renderer : public baseRenderer {
+class doTypeN1Renderer : public BaseRenderer {
     public:
     void setup(string name = "dot n1") {
-        baseRenderer::setup(name);
+        BaseRenderer::setup(name);
         lighting = false;
 
-        lines = lineLoader::loadJson("paths/lines_n1.json");
+        lines = LineLoader::loadJson("paths/lines_n1.json");
         // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
         parameters.add(color2.set("color2", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
         parameters.add(color3.set("color3", ofColor(255, 255, 255), ofColor(0, 0), ofColor(255, 255)));
@@ -609,7 +588,7 @@ class doTypeN1Renderer : public baseRenderer {
         wave.update();
         scale = fbo.getWidth();
 
-        baseRenderer::preUpdate(fbo);
+        BaseRenderer::preUpdate(fbo);
 
         // ofTranslate(0, 0, -2.0*scale);
         ofRotateXDeg(180);
@@ -640,7 +619,7 @@ class doTypeN1Renderer : public baseRenderer {
         }
 
         ofPopMatrix();
-        baseRenderer::postUpdate(fbo);
+        BaseRenderer::postUpdate(fbo);
     }
 
     protected:
@@ -663,10 +642,10 @@ class doTypeN1Renderer : public baseRenderer {
 
 // NOTE: letter N2
 // draw days of type 0:
-class doTypeN2Renderer : public baseRenderer {
+class doTypeN2Renderer : public BaseRenderer {
     public:
     void setup(string name = "dot n2") {
-        baseRenderer::setup(name);
+        BaseRenderer::setup(name);
         lighting = false;
 
         // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
@@ -707,7 +686,7 @@ class doTypeN2Renderer : public baseRenderer {
         noise2.update();
         scale = fbo.getWidth();
 
-        baseRenderer::preUpdate(fbo);
+        BaseRenderer::preUpdate(fbo);
 
         // ofTranslate(0, 0, -2.0*scale);
         ofRotateXDeg(180);
@@ -734,7 +713,7 @@ class doTypeN2Renderer : public baseRenderer {
         }
 
         ofPopMatrix();
-        baseRenderer::postUpdate(fbo);
+        BaseRenderer::postUpdate(fbo);
     }
 
     protected:
@@ -754,10 +733,10 @@ class doTypeN2Renderer : public baseRenderer {
 
 // NOTE: letter N3
 // draw days of type 0:
-class doTypeN3Renderer : public baseRenderer {
+class doTypeN3Renderer : public BaseRenderer {
     public:
     void setup(string name = "dot n3") {
-        baseRenderer::setup(name);
+        BaseRenderer::setup(name);
         lighting = false;
 
         // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
@@ -798,7 +777,7 @@ class doTypeN3Renderer : public baseRenderer {
         noise2.update();
         scale = fbo.getWidth() * (dimensions.get().x);
 
-        baseRenderer::preUpdate(fbo);
+        BaseRenderer::preUpdate(fbo);
 
         // ofTranslate(0, 0, -2.0*scale);
         ofRotateXDeg(180);
@@ -829,7 +808,7 @@ class doTypeN3Renderer : public baseRenderer {
         ofDrawCircle(pos, scale * dimensions.get().y / 5.0);
 
         ofPopMatrix();
-        baseRenderer::postUpdate(fbo);
+        BaseRenderer::postUpdate(fbo);
     }
 
     protected:
@@ -849,10 +828,10 @@ class doTypeN3Renderer : public baseRenderer {
 
 // NOTE: letter N8
 // draw days of type 8:
-class doTypeN8Renderer : public baseRenderer {
+class doTypeN8Renderer : public BaseRenderer {
     public:
     void setup(string name = "dot n8") {
-        baseRenderer::setup(name);
+        BaseRenderer::setup(name);
         lighting = false;
 
         // parameters.add(waveformTimes.set("waveform times", glm::vec2(0.0, 0.0), glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0)));
@@ -896,7 +875,7 @@ class doTypeN8Renderer : public baseRenderer {
         scale = fbo.getWidth();
         radius = (1 + lfo.getValue() * 2.0) * dimensions.get().z * scale;
 
-        baseRenderer::preUpdate(fbo);
+        BaseRenderer::preUpdate(fbo);
 
         // ofTranslate(0, 0, -2.0*scale);
         ofRotateXDeg(180);
@@ -922,7 +901,7 @@ class doTypeN8Renderer : public baseRenderer {
         }
 
         ofPopMatrix();
-        baseRenderer::postUpdate(fbo);
+        BaseRenderer::postUpdate(fbo);
     }
 
     protected:
@@ -945,15 +924,15 @@ class doTypeN8Renderer : public baseRenderer {
 
 // declare LUA module bindings for ofxWaveforms
 extern "C" {
-    int luaopen_waveforms(lua_State *L);
+int luaopen_waveforms(lua_State *L);
 }
 
 // NOTE: LUA Renderer
-class luaRenderer : public baseRenderer, ofxLuaListener {
+class luaRenderer : public BaseRenderer, ofxLuaListener {
     public:
     void setup(string name = "lua") {
         ofSetLogLevel("ofxLua", OF_LOG_VERBOSE);
-        baseRenderer::setup(name);
+        BaseRenderer::setup(name);
         lighting = false;
         populateScripts();
 
@@ -1033,12 +1012,12 @@ class luaRenderer : public baseRenderer, ofxLuaListener {
         // update lua
         lua.scriptUpdate();
 
-        baseRenderer::preUpdate(fbo);
+        BaseRenderer::preUpdate(fbo);
         ofSetRectMode(OF_RECTMODE_CENTER);
         // draw lua
         lua.scriptDraw();
         ofSetRectMode(OF_RECTMODE_CORNER);
-        baseRenderer::postUpdate(fbo);
+        BaseRenderer::postUpdate(fbo);
     }
 
     // script control

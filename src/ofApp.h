@@ -2,9 +2,7 @@
 
 #include "ColorTheme.h"
 #include "ImageSaverThread.h"
-#include "RendererFactory.h"
-#include "baseRenderer.h"
-#include "implRenderer.h"
+#include "Renderers.h"
 #include "ofMain.h"
 #include "ofxButton.h"
 #include "ofxFontStash.h"
@@ -151,5 +149,5 @@ class ofApp : public ofBaseApp {
 
     ofxPanel guiRenderer;
     noiseRenderer noise;
-    vector<shared_ptr<baseRenderer>> renderersVec;
+    vector<shared_ptr<BaseRenderer>> renderersVec;
 };

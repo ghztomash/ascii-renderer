@@ -1,6 +1,5 @@
 #include "ofApp.h"
 #include "ColorTheme.h"
-#include "implRenderer.h"
 
 //--------------------------------------------------------------
 void ofApp::setup() {
