@@ -1,5 +1,7 @@
 #pragma once
 #include "ImplRenderer.h"
+#include "LuaRenderer.h"
+#include "DaysOfTypeRenderer.h"
 
 enum rendererType {
     CIRC_MOUSE_RENDERER,

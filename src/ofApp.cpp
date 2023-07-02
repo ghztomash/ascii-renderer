@@ -79,43 +79,25 @@ void ofApp::setup() {
     //p->setup(fboCanvasWidth/8, fboCanvasHeight/8);
     p->setup(20, 20);
     renderersVec.emplace_back(p);
-    guiRenderer.add(renderersVec.back()->parameters);
 
     renderersVec.emplace_back(RendererFactory::newRenderer(CIRC_WAVES_RENDERER));
-    guiRenderer.add(renderersVec.back()->parameters);
-
-    renderersVec.emplace_back(RendererFactory::newRenderer(RECT_RENDERER));
-    guiRenderer.add(renderersVec.back()->parameters);
-
-    renderersVec.emplace_back(RendererFactory::newRenderer(CIRCLE_RENDERER));
-    guiRenderer.add(renderersVec.back()->parameters);
 
     shared_ptr<circMouseRenderer> c(new circMouseRenderer());
     c->setup(fboWidth, 0);
     renderersVec.emplace_back(c);
-    guiRenderer.add(renderersVec.back()->parameters);
 
     renderersVec.emplace_back(RendererFactory::newRenderer(CUBE_RENDERER));
-    guiRenderer.add(renderersVec.back()->parameters);
     //renderersVec.back()->loadTexture("textures/box.jpg");
 
     renderersVec.emplace_back(RendererFactory::newRenderer(SPHERE_RENDERER));
-    guiRenderer.add(renderersVec.back()->parameters);
     renderersVec.back()->setTexture(fboNoiseTexture.getTexture());
 
-    renderersVec.emplace_back(RendererFactory::newRenderer(CYLINDER_RENDERER));
-    guiRenderer.add(renderersVec.back()->parameters);
-
-    renderersVec.emplace_back(RendererFactory::newRenderer(CONE_RENDERER));
-    guiRenderer.add(renderersVec.back()->parameters);
-
     // renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_G_RENDERER));
-    // guiRenderer.add(renderersVec.back()->parameters);
-
     renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_N2_RENDERER));
-    guiRenderer.add(renderersVec.back()->parameters);
-
     */
+
+    renderersVec.emplace_back(RendererFactory::newRenderer(CIRC_WAVES_RENDERER));
+    renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_N2_RENDERER));
 
     // TODO: hot reload lua scripts
     renderersVec.emplace_back(RendererFactory::newRenderer(LUA_RENDERER));
