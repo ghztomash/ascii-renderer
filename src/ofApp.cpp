@@ -477,6 +477,11 @@ void ofApp::calculateGridSize() {
         gridWidth = 2;
     if (gridHeight <= 0)
         gridHeight = 2;
+
+    characterGrid.resize(gridWidth);
+    for (int i = 0; i < gridWidth; i++) {
+        characterGrid[i].resize(gridHeight);
+    }
 }
 
 //--------------------------------------------------------------
@@ -556,9 +561,7 @@ void ofApp::allocateFbo() {
 // draw the ascii characters into the fbo
 void ofApp::convertFboToAscii() {
 
-    // TODO: improve resize performance
     TS_START("resize");
-    // fboCanvas.readToPixels(canvasPixels);
     canvasPixels = canvasLastFrame;
     canvasPixels.resize(gridWidth, gridHeight, OF_INTERPOLATE_NEAREST_NEIGHBOR);
     TS_STOP("resize");
@@ -667,6 +670,9 @@ void ofApp::convertFboToAscii() {
 
             TS_START_ACC("getColor");
             pixelColor = canvasPixels.getColor(x, y);
+            characterGrid[x][y].color = pixelColor;
+            characterGrid[x][y].characterIndex = (pixelColor.getBrightness() / 255.0) *
+                                 (characterSetSize - 1); // convert brightness to character index
             index =
                 (pixelColor.getBrightness() / 255.0) *
                 (characterSetSize - 1); // convert brightness to character index
@@ -688,7 +694,7 @@ void ofApp::convertFboToAscii() {
 
             TS_START_ACC("drawString");
             // TODO: optimize printing characters
-            font.drawString(ofToString(getCharacter(index)), cX, cY,
+            font.drawString(ofToString(getCharacter(characterGrid[x][y].characterIndex)), cX, cY,
                             currentFont);
             TS_STOP_ACC("drawString");
         }

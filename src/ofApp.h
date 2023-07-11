@@ -9,6 +9,8 @@
 #include "ofxGui.h"
 #include "ofxPanel.h"
 #include "ofxToggle.h"
+#include <cstddef>
+#include <vector>
 
 #ifdef MEASURE_PERFORMANCE
 #include "ofxTimeMeasurements.h"
@@ -20,6 +22,25 @@
 #define NUM_BUFFERS 4
 
 class ofApp : public ofBaseApp {
+
+    struct GridEntry {
+        string character;
+        int characterIndex;
+        ofColor color;
+        float lightness;
+        size_t lastUpdate;
+        float stickiness;
+
+        GridEntry() {
+            character = "";
+            characterIndex = 0;
+            color = ofColor::black;
+            lightness = 0.0;
+            lastUpdate = 0;
+            stickiness = 0.0;
+        }
+    };
+
     public:
     void setup();
     void update();
@@ -103,6 +124,9 @@ class ofApp : public ofBaseApp {
     ofImage bufferLastFrame;
     ofFbo fboNoiseTexture;
     ofFbo fboGrid;
+
+    // store the index of the character in the character set derived from the buffer
+    vector<vector<GridEntry>> characterGrid;
 
     ofFbo fboCharacterBuffer;
 
