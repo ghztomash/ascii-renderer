@@ -694,7 +694,7 @@ void ofApp::convertFboToAscii() {
 
             TS_START_ACC("drawString");
             // TODO: optimize printing characters
-            font.drawString(ofToString(getCharacter(characterGrid[x][y].characterIndex)), cX, cY,
+            font.drawString(getCharacter(characterGrid[x][y].characterIndex), cX, cY,
                             currentFont);
             TS_STOP_ACC("drawString");
         }
