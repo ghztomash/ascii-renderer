@@ -39,7 +39,7 @@ class ofApp : public ofBaseApp {
         }
     };
 
-    inline void updateGridEntry(GridEntry &e, ofColor c){
+    inline void updateGridEntry(GridEntry &e, ofColor c) {
         e.color = c;
         e.characterIndex = (c.getBrightness() / 255.0) * (characterSetSize - 1); // convert brightness to character index
         e.character = getCharacter(e.characterIndex);
@@ -77,6 +77,7 @@ class ofApp : public ofBaseApp {
     void saveDescription();
     int secondsToFrames(float seconds);
     void loadCharacterSets(string filename);
+    void generateTestGrid();
 
     void startRecording();
     void allocateFbo();
@@ -130,7 +131,10 @@ class ofApp : public ofBaseApp {
     ofFbo fboGrid;
 
     // store the index of the character in the character set derived from the buffer
+    vector<GridEntry> testGrid;
     vector<GridEntry> characterGrid;
+    vector<GridEntry> overlayGrid;
+    string overlayText = "test";
 
     ofFbo fboCharacterBuffer;
 
@@ -143,6 +147,7 @@ class ofApp : public ofBaseApp {
     ofxFloatSlider offsetH;
     ofxFloatSlider offsetV;
     ofxIntSlider marginSize;
+    ofxToggle overlay;
     ofxToggle zoom;
     ofxToggle debugGrid;
     ofxToggle debugLines;

@@ -478,7 +478,43 @@ void ofApp::calculateGridSize() {
     if (gridHeight <= 0)
         gridHeight = 2;
 
-    characterGrid.resize(gridWidth*gridHeight);
+    characterGrid.resize(gridWidth * gridHeight);
+    testGrid.resize(gridWidth * gridHeight);
+    generateTestGrid();
+    overlayGrid.resize(gridWidth * gridHeight);
+    // TODO: generateOverlayGrid();
+}
+
+void ofApp::generateTestGrid() {
+    size_t size = gridWidth * gridHeight;
+    size_t x = 0;
+    size_t y = 0;
+    for (size_t i = 0; i < size; i++) {
+        x = i % (size_t)gridWidth;
+        y = i / (size_t)gridWidth;
+
+        if (y == 0) {
+            if (x == 0) {
+                testGrid[i].character = u8"╔";
+            } else if (x == gridWidth - 1) {
+                testGrid[i].character = u8"╗";
+            } else {
+                testGrid[i].character = u8"═";
+            }
+        } else if (y == gridHeight - 1) {
+            if (x == 0) {
+                testGrid[i].character = u8"╚";
+            } else if (x == gridWidth - 1) {
+                testGrid[i].character = u8"╝";
+            } else {
+                testGrid[i].character = u8"═";
+            }
+        } else if ((x == 0) || (x == gridWidth - 1)) {
+            testGrid[i].character = u8"║";
+        } else {
+            testGrid[i].character = u8"▒";
+        }
+    }
 }
 
 //--------------------------------------------------------------
@@ -613,28 +649,7 @@ void ofApp::convertFboToAscii() {
 
             ofSetColor(ColorThemes::colorThemes[currentTheme]
                                                [ColorThemes::Color::cyan]);
-            if (y == 0) {
-                if (x == 0) {
-                    font.drawString(u8"╔", cX, cY, currentFont);
-                } else if (x == gridWidth - 1) {
-                    font.drawString(u8"╗", cX, cY, currentFont);
-                } else {
-                    font.drawString(u8"═", cX, cY, currentFont);
-                    // font.drawString(u8"▒", cX, cY, currentFont);
-                }
-            } else if (y == gridHeight - 1) {
-                if (x == 0) {
-                    font.drawString(u8"╚", cX, cY, currentFont);
-                } else if (x == gridWidth - 1) {
-                    font.drawString(u8"╝", cX, cY, currentFont);
-                } else {
-                    font.drawString(u8"═", cX, cY, currentFont);
-                }
-            } else if ((x == 0) || (x == gridWidth - 1)) {
-                font.drawString(u8"║", cX, cY, currentFont);
-            } else {
-                font.drawString(u8"▒", cX, cY, currentFont);
-            }
+            font.drawString(testGrid[i].character, cX, cY, currentFont);
 
             TS_STOP_ACC("debug");
         }
