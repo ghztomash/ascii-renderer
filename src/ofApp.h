@@ -27,19 +27,24 @@ class ofApp : public ofBaseApp {
         string character;
         int characterIndex;
         ofColor color;
-        float lightness;
-        size_t lastUpdate;
+        int lastUpdate;
         float stickiness;
 
         GridEntry() {
             character = "";
             characterIndex = 0;
             color = ofColor::black;
-            lightness = 0.0;
             lastUpdate = 0;
             stickiness = 0.0;
         }
     };
+
+    inline void updateGridEntry(GridEntry &e, ofColor c){
+        e.color = c;
+        e.characterIndex = (c.getBrightness() / 255.0) * (characterSetSize - 1); // convert brightness to character index
+        e.character = getCharacter(e.characterIndex);
+        e.lastUpdate = ofGetFrameNum();
+    }
 
     public:
     void setup();
@@ -82,7 +87,6 @@ class ofApp : public ofBaseApp {
 
     vector<string> characterSets;
     size_t characterSetSize;
-    size_t index;
 
     vector<string> fontNames;
 
@@ -126,7 +130,7 @@ class ofApp : public ofBaseApp {
     ofFbo fboGrid;
 
     // store the index of the character in the character set derived from the buffer
-    vector<vector<GridEntry>> characterGrid;
+    vector<GridEntry> characterGrid;
 
     ofFbo fboCharacterBuffer;
 

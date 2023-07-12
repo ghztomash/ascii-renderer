@@ -478,10 +478,7 @@ void ofApp::calculateGridSize() {
     if (gridHeight <= 0)
         gridHeight = 2;
 
-    characterGrid.resize(gridWidth);
-    for (int i = 0; i < gridWidth; i++) {
-        characterGrid[i].resize(gridHeight);
-    }
+    characterGrid.resize(gridWidth*gridHeight);
 }
 
 //--------------------------------------------------------------
@@ -566,7 +563,6 @@ void ofApp::convertFboToAscii() {
     canvasPixels.resize(gridWidth, gridHeight, OF_INTERPOLATE_NEAREST_NEIGHBOR);
     TS_STOP("resize");
 
-    ofColor pixelColor;
     size_t colorIndex;
 
     fboAscii.begin();
@@ -668,21 +664,14 @@ void ofApp::convertFboToAscii() {
                  y * (charHeight + offsetV);
             TS_STOP_ACC("coords");
 
-            TS_START_ACC("getColor");
-            pixelColor = canvasPixels.getColor(x, y);
-            characterGrid[x][y].color = pixelColor;
-            characterGrid[x][y].characterIndex = (pixelColor.getBrightness() / 255.0) *
-                                 (characterSetSize - 1); // convert brightness to character index
-            index =
-                (pixelColor.getBrightness() / 255.0) *
-                (characterSetSize - 1); // convert brightness to character index
-            TS_STOP_ACC("getColor");
+            TS_START_ACC("updateGridEntry");
+            updateGridEntry(characterGrid[i], canvasPixels.getColor(x, y));
+            TS_STOP_ACC("updateGridEntry");
 
             if (enableColors) {
                 TS_START_ACC("nearestColor");
-                colorIndex = findNearestColor(pixelColor);
+                colorIndex = findNearestColor(characterGrid[i].color);
                 ofSetColor(ColorThemes::colorThemes[currentTheme][colorIndex]);
-                // ofSetColor(pixelColor);
                 TS_STOP_ACC("nearestColor");
             } else {
                 TS_START_ACC("setColor");
@@ -693,9 +682,7 @@ void ofApp::convertFboToAscii() {
             }
 
             TS_START_ACC("drawString");
-            // TODO: optimize printing characters
-            font.drawString(getCharacter(characterGrid[x][y].characterIndex), cX, cY,
-                            currentFont);
+            font.drawString(characterGrid[i].character, cX, cY, currentFont);
             TS_STOP_ACC("drawString");
         }
 
