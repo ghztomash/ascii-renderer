@@ -55,6 +55,19 @@ void ofApp::setup() {
     gui.add(recordSeconds.setup("rec dur", 2, 0, 240));
     gui.add(record.setup("record frames"));
 
+    overlayParameters.setName("overlay");
+    overlayParameters.add(overlay.set("enable", true));
+    overlayParameters.add(overlayBorder.set("border", true));
+    overlayParameters.add(overlayX.set("x", 3, 0, gridWidth));
+    overlayParameters.add(overlayY.set("y", 3, 0, gridHeight));
+    gui.add(overlayParameters);
+    gui.minimizeAll();
+
+    overlay.addListener(this, &ofApp::overlayBoolChanged);
+    overlayBorder.addListener(this, &ofApp::overlayBoolChanged);
+    overlayX.addListener(this, &ofApp::overlayIntChanged);
+    overlayY.addListener(this, &ofApp::overlayIntChanged);
+
     marginSize.addListener(this, &ofApp::marginChanged);
     size.addListener(this, &ofApp::sizeChanged);
     currentFont.addListener(this, &ofApp::sizeChanged);
@@ -462,7 +475,12 @@ void ofApp::calculateGridSize() {
                 << " size: " << font.getFontHeight(fontSize);
     }
 
-    // TODO: potential for divide by zero before font is loaded
+    // fix potential divide by zero
+    if (charWidth < 1)
+        charWidth = 1;
+    if (charHeight < 1)
+        charHeight = 1;
+
     gridWidth =
         (fboWidth / (charWidth + offsetH)) - (marginSize * gridWidthMult);
     gridHeight = (fboHeight / (charHeight + offsetV)) - (marginSize * 2);
@@ -473,18 +491,73 @@ void ofApp::calculateGridSize() {
         (fboHeight - (gridHeight + marginSize * 2) * (charHeight + offsetV)) /
         2.0;
 
-    if (gridWidth <= 0)
+    if (gridWidth <= 2)
         gridWidth = 2;
-    if (gridHeight <= 0)
+    if (gridHeight <= 2)
         gridHeight = 2;
+
+    overlayX.setMax(gridWidth - 1);
+    overlayY.setMax(gridHeight - 1);
 
     characterGrid.resize(gridWidth * gridHeight);
     testGrid.resize(gridWidth * gridHeight);
     generateTestGrid();
     overlayGrid.resize(gridWidth * gridHeight);
-    // TODO: generateOverlayGrid();
+    generateOverlayGrid();
 }
 
+//--------------------------------------------------------------
+void ofApp::generateOverlayGrid() {
+    size_t size = gridWidth * gridHeight;
+    size_t x = 0;
+    size_t y = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        x = i % (size_t)gridWidth;
+        y = i / (size_t)gridWidth;
+
+        // clear the grid
+        overlayGrid[i].character.clear();
+
+        // border
+        if (overlayBorder) {
+            if (y == 0) {
+                if (x == 0) {
+                    overlayGrid[i].character = u8"╔";
+                } else if (x == gridWidth - 1) {
+                    overlayGrid[i].character = u8"╗";
+                } else {
+                    overlayGrid[i].character = u8"═";
+                }
+            } else if (y == gridHeight - 1) {
+                if (x == 0) {
+                    overlayGrid[i].character = u8"╚";
+                } else if (x == gridWidth - 1) {
+                    overlayGrid[i].character = u8"╝";
+                } else {
+                    overlayGrid[i].character = u8"═";
+                }
+            } else if ((x == 0) || (x == gridWidth - 1)) {
+                overlayGrid[i].character = u8"║";
+            }
+        }
+    }
+
+    // fill overlay text
+    x = gridWidth - overlayText.size() - overlayX; // position of overlay text
+    y = gridHeight - overlayY;
+    size_t index = 0;
+    for (size_t j = 0; j < overlayText.size(); j++) {
+        index = x + (y * gridWidth) + j;
+
+        if (index < 0 || index >= size)
+            break;
+
+        overlayGrid[index].character = ofUTF8Substring(overlayText, j, 1);
+    }
+}
+
+//--------------------------------------------------------------
 void ofApp::generateTestGrid() {
     size_t size = gridWidth * gridHeight;
     size_t x = 0;
@@ -664,6 +737,50 @@ void ofApp::convertFboToAscii() {
             ofDrawLine(cX, 0, cX, fboHeight);
             ofDrawLine(0, cY - ascenderH, fboWidth, cY - ascenderH);
         }
+    } else if (overlay) { // draw overlay
+        for (size_t i = 0; i < size; i++) {
+
+            x = i % (size_t)gridWidth;
+            y = i / (size_t)gridWidth;
+
+            TS_START_ACC("character");
+
+            TS_START_ACC("coords");
+            cX = marginOffsetH + charWidth * marginSize * 2 +
+                 x * (charWidth + offsetH);
+            cY = marginOffsetV + ascenderH + charHeight * marginSize +
+                 y * (charHeight + offsetV);
+            TS_STOP_ACC("coords");
+
+            TS_START_ACC("updateGridEntry");
+            updateGridEntry(characterGrid[i], canvasPixels.getColor(x, y));
+            TS_STOP_ACC("updateGridEntry");
+
+            if (enableColors) {
+                TS_START_ACC("nearestColor");
+                colorIndex = findNearestColor(characterGrid[i].color);
+                ofSetColor(ColorThemes::colorThemes[currentTheme][colorIndex]);
+                TS_STOP_ACC("nearestColor");
+            } else {
+                TS_START_ACC("setColor");
+                ofSetColor(
+                    ColorThemes::colorThemes[currentTheme]
+                                            [ColorThemes::Color::foreground]);
+                TS_STOP_ACC("setColor");
+            }
+
+            TS_START_ACC("testOverlay");
+            if (overlayGrid[i].character.empty() == false) {
+                ofSetColor(
+                    ColorThemes::colorThemes[currentTheme]
+                                            [ColorThemes::Color::foreground]);
+                font.drawString(overlayGrid[i].character, cX, cY, currentFont);
+            } else {
+                font.drawString(characterGrid[i].character, cX, cY, currentFont);
+            }
+            TS_STOP_ACC("testOverlay");
+        }
+        TS_STOP_ACC("character");
     } else {
         for (size_t i = 0; i < size; i++) {
 
@@ -707,12 +824,6 @@ void ofApp::convertFboToAscii() {
     TS_STOP("loop");
     TSGL_STOP("loop");
     fboAscii.end();
-}
-
-//--------------------------------------------------------------
-void ofApp::injectText(string text, int x, int y) {
-    // TODO: overlay custom text on top of canvas
-    // or other characters text, frame etc
 }
 
 //--------------------------------------------------------------

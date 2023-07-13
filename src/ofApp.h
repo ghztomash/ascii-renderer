@@ -78,11 +78,11 @@ class ofApp : public ofBaseApp {
     int secondsToFrames(float seconds);
     void loadCharacterSets(string filename);
     void generateTestGrid();
+    void generateOverlayGrid();
 
     void startRecording();
     void allocateFbo();
     void convertFboToAscii();
-    void injectText(string text, int x, int y);
 
     bool drawGui = true;
 
@@ -134,7 +134,6 @@ class ofApp : public ofBaseApp {
     vector<GridEntry> testGrid;
     vector<GridEntry> characterGrid;
     vector<GridEntry> overlayGrid;
-    string overlayText = "test";
 
     ofFbo fboCharacterBuffer;
 
@@ -147,13 +146,22 @@ class ofApp : public ofBaseApp {
     ofxFloatSlider offsetH;
     ofxFloatSlider offsetV;
     ofxIntSlider marginSize;
-    ofxToggle overlay;
     ofxToggle zoom;
     ofxToggle debugGrid;
     ofxToggle debugLines;
     ofxToggle debugBuffer;
     ofxToggle blur;
     ofxIntSlider fadeAmmount;
+
+    ofParameterGroup overlayParameters;
+    string overlayText = "ascii";
+    ofParameter<bool> overlay;
+    ofParameter<bool> overlayBorder;
+    ofParameter<int> overlayX;
+    ofParameter<int> overlayY;
+
+    void overlayIntChanged(int &i) {generateOverlayGrid();}
+    void overlayBoolChanged(bool &b) {generateOverlayGrid();}
 
     string projectName = "test";
     ofxFloatSlider recordSeconds;
