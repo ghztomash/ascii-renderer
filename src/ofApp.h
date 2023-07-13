@@ -25,25 +25,58 @@ class ofApp : public ofBaseApp {
 
     struct GridEntry {
         string character;
-        int characterIndex;
+        float characterIndex;
+        float targetIndex;
         ofColor color;
         int lastUpdate;
-        float stickiness;
+        int updateInterval;
+        float stickinessAscending;
+        float stickinessDescending;
 
         GridEntry() {
             character = "";
             characterIndex = 0;
+            targetIndex = 0;
             color = ofColor::black;
             lastUpdate = 0;
-            stickiness = 0.0;
+            updateInterval = 0;
+            stickinessAscending = 0.0;
+            stickinessDescending = 0.0;
         }
     };
 
     inline void updateGridEntry(GridEntry &e, ofColor c) {
-        e.color = c;
-        e.characterIndex = (c.getBrightness() / 255.0) * (characterSetSize - 1); // convert brightness to character index
-        e.character = getCharacter(e.characterIndex);
-        e.lastUpdate = ofGetFrameNum();
+        if (flipEffectEnabled) {
+            if (e.lastUpdate + e.updateInterval < ofGetFrameNum()) {
+                e.targetIndex = (c.getBrightness() / 255.0) * (characterSetSize - 1); // convert brightness to character index
+                distance = fabs(e.targetIndex - e.characterIndex);
+                // if index is greater than the current index, set it to the current index
+                // ofLogNotice() << "target index: " << e.targetIndex << " current index: " << e.characterIndex << " stickiness: " << e.stickiness;
+                if (e.targetIndex > e.characterIndex) {
+                    // e.characterIndex = e.targetIndex;
+                    e.characterIndex += distance * (1.0 - e.stickinessAscending);
+                    if (e.characterIndex > e.targetIndex) {
+                        e.characterIndex = e.targetIndex;
+                    }
+                    e.color = c;
+                } else if (e.targetIndex < e.characterIndex) {
+                    e.characterIndex -= distance * (1.0 - e.stickinessDescending);
+                    if (e.characterIndex < e.targetIndex) {
+                        e.characterIndex = e.targetIndex;
+                    }
+                } else {
+                    e.characterIndex = e.targetIndex;
+                    e.color = c;
+                }
+                e.character = getCharacter(e.characterIndex);
+                e.lastUpdate = ofGetFrameNum();
+            }
+        } else {
+            e.characterIndex = (c.getBrightness() / 255.0) * (characterSetSize - 1); // convert brightness to character index
+            e.color = c;
+            e.character = getCharacter(e.characterIndex);
+            e.lastUpdate = ofGetFrameNum();
+        }
     }
 
     public:
@@ -79,6 +112,7 @@ class ofApp : public ofBaseApp {
     void loadCharacterSets(string filename);
     void generateTestGrid();
     void generateOverlayGrid();
+    void generateGridFlipEffectHeatmap();
 
     void startRecording();
     void allocateFbo();
@@ -160,8 +194,18 @@ class ofApp : public ofBaseApp {
     ofParameter<int> overlayX;
     ofParameter<int> overlayY;
 
-    void overlayIntChanged(int &i) {generateOverlayGrid();}
-    void overlayBoolChanged(bool &b) {generateOverlayGrid();}
+    ofParameterGroup flipEffectParameters;
+    ofParameter<bool> flipEffectEnabled;
+    ofParameter<int> maxInterval;
+    ofParameter<float> maxStickinessAscending;
+    ofParameter<float> maxStickinessDescending;
+    void flipEffectChanged(float &i) { generateGridFlipEffectHeatmap(); }
+    void flipEffectIntChanged(int &i) { generateGridFlipEffectHeatmap(); }
+
+    void overlayIntChanged(int &i) { generateOverlayGrid(); }
+    void overlayBoolChanged(bool &b) { generateOverlayGrid(); }
+
+    float distance;
 
     string projectName = "test";
     ofxFloatSlider recordSeconds;

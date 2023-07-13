@@ -1,5 +1,6 @@
 #include "ofApp.h"
 #include "ColorTheme.h"
+#include "ofMath.h"
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -61,7 +62,19 @@ void ofApp::setup() {
     overlayParameters.add(overlayX.set("x", 3, 0, gridWidth));
     overlayParameters.add(overlayY.set("y", 3, 0, gridHeight));
     gui.add(overlayParameters);
+
+    flipEffectParameters.setName("flip effect");
+    flipEffectParameters.add(flipEffectEnabled.set("enable", true));
+    flipEffectParameters.add(maxInterval.set("max interval", 2, 0, 10));
+    flipEffectParameters.add(maxStickinessAscending.set("stickiness asc", 0.2, 0, 1.0));
+    flipEffectParameters.add(maxStickinessDescending.set("stickiness des", 0.8, 0, 1.0));
+    gui.add(flipEffectParameters);
+
     gui.minimizeAll();
+
+    maxInterval.addListener(this, &ofApp::flipEffectIntChanged);
+    maxStickinessAscending.addListener(this, &ofApp::flipEffectChanged);
+    maxStickinessDescending.addListener(this, &ofApp::flipEffectChanged);
 
     overlay.addListener(this, &ofApp::overlayBoolChanged);
     overlayBorder.addListener(this, &ofApp::overlayBoolChanged);
@@ -500,12 +513,27 @@ void ofApp::calculateGridSize() {
     overlayY.setMax(gridHeight - 1);
 
     characterGrid.resize(gridWidth * gridHeight);
+    generateGridFlipEffectHeatmap();
     testGrid.resize(gridWidth * gridHeight);
     generateTestGrid();
     overlayGrid.resize(gridWidth * gridHeight);
     generateOverlayGrid();
 }
 
+//--------------------------------------------------------------
+void ofApp::generateGridFlipEffectHeatmap() {
+    size_t size = gridWidth * gridHeight;
+    size_t x = 0;
+    size_t y = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        x = i % (size_t)gridWidth;
+        y = i / (size_t)gridWidth;
+        characterGrid[i].updateInterval = ofMap(ofNoise(x * 0.05, y * 0.05, ofGetElapsedTimef() * 0.1), 0, 1, 0, maxInterval);
+        characterGrid[i].stickinessAscending = ofMap(ofNoise(x * 0.05, y * 0.05, ofGetElapsedTimef() * 0.5), 0, 1, 0, maxStickinessAscending);
+        characterGrid[i].stickinessDescending = ofMap(ofNoise(x * 0.05, y * 0.05, ofGetElapsedTimef() * 0.5), 0, 1, 0, maxStickinessDescending);
+    }
+}
 //--------------------------------------------------------------
 void ofApp::generateOverlayGrid() {
     size_t size = gridWidth * gridHeight;
@@ -586,6 +614,7 @@ void ofApp::generateTestGrid() {
             testGrid[i].character = u8"║";
         } else {
             testGrid[i].character = u8"▒";
+            // testGrid[i].character = ofToString((int)(ofNoise(x*0.05, y*0.05, ofGetElapsedTimef() * 0.1) * 9.0));
         }
     }
 }
