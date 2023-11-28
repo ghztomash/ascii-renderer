@@ -19,7 +19,7 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
 
         parameters.add(currentScriptParam.set("current script", 0, 0, scripts.size() - 1));
         parameters.add(particles.set("particles", 100, 1, 1000));
-        currentScriptParam.addListener(this, &luaRenderer::scriptChanged);
+        currentScriptParam.addListener(this, &luaRenderer::scriptParamChanged);
 
         // test modulation sources
         sequence.addSequence();
@@ -31,10 +31,13 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         // listen to error events
         lua.addListener(this);
 
-        reloadScript();
+        reloadCurrentScript();
     }
 
     void update(ofFbo &fbo) {
+        // reload script if it has changed
+        reloadScriptIfChanged();
+
         // update modulation sources
         sequence.update();
         wave.update();
@@ -102,22 +105,18 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     }
 
     // script control
-    void loadScript(std::string &script) {
-        ofLogNotice("luaRenderer::loadScript") << "Loading script: " << script;
-        // close the lua state
-        lua.scriptExit();
-        // init the lua state
-        lua.init();
-        // load additional bindings
-        luaopen_waveforms(lua);
-        // run script
-        lua.doScript(script, true);
-        // call script setup()
-        lua.scriptSetup();
+
+
+    void loadScript(size_t script) {
+        if ((script >= scripts.size()) || (script < 0)) {
+            ofLogError("luaRenderer::loadScript") << "script index out of bounds";
+            return;
+        }
+        loadScript(scripts[script]);
     }
 
-    void reloadScript() {
-        loadScript(scripts[currentScript]);
+    void reloadCurrentScript() {
+        loadScript(currentScript);
     }
 
     protected:
@@ -140,6 +139,23 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         dir.close();
     }
 
+    void loadScript(std::string &script) {
+        ofLogNotice("luaRenderer::loadScript") << "Loading script: " << script;
+        currentScriptPath = script;
+        lastModified = getLastModified(script);
+
+        // close the lua state
+        lua.scriptExit();
+        // init the lua state
+        lua.init();
+        // load additional bindings
+        luaopen_waveforms(lua);
+        // run script
+        lua.doScript(script, true);
+        // call script setup()
+        lua.scriptSetup();
+    }
+
     // ofxLua error callback
     //--------------------------------------------------------------
     void errorReceived(std::string &msg) {
@@ -147,14 +163,32 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
                                   << msg;
     }
 
-    void scriptChanged(int &script) {
+    void scriptParamChanged(int &script) {
+        if (script == currentScript)
+            return;
         currentScript = script;
-        reloadScript();
+        loadScript(currentScript);
+    }
+
+    /// get last modified time of a script
+    time_t getLastModified(std::string &path) {
+        return std::filesystem::last_write_time(ofToDataPath(path, true));
+    }
+
+    void reloadScriptIfChanged() {
+        if (lastModified == getLastModified(currentScriptPath))
+            return;
+        ofLogNotice("luaRenderer::reloadScriptIfChanged") << "Reloading changed script: " << currentScriptPath;
+
+        reloadCurrentScript();
     }
 
     ofxLua lua;
     vector<std::string> scripts;
     size_t currentScript = 0;
+    string currentScriptPath;
+    time_t lastModified = 0;
+
     ofParameter<int> particles;
     ofParameter<int> currentScriptParam;
 
