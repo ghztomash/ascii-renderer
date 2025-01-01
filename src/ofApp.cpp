@@ -551,22 +551,22 @@ void ofApp::generateOverlayGrid() {
         if (overlayBorder) {
             if (y == 0) {
                 if (x == 0) {
-                    overlayGrid[i].character = u8"╔";
+                    overlayGrid[i].character = "╔";
                 } else if (x == gridWidth - 1) {
-                    overlayGrid[i].character = u8"╗";
+                    overlayGrid[i].character = "╗";
                 } else {
-                    overlayGrid[i].character = u8"═";
+                    overlayGrid[i].character = "═";
                 }
             } else if (y == gridHeight - 1) {
                 if (x == 0) {
-                    overlayGrid[i].character = u8"╚";
+                    overlayGrid[i].character = "╚";
                 } else if (x == gridWidth - 1) {
-                    overlayGrid[i].character = u8"╝";
+                    overlayGrid[i].character = "╝";
                 } else {
-                    overlayGrid[i].character = u8"═";
+                    overlayGrid[i].character = "═";
                 }
             } else if ((x == 0) || (x == gridWidth - 1)) {
-                overlayGrid[i].character = u8"║";
+                overlayGrid[i].character = "║";
             }
         }
     }
@@ -596,24 +596,24 @@ void ofApp::generateTestGrid() {
 
         if (y == 0) {
             if (x == 0) {
-                testGrid[i].character = u8"╔";
+                testGrid[i].character = "╔";
             } else if (x == gridWidth - 1) {
-                testGrid[i].character = u8"╗";
+                testGrid[i].character = "╗";
             } else {
-                testGrid[i].character = u8"═";
+                testGrid[i].character = "═";
             }
         } else if (y == gridHeight - 1) {
             if (x == 0) {
-                testGrid[i].character = u8"╚";
+                testGrid[i].character = "╚";
             } else if (x == gridWidth - 1) {
-                testGrid[i].character = u8"╝";
+                testGrid[i].character = "╝";
             } else {
-                testGrid[i].character = u8"═";
+                testGrid[i].character = "═";
             }
         } else if ((x == 0) || (x == gridWidth - 1)) {
-            testGrid[i].character = u8"║";
+            testGrid[i].character = "║";
         } else {
-            testGrid[i].character = u8"▒";
+            testGrid[i].character = "▒";
             // testGrid[i].character = ofToString((int)(ofNoise(x*0.05, y*0.05, ofGetElapsedTimef() * 0.1) * 9.0));
         }
     }

@@ -106,7 +106,6 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
 
     // script control
 
-
     void loadScript(size_t script) {
         if ((script >= scripts.size()) || (script < 0)) {
             ofLogError("luaRenderer::loadScript") << "script index out of bounds";
@@ -172,7 +171,11 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
 
     /// get last modified time of a script
     time_t getLastModified(std::string &path) {
-        return std::filesystem::last_write_time(ofToDataPath(path, true));
+        auto ftime = std::filesystem::last_write_time(ofToDataPath(path, true));
+        auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+            ftime - std::filesystem::file_time_type::clock::now() +
+            std::chrono::system_clock::now());
+        return std::chrono::system_clock::to_time_t(sctp);
     }
 
     void reloadScriptIfChanged() {
