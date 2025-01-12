@@ -348,6 +348,11 @@ void ofApp::keyReleased(int key) {
         case 'R':
             startRecording();
             break;
+        // save txt frame
+        case 't':
+        case 'T':
+            saveTxtFrame();
+            break;
         // generate video
         case 'v':
         case 'V':
@@ -390,6 +395,7 @@ void ofApp::keyReleased(int key) {
                 "l: draw grid lines\n"
                 "b: draw buffer preview\n"
                 "r: record fbo frames\n"
+                "t: save txt frame\n"
                 "v: generate video\n"
                 "s: sort character set\n"
                 "z: change fit screen\n"
@@ -1109,7 +1115,7 @@ int ofApp::secondsToFrames(float seconds) {
 
 //--------------------------------------------------------------
 void ofApp::saveDescription() {
-    ofFile descriptionFile("data/captures/" + projectName + "/desc.txt", ofFile::WriteOnly, false);
+    ofFile descriptionFile("captures/" + projectName + "/desc.txt", ofFile::WriteOnly, false);
     descriptionFile.create();
     descriptionFile << "project: " + projectName << '\n';
     descriptionFile << "grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) << '\n';
@@ -1146,4 +1152,34 @@ void ofApp::loadCharacterSets(string filename) {
         ofLogError("ofApp::loadCharacterSets") << "empty file: " << filename;
     }
     ofLog() << "loaded " << characterSets.size() << " character sets";
+}
+
+//--------------------------------------------------------------
+void ofApp::saveTxtFrame() {
+    string filePath = "captures/" + projectName + "/grid-" + ofGetTimestampString() + ".txt";
+    ofFile gridFile(filePath, ofFile::WriteOnly, false);
+    gridFile.create();
+    int i = 0;
+
+    for (int h = 0; h < gridHeight; h++) {
+        for (int w = 0; w < gridWidth; w++) {
+            // Write each character
+            if (debugGrid) {
+                gridFile << testGrid[i].character;
+            } else if (overlay) {
+                if (overlayGrid[i].character.empty() == false) {
+                    gridFile << overlayGrid[i].character;
+                } else {
+                    gridFile << characterGrid[i].character;
+                }
+            } else {
+                gridFile << characterGrid[i].character;
+            }
+            i++;
+        }
+        gridFile << "\n"; // Newline after each row
+    }
+    ofLog() << "saved grid frame to " << filePath;
+
+    gridFile.close();
 }

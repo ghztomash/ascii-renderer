@@ -108,6 +108,7 @@ class ofApp : public ofBaseApp {
     void sortCharacterSet(bool reverseOrder = false);
     void makeVideo();
     void saveDescription();
+    void saveTxtFrame();
     int secondsToFrames(float seconds);
     void loadCharacterSets(string filename);
     void generateTestGrid();
