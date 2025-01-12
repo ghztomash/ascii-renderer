@@ -388,6 +388,13 @@ void ofApp::keyReleased(int key) {
                 saverThread.changeProject(projectName);
             }
             break;
+        // change overlayText
+        case 'o':
+        case 'O':
+            if (!recording) {
+                overlayText = ofSystemTextBoxDialog("Overlay text", overlayText);
+            }
+            break;
         case '?':
             ofSystemAlertDialog(
                 "g: draw gui\n"
@@ -401,6 +408,7 @@ void ofApp::keyReleased(int key) {
                 "z: change fit screen\n"
                 "f: toggle fullscreen\n"
                 "p: change projectName\n"
+                "o: change overlayText\n"
                 "?: show this help\n");
             break;
         default:

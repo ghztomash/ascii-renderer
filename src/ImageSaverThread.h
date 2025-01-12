@@ -1,9 +1,3 @@
-/*
- * ImageSaverThread.h
- *
- *  Created on: Oct 14, 2014
- *      Author: arturo
- */
 #pragma once
 #include "ofMain.h"
 

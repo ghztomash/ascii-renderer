@@ -1,10 +1,3 @@
-/*
- * ImageSaverThread.cpp
- *
- *  Created on: Oct 14, 2014
- *      Author: arturo
- */
-
 #include "ImageSaverThread.h"
 
 ImageSaverThread::ImageSaverThread() {}
