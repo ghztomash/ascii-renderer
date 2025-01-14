@@ -34,6 +34,8 @@ void ofApp::setup() {
 
     // load character sets from data/charsets
     loadCharacterSets("charsets.txt");
+    loadStringFromFile("project.txt", projectName);
+    loadStringFromFile("overlay.txt", overlayText);
 
     // setup gui elements
     gui.setup();
@@ -1190,4 +1192,29 @@ void ofApp::saveTxtFrame() {
     ofLog() << "saved grid frame to " << filePath;
 
     gridFile.close();
+}
+
+//--------------------------------------------------------------
+void ofApp::loadStringFromFile(string filename, string &target) {
+    // load string from file
+    ofFile file(filename);
+    if (!file.exists()) {
+        ofLogError("ofApp::loadStringFromFile") << "file not found: " << filename;
+        return;
+    }
+    ofBuffer buffer(file);
+
+    if (buffer.size()) {
+        for (ofBuffer::Line it = buffer.getLines().begin(), end = buffer.getLines().end(); it != end; ++it) {
+            string line = *it;
+            // make sure its not a empty line
+            if (line.empty() == false) {
+                target = ofTrim(line);
+                break;
+            }
+        }
+    } else {
+        ofLogError("ofApp::loadStringFromFile") << "empty file: " << filename;
+    }
+    ofLog() << "loaded " << target << " string";
 }

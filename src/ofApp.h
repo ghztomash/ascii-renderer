@@ -111,6 +111,7 @@ class ofApp : public ofBaseApp {
     void saveTxtFrame();
     int secondsToFrames(float seconds);
     void loadCharacterSets(string filename);
+    void loadStringFromFile(string filename, string &target);
     void generateTestGrid();
     void generateOverlayGrid();
     void generateGridFlipEffectHeatmap();
