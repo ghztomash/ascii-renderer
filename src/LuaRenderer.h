@@ -171,11 +171,25 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
 
     /// get last modified time of a script
     time_t getLastModified(std::string &path) {
-        auto ftime = std::filesystem::last_write_time(ofToDataPath(path, true));
-        auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
-            ftime - std::filesystem::file_time_type::clock::now() +
-            std::chrono::system_clock::now());
-        return std::chrono::system_clock::to_time_t(sctp);
+        try {
+            ofFile file(path);
+            if (!file.exists() || !file.canRead()) {
+                ofLogError("luaRenderer::getLastModified") << "file not accessible: " << path;
+                return 0;
+            }
+
+            auto ftime = std::filesystem::last_write_time(ofToDataPath(path, true));
+            auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+                ftime - std::filesystem::file_time_type::clock::now() +
+                std::chrono::system_clock::now());
+            return std::chrono::system_clock::to_time_t(sctp);
+        } catch (const std::filesystem::filesystem_error &e) {
+            ofLogError("LuaRenderer::getLastModified") << "Filesystem error: " << e.what();
+            return 0;
+        } catch (const std::exception &e) {
+            ofLogError("LuaRenderer::getLastModified") << "Unexpected error: " << e.what();
+            return 0;
+        }
     }
 
     void reloadScriptIfChanged() {
