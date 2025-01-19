@@ -354,6 +354,7 @@ void ofApp::keyReleased(int key) {
         case 't':
         case 'T':
             saveTxtFrame();
+            saveSvgFrame();
             break;
         // generate video
         case 'v':
@@ -1195,6 +1196,73 @@ void ofApp::saveTxtFrame() {
 }
 
 //--------------------------------------------------------------
+void ofApp::saveSvgFrame() {
+    string filePath = "captures/" + projectName + "/grid-" + ofGetTimestampString() + ".svg";
+    string fontFamily = getFontFamily(ofFilePath::getAbsolutePath("fonts") + "/" + fontNames[currentFont]);
+
+    ofXml svg;
+    svg.setAttribute("encoding", "utf8");
+
+    // Set SVG attributes
+    auto tag = svg.appendChild("svg");
+    tag.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    tag.setAttribute("version", "1.1");
+    tag.setAttribute("width", fboWidth);
+    tag.setAttribute("height", fboHeight);
+
+    std::string colorHex = "#000000"; // Default black color
+    auto color = ColorThemes::colorThemes[currentTheme][ColorThemes::Color::background];
+    colorHex = "#" + ofToHex(color.r) + ofToHex(color.g) + ofToHex(color.b);
+    ofXml rect = tag.appendChild("rect");
+    rect.setAttribute("width", fboWidth);
+    rect.setAttribute("height", fboHeight);
+    rect.setAttribute("fill", colorHex);
+
+    // add text elements for each character
+    size_t size = gridWidth * gridHeight;
+    size_t x, y;
+    float cX, cY;
+    for (size_t i = 0; i < size; i++) {
+        x = i % (size_t)gridWidth;
+        y = i / (size_t)gridWidth;
+
+        // Calculate the position of the character
+        cX = marginOffsetH + charWidth * marginSize * 2 + x * (charWidth + offsetH);
+        cY = marginOffsetV + ascenderH + charHeight * marginSize + y * (charHeight + offsetV);
+
+        // Determine color in hex format
+        if (enableColors) {
+            size_t colorIndex = findNearestColor(characterGrid[i].color);
+            auto color = ColorThemes::colorThemes[currentTheme][colorIndex];
+            colorHex = "#" + ofToHex(color.r) + ofToHex(color.g) + ofToHex(color.b);
+        } else {
+            auto color = ColorThemes::colorThemes[currentTheme][ColorThemes::Color::foreground];
+            colorHex = "#" + ofToHex(color.r) + ofToHex(color.g) + ofToHex(color.b);
+        }
+
+        // Create a <text> element for the character
+        ofXml textElement = tag.appendChild("text");
+        textElement.setAttribute("x", (size_t)cX);
+        textElement.setAttribute("y", (size_t)cY);
+        textElement.setAttribute("fill", colorHex);
+        textElement.setAttribute("font-family", fontFamily); // Monospaced font
+        textElement.setAttribute("font-size", charWidth);
+        // textElement.setAttribute("text-anchor", "left");
+        // textElement.setAttribute("alignment-baseline", "left");
+
+        // Set the character as the content of the <text> element
+        textElement.set(characterGrid[i].character);
+    }
+
+    // Save the SVG file
+    if (svg.save(filePath)) {
+        ofLogNotice() << "file created: " << filePath;
+    } else {
+        ofLogError("ofApp::convertToSvgWithOfXml") << "Failed to save SVG file: " << filePath;
+    }
+}
+
+//--------------------------------------------------------------
 void ofApp::loadStringFromFile(string filename, string &target) {
     // load string from file
     ofFile file(filename);
@@ -1217,4 +1285,34 @@ void ofApp::loadStringFromFile(string filename, string &target) {
         ofLogError("ofApp::loadStringFromFile") << "empty file: " << filename;
     }
     ofLog() << "loaded " << target << " string";
+}
+
+//--------------------------------------------------------------
+string ofApp::getFontFamily(string fontFilePath) {
+    // Create the command string
+    string command = "fc-query -f \"%{family}\" \"" + fontFilePath + "\"";
+
+    // Open a pipe to execute the command
+    FILE *pipe = popen(command.c_str(), "r");
+    if (!pipe) {
+        ofLogError("getFontFamily") << "Failed to run command: " << command;
+        return "";
+    }
+
+    // Read the output into a string
+    char buffer[128];
+    string result;
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        result += buffer;
+    }
+
+    // Close the pipe
+    pclose(pipe);
+
+    // Trim any trailing newlines or whitespace
+    result.erase(result.find_last_not_of(" \n\r\t") + 1);
+
+    ofLogNotice("getFontFamily") << result;
+
+    return result;
 }

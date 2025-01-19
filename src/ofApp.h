@@ -109,9 +109,11 @@ class ofApp : public ofBaseApp {
     void makeVideo();
     void saveDescription();
     void saveTxtFrame();
+    void saveSvgFrame();
     int secondsToFrames(float seconds);
     void loadCharacterSets(string filename);
     void loadStringFromFile(string filename, string &target);
+    string getFontFamily(string filename);
     void generateTestGrid();
     void generateOverlayGrid();
     void generateGridFlipEffectHeatmap();
