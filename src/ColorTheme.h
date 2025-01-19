@@ -31,6 +31,7 @@ const vector<string> THEME_NAMES = {
     "ayu_dark",
     "tomorrow_night_bright",
     "noisetomorrow_night",
+    "eye_sore",
 };
 
 // const vector<ColorTheme> color_themes = {
@@ -240,6 +241,22 @@ const vector<vector<ofColor>> colorThemes = {
         ofColor::fromHex(0x81a2be), // bright blue
         ofColor::fromHex(0xb77ee0), // bright magenta
         ofColor::fromHex(0x54ced6), // bright cyan
+    },
+    {   // eye_sore just harsh rgb theme
+        ofColor::fromHex(0x000000), // background
+        ofColor::fromHex(0x7F0000), // red
+        ofColor::fromHex(0x007F00), // green
+        ofColor::fromHex(0x7F7F00), // yellow
+        ofColor::fromHex(0x00007F), // blue
+        ofColor::fromHex(0x7F007F), // magenta
+        ofColor::fromHex(0x007F7F), // cyan
+        ofColor::fromHex(0xFFFFFF), // foreground
+        ofColor::fromHex(0xFF0000), // bright red
+        ofColor::fromHex(0x00FF00), // bright green
+        ofColor::fromHex(0xFFFF00), // bright yellow
+        ofColor::fromHex(0x0000FF), // bright blue
+        ofColor::fromHex(0xFF00FF), // bright magenta
+        ofColor::fromHex(0x00FFFF), // bright cyan
     },
     /*
     {   //
