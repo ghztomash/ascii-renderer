@@ -1,6 +1,7 @@
 #include "ofApp.h"
 #include "ColorTheme.h"
 #include "ofMath.h"
+#include "ofUtils.h"
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -881,7 +882,7 @@ void ofApp::startRecording() {
     tm = localtime(&t);
     strftime(time_string, sizeof(time_string), "%b%d-%H%M%S", tm);
 
-    recordFramesNumber = secondsToFrames(recordSeconds);
+    recordFramesNumber = max(secondsToFrames(recordSeconds), 1);
     recordedFramesCount = 0;
     recording = true;
 }
@@ -1112,7 +1113,7 @@ void ofApp::sortCharacterSet(bool reverseOrder) {
 
 //--------------------------------------------------------------
 void ofApp::makeVideo() {
-    string command = "cd data && ./generate_loop.sh " + projectName + " " +
+    string command = "cd " + ofFilePath::getAbsolutePath("") + " && ./generate_loop.sh " + projectName + " " +
                      ofToString(frameRate) + " && open captures/" +
                      projectName + " && cd ..";
     system(command.c_str());
