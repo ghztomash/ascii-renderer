@@ -1,5 +1,7 @@
 #pragma once
 #include "BaseRenderer.h"
+#include "ofLog.h"
+#include "ofUtils.h"
 #include "ofxLua.h"
 #include "ofxWaveforms.h"
 
@@ -19,7 +21,9 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
 
         parameters.add(currentScriptParam.set("current script", 0, 0, scripts.size() - 1));
         parameters.add(particles.set("particles", 100, 1, 1000));
+        parameters.add(open.set("browse script"));
         currentScriptParam.addListener(this, &luaRenderer::scriptParamChanged);
+        open.addListener(this, &luaRenderer::browseScript);
 
         // test modulation sources
         sequence.addSequence();
@@ -105,7 +109,6 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     }
 
     // script control
-
     void loadScript(size_t script) {
         if ((script >= scripts.size()) || (script < 0)) {
             ofLogError("luaRenderer::loadScript") << "script index out of bounds";
@@ -115,7 +118,11 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     }
 
     void reloadCurrentScript() {
-        loadScript(currentScript);
+        if (currentScriptPath != "") {
+            loadScript(currentScriptPath);
+        } else {
+            loadScript(0);
+        }
     }
 
     protected:
@@ -139,20 +146,32 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     }
 
     void loadScript(std::string &script) {
-        ofLogNotice("luaRenderer::loadScript") << "Loading script: " << script;
-        currentScriptPath = script;
-        lastModified = getLastModified(script);
+        ofFile file(script);
 
-        // close the lua state
-        lua.scriptExit();
-        // init the lua state
-        lua.init();
-        // load additional bindings
-        luaopen_waveforms(lua);
-        // run script
-        lua.doScript(script, true);
-        // call script setup()
-        lua.scriptSetup();
+        if (file.exists()) {
+            string fileExtension = ofToLower(file.getExtension());
+
+            if (fileExtension == "lua") {
+                ofLogNotice("luaRenderer::loadScript") << "Loading script: " << script;
+                currentScriptPath = script;
+                lastModified = getLastModified(script);
+
+                // close the lua state
+                lua.scriptExit();
+                // init the lua state
+                lua.init();
+                // load additional bindings
+                luaopen_waveforms(lua);
+                // run script
+                lua.doScript(script, true);
+                // call script setup()
+                lua.scriptSetup();
+            } else {
+                ofLogError("luaRenderer::loadScript") << "selected script is not lua: " << script;
+            }
+        } else {
+            ofLogError("luaRenderer::loadScript") << "file doesn't exist: " << script;
+        }
     }
 
     // ofxLua error callback
@@ -167,6 +186,24 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
             return;
         currentScript = script;
         loadScript(currentScript);
+    }
+
+    void browseScript() {
+        ofFileDialogResult result = ofSystemLoadDialog("open lua script", false, "scripts");
+        if (result.bSuccess) {
+            string path = result.getPath();
+            string name = result.getName();
+
+            if (ofToLower(name).ends_with(".lua")) {
+                ofLogNotice("luaRenderer::browseScript") << "selected script: " << name;
+                // load file at `path`
+                loadScript(path);
+            } else {
+                ofLogError("luaRenderer::browseScript") << "selected script is not lua: " << name;
+            }
+        } else {
+            ofLogWarning("luaRenderer::browseScript") << "canceled";
+        }
     }
 
     /// get last modified time of a script
@@ -208,6 +245,7 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
 
     ofParameter<int> particles;
     ofParameter<int> currentScriptParam;
+    ofParameter<void> open;
 
     // modulation sources
     vector<lua_Number> modulation;
