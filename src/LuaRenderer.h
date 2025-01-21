@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseRenderer.h"
+#include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofUtils.h"
 #include "ofxLua.h"
@@ -19,10 +20,10 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         lighting = false;
         populateScripts();
 
-        parameters.add(currentScriptParam.set("current script", 0, 0, scripts.size() - 1));
         parameters.add(particles.set("particles", 100, 1, 1000));
         parameters.add(open.set("browse script"));
-        currentScriptParam.addListener(this, &luaRenderer::scriptParamChanged);
+        parameters.add(scriptPathParam.set("script path", "scripts/rect.lua"));
+        scriptPathParam.addListener(this, &luaRenderer::scriptParamChanged);
         open.addListener(this, &luaRenderer::browseScript);
 
         // test modulation sources
@@ -154,6 +155,7 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
             if (fileExtension == "lua") {
                 ofLogNotice("luaRenderer::loadScript") << "Loading script: " << script;
                 currentScriptPath = script;
+                scriptPathParam = script;
                 lastModified = getLastModified(script);
 
                 // close the lua state
@@ -168,9 +170,11 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
                 lua.scriptSetup();
             } else {
                 ofLogError("luaRenderer::loadScript") << "selected script is not lua: " << script;
+                scriptPathParam = currentScriptPath;
             }
         } else {
             ofLogError("luaRenderer::loadScript") << "file doesn't exist: " << script;
+            scriptPathParam = currentScriptPath;
         }
     }
 
@@ -181,17 +185,16 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
                                   << msg;
     }
 
-    void scriptParamChanged(int &script) {
-        if (script == currentScript)
+    void scriptParamChanged(std::string &script) {
+        if (script == currentScriptPath)
             return;
-        currentScript = script;
-        loadScript(currentScript);
+        loadScript(script);
     }
 
     void browseScript() {
         ofFileDialogResult result = ofSystemLoadDialog("open lua script", false, "scripts");
         if (result.bSuccess) {
-            string path = result.getPath();
+            string path = ofFilePath::makeRelative(ofToDataPath("", true), result.getPath());
             string name = result.getName();
 
             if (ofToLower(name).ends_with(".lua")) {
@@ -239,13 +242,12 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
 
     ofxLua lua;
     vector<std::string> scripts;
-    size_t currentScript = 0;
     string currentScriptPath;
     time_t lastModified = 0;
 
     ofParameter<int> particles;
-    ofParameter<int> currentScriptParam;
     ofParameter<void> open;
+    ofParameter<string> scriptPathParam;
 
     // modulation sources
     vector<lua_Number> modulation;
