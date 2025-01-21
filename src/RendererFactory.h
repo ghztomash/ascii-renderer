@@ -1,7 +1,9 @@
 #pragma once
+#include "DaysOfTypeRenderer.h"
 #include "ImplRenderer.h"
 #include "LuaRenderer.h"
-#include "DaysOfTypeRenderer.h"
+#include <optional>
+#include <string>
 
 enum rendererType {
     CIRC_MOUSE_RENDERER,
@@ -26,7 +28,7 @@ const vector<std::string> RENDERER_NAMES = {"circmouse", "circwaves",
 
 class RendererFactory {
     public:
-    static shared_ptr<BaseRenderer> newRenderer(rendererType type) {
+    static shared_ptr<BaseRenderer> newRenderer(rendererType type, std::optional<std::string> customName = std::nullopt) {
         shared_ptr<BaseRenderer> obj;
 
         switch (type) {
@@ -58,7 +60,11 @@ class RendererFactory {
                 {
                     shared_ptr<luaRenderer> obj;
                     obj = make_shared<luaRenderer>();
-                    obj->setup();
+                    if (customName) {
+                        obj->setup(*customName);
+                    } else {
+                        obj->setup();
+                    }
                     return obj;
                     break;
                 }

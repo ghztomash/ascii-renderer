@@ -128,8 +128,9 @@ void ofApp::setup() {
     renderersVec.emplace_back(RendererFactory::newRenderer(CIRC_WAVES_RENDERER));
     renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_N2_RENDERER));
 
-    // TODO: hot reload lua scripts
     renderersVec.emplace_back(RendererFactory::newRenderer(LUA_RENDERER));
+    renderersVec.emplace_back(RendererFactory::newRenderer(LUA_RENDERER, "lua_back"));
+    renderersVec.emplace_back(RendererFactory::newRenderer(LUA_RENDERER, "lua_front"));
 
     // add all of the gui parameters to the gui renderer
     for (auto &r : renderersVec) {
