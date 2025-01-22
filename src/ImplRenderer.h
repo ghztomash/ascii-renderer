@@ -5,7 +5,7 @@
 // draw circle:
 class circMouseRenderer : public BaseRenderer {
     public:
-    void setup(float offX = 0, float offY = 0, string name = "circ mouse") {
+    void setup(string name = "circ mouse", float offX = 0, float offY = 0) {
         BaseRenderer::setup(name);
         lighting = false;
         offsetX = offX;
@@ -86,7 +86,7 @@ class circWavesRenderer : public BaseRenderer {
 // draw noise:
 class noiseRenderer : public BaseRenderer {
     public:
-    void setup(float w = 10, float h = 10, string name = "noise") {
+    void setup(string name = "noise", float w = 10, float h = 10) {
         noiseCanvasWidth = w;
         noiseCanvasHeight = h;
         BaseRenderer::setup(name);

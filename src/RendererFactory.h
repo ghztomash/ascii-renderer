@@ -26,6 +26,20 @@ const vector<std::string> RENDERER_NAMES = {"circmouse", "circwaves",
                                             "dotype-g", "dotype-h", "dotype-k", "dotype-l",
                                             "dotype-n0", "dotype-n1", "dotype-n2", "dotype-n3", "dotype-n8"};
 
+/// Generic function that creates a renderer
+template <typename T>
+std::shared_ptr<BaseRenderer> createRenderer(std::optional<std::string> customName = std::nullopt) {
+    auto obj = std::make_shared<T>();
+
+    if (customName) {
+        obj->setup(*customName);
+    } else {
+        obj->setup();
+    }
+
+    return obj;
+}
+
 class RendererFactory {
     public:
     static shared_ptr<BaseRenderer> newRenderer(rendererType type, std::optional<std::string> customName = std::nullopt) {
@@ -33,118 +47,33 @@ class RendererFactory {
 
         switch (type) {
             case CIRC_MOUSE_RENDERER:
-                {
-                    shared_ptr<circMouseRenderer> obj;
-                    obj = make_shared<circMouseRenderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
+                return createRenderer<circMouseRenderer>(customName);
             case CIRC_WAVES_RENDERER:
-                {
-                    shared_ptr<circWavesRenderer> obj;
-                    obj = make_shared<circWavesRenderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
+                return createRenderer<circWavesRenderer>(customName);
             case NOISE_RENDERER:
-                {
-                    shared_ptr<noiseRenderer> obj;
-                    obj = make_shared<noiseRenderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
+                return createRenderer<noiseRenderer>(customName);
             case LUA_RENDERER:
-                {
-                    shared_ptr<luaRenderer> obj;
-                    obj = make_shared<luaRenderer>();
-                    if (customName) {
-                        obj->setup(*customName);
-                    } else {
-                        obj->setup();
-                    }
-                    return obj;
-                    break;
-                }
+                return createRenderer<luaRenderer>(customName);
             case DOTYPE_G_RENDERER:
-                {
-                    shared_ptr<doTypeGRenderer> obj =
-                        make_shared<doTypeGRenderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
+                return createRenderer<doTypeGRenderer>(customName);
             case DOTYPE_H_RENDERER:
-                {
-                    shared_ptr<doTypeHRenderer> obj =
-                        make_shared<doTypeHRenderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
+                return createRenderer<doTypeHRenderer>(customName);
             case DOTYPE_K_RENDERER:
-                {
-                    shared_ptr<doTypeKRenderer> obj =
-                        make_shared<doTypeKRenderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
+                return createRenderer<doTypeKRenderer>(customName);
             case DOTYPE_L_RENDERER:
-                {
-                    shared_ptr<doTypeLRenderer> obj =
-                        make_shared<doTypeLRenderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
+                return createRenderer<doTypeLRenderer>(customName);
             case DOTYPE_N0_RENDERER:
-                {
-                    shared_ptr<doTypeN0Renderer> obj =
-                        make_shared<doTypeN0Renderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
+                return createRenderer<doTypeN0Renderer>(customName);
             case DOTYPE_N1_RENDERER:
-                {
-                    shared_ptr<doTypeN1Renderer> obj =
-                        make_shared<doTypeN1Renderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
+                return createRenderer<doTypeN1Renderer>(customName);
             case DOTYPE_N2_RENDERER:
-                {
-                    shared_ptr<doTypeN2Renderer> obj =
-                        make_shared<doTypeN2Renderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
+                return createRenderer<doTypeN2Renderer>(customName);
             case DOTYPE_N3_RENDERER:
-                {
-                    shared_ptr<doTypeN3Renderer> obj =
-                        make_shared<doTypeN3Renderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
+                return createRenderer<doTypeN3Renderer>(customName);
             case DOTYPE_N8_RENDERER:
-                {
-                    shared_ptr<doTypeN8Renderer> obj =
-                        make_shared<doTypeN8Renderer>();
-                    obj->setup();
-                    return obj;
-                    break;
-                }
+                return createRenderer<doTypeN8Renderer>(customName);
             default:
-                obj = make_shared<BaseRenderer>();
-                break;
+                return createRenderer<BaseRenderer>(customName);
         }
-        obj->setup();
-        return obj;
     };
 };
