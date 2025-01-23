@@ -1,7 +1,9 @@
 #include "ofApp.h"
 #include "ColorTheme.h"
+#include "ofLog.h"
 #include "ofMath.h"
 #include "ofUtils.h"
+#include <omp.h>
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -736,6 +738,8 @@ void ofApp::convertFboToAscii() {
     size_t x = 0;
     size_t y = 0;
 
+    auto frameNum = ofGetFrameNum();
+
     if (debugGrid) { // draw debug test pattern
         for (size_t i = 0; i < size; i++) {
 
@@ -787,6 +791,7 @@ void ofApp::convertFboToAscii() {
             ofDrawLine(0, cY - ascenderH, fboWidth, cY - ascenderH);
         }
     } else if (overlay) { // draw overlay
+#pragma omp parallel for
         for (size_t i = 0; i < size; i++) {
 
             x = i % (size_t)gridWidth;
@@ -802,7 +807,7 @@ void ofApp::convertFboToAscii() {
             TS_STOP_ACC("coords");
 
             TS_START_ACC("updateGridEntry");
-            updateGridEntry(characterGrid[i], canvasPixels.getColor(x, y));
+            updateGridEntry(characterGrid[i], canvasPixels.getColor(x, y), frameNum);
             TS_STOP_ACC("updateGridEntry");
 
             if (enableColors) {
@@ -818,7 +823,7 @@ void ofApp::convertFboToAscii() {
                 TS_STOP_ACC("setColor");
             }
 
-            TS_START_ACC("testOverlay");
+            TS_START_ACC("drawStringOverlay");
             if (overlayGrid[i].character.empty() == false) {
                 ofSetColor(
                     ColorThemes::colorThemes[currentTheme]
@@ -827,7 +832,7 @@ void ofApp::convertFboToAscii() {
             } else {
                 font.drawString(characterGrid[i].character, cX, cY, currentFont);
             }
-            TS_STOP_ACC("testOverlay");
+            TS_STOP_ACC("drawStringOverlay");
         }
         TS_STOP_ACC("character");
     } else {
@@ -846,7 +851,7 @@ void ofApp::convertFboToAscii() {
             TS_STOP_ACC("coords");
 
             TS_START_ACC("updateGridEntry");
-            updateGridEntry(characterGrid[i], canvasPixels.getColor(x, y));
+            updateGridEntry(characterGrid[i], canvasPixels.getColor(x, y), frameNum);
             TS_STOP_ACC("updateGridEntry");
 
             if (enableColors) {
@@ -866,7 +871,6 @@ void ofApp::convertFboToAscii() {
             font.drawString(characterGrid[i].character, cX, cY, currentFont);
             TS_STOP_ACC("drawString");
         }
-
         TS_STOP_ACC("character");
     }
 
@@ -1051,7 +1055,7 @@ ColorThemes::colorThemes[currentTheme][i].b);
 // }
 
 //--------------------------------------------------------------
-size_t ofApp::findNearestColor(ofColor col) {
+inline size_t ofApp::findNearestColor(ofColor col) {
     // Quick early-outs
     if (col.getBrightness() <= 8 || col.getSaturation() <= 32) {
         return ColorThemes::Color::foreground;

@@ -12,6 +12,8 @@
 #include "ofxPanel.h"
 #include "ofxToggle.h"
 #include <cstddef>
+#include <cstdint>
+#include <omp.h>
 #include <vector>
 
 #ifdef MEASURE_PERFORMANCE
@@ -23,12 +25,13 @@
 
 #define NUM_BUFFERS 4
 
+static const float kInvMaxBrightness = 1.0f / 255.0f;
+
 class ofApp : public ofBaseApp {
 
     struct GridEntry {
         string character;
         float characterIndex;
-        float targetIndex;
         ofColor color;
         int lastUpdate;
         int updateInterval;
@@ -38,7 +41,6 @@ class ofApp : public ofBaseApp {
         GridEntry() {
             character = "";
             characterIndex = 0;
-            targetIndex = 0;
             color = ofColor::black;
             lastUpdate = 0;
             updateInterval = 0;
@@ -47,37 +49,40 @@ class ofApp : public ofBaseApp {
         }
     };
 
-    inline void updateGridEntry(GridEntry &e, ofColor c) {
+    // 30ms
+    inline void updateGridEntry(GridEntry &e, ofColor c, uint64_t frameNum) {
+        float brightness = c.getBrightness();
+        float factor = (characterSetSize - 1) * kInvMaxBrightness;
+        float targetIndex = brightness * factor;
+
         if (flipEffectEnabled) {
-            if (e.lastUpdate + e.updateInterval < ofGetFrameNum()) {
-                e.targetIndex = (c.getBrightness() / 255.0) * (characterSetSize - 1); // convert brightness to character index
-                distance = fabs(e.targetIndex - e.characterIndex);
+            if (e.lastUpdate + e.updateInterval < frameNum) {
+                float distance = abs(targetIndex - e.characterIndex);
                 // if index is greater than the current index, set it to the current index
                 // ofLogNotice() << "target index: " << e.targetIndex << " current index: " << e.characterIndex << " stickiness: " << e.stickiness;
-                if (e.targetIndex > e.characterIndex) {
-                    // e.characterIndex = e.targetIndex;
-                    e.characterIndex += distance * (1.0 - e.stickinessAscending);
-                    if (e.characterIndex > e.targetIndex) {
-                        e.characterIndex = e.targetIndex;
+                if (targetIndex > e.characterIndex) {
+                    e.characterIndex += distance * (1.0f - e.stickinessAscending);
+                    if (e.characterIndex > targetIndex) {
+                        e.characterIndex = targetIndex;
                     }
                     e.color = c;
-                } else if (e.targetIndex < e.characterIndex) {
-                    e.characterIndex -= distance * (1.0 - e.stickinessDescending);
-                    if (e.characterIndex < e.targetIndex) {
-                        e.characterIndex = e.targetIndex;
+                } else if (targetIndex < e.characterIndex) {
+                    e.characterIndex -= distance * (1.0f - e.stickinessDescending);
+                    if (e.characterIndex < targetIndex) {
+                        e.characterIndex = targetIndex;
                     }
                 } else {
-                    e.characterIndex = e.targetIndex;
+                    e.characterIndex = targetIndex;
                     e.color = c;
                 }
                 e.character = getCharacter(e.characterIndex);
-                e.lastUpdate = ofGetFrameNum();
+                e.lastUpdate = frameNum;
             }
         } else {
-            e.characterIndex = (c.getBrightness() / 255.0) * (characterSetSize - 1); // convert brightness to character index
+            e.characterIndex = targetIndex;
             e.color = c;
             e.character = getCharacter(e.characterIndex);
-            e.lastUpdate = ofGetFrameNum();
+            e.lastUpdate = frameNum;
         }
     }
 
@@ -107,7 +112,7 @@ class ofApp : public ofBaseApp {
     void calculateGridSize();
     void drawTheme(int x, int y, int size);
     string getCharacter(size_t i);
-    size_t findNearestColor(ofColor col);
+    inline size_t findNearestColor(ofColor col);
     void sortCharacterSet(bool reverseOrder = false);
     void makeVideo();
     void saveDescription();
@@ -211,8 +216,6 @@ class ofApp : public ofBaseApp {
 
     void overlayIntChanged(int &i) { generateOverlayGrid(); }
     void overlayBoolChanged(bool &b) { generateOverlayGrid(); }
-
-    float distance;
 
     string projectName = "test";
     ofxFloatSlider recordSeconds;
