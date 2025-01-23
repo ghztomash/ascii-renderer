@@ -75,13 +75,13 @@ class ofApp : public ofBaseApp {
                     e.characterIndex = targetIndex;
                     e.color = c;
                 }
-                e.character = getCharacter(e.characterIndex);
+                e.character = getCharacterFromCache(e.characterIndex);
                 e.lastUpdate = frameNum;
             }
         } else {
             e.characterIndex = targetIndex;
             e.color = c;
-            e.character = getCharacter(e.characterIndex);
+            e.character = getCharacterFromCache(e.characterIndex);
             e.lastUpdate = frameNum;
         }
     }
@@ -112,6 +112,7 @@ class ofApp : public ofBaseApp {
     void calculateGridSize();
     void drawTheme(int x, int y, int size);
     string getCharacter(size_t i);
+    const string &getCharacterFromCache(size_t i);
     void buildCharacterSetCache();
     inline size_t findNearestColor(ofColor col);
     void sortCharacterSet(bool reverseOrder = false);

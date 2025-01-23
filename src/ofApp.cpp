@@ -473,17 +473,16 @@ void ofApp::characterSetChanged(int &d) {
 }
 
 void ofApp::buildCharacterSetCache() {
-    ofLogNotice() << "building CharacterSetCache for " << characterSetSize;
+    ofLogNotice() << "building CharacterSetCache for " << characterSets[currentCharacterSet];
 
     // characterSetCache.reserve(characterSetSize);
     characterSetCache.clear();
+    characterSetCache.reserve(characterSetSize);
 
     for (int i = 0; i < characterSetSize; i++) {
         string ch = ofUTF8Substring(characterSets[currentCharacterSet], i, 1);
         characterSetCache.push_back(ch);
     }
-
-    ofLogNotice() << "actually built " << characterSetCache.size();
 }
 
 //--------------------------------------------------------------
@@ -696,6 +695,17 @@ string ofApp::getCharacter(size_t i) {
         return "";
     }
     return ofUTF8Substring(characterSets[currentCharacterSet], i, 1);
+}
+
+//--------------------------------------------------------------
+inline const string &ofApp::getCharacterFromCache(size_t i) {
+    // Check range
+    if (i >= characterSetCache.size()) {
+        static const std::string emptyStr("");
+        return emptyStr;
+    }
+    // Return reference to avoid copying
+    return characterSetCache[i];
 }
 
 //--------------------------------------------------------------
