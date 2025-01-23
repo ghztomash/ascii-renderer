@@ -1,5 +1,6 @@
 #include "ofApp.h"
 #include "ColorTheme.h"
+#include "ofGraphics.h"
 #include "ofLog.h"
 #include "ofMath.h"
 #include "ofUtils.h"
@@ -261,6 +262,12 @@ void ofApp::update() {
 //--------------------------------------------------------------
 void ofApp::draw() {
     // ofDisableAntiAliasing(); //to get precise lines
+    //
+    if (fullScreen) {
+        ofBackground(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::background]);
+        ofPushMatrix();
+        ofTranslate(ofGetWidth() / 2 - fboCanvasWidth, 0);
+    }
 
     TSGL_START("asciiFboBuffer");
     TS_START("asciiFboBuffer");
@@ -274,6 +281,10 @@ void ofApp::draw() {
     }
     TS_STOP("asciiFboBuffer");
     TSGL_STOP("asciiFboBuffer");
+
+    if (fullScreen) {
+        ofPopMatrix();
+    }
 
     TS_START("debugBuffer");
     // draw debug buffer
