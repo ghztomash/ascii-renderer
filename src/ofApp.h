@@ -1,8 +1,10 @@
 #pragma once
 
+#include "ColorCache.h"
 #include "ColorTheme.h"
 #include "ImageSaverThread.h"
 #include "Renderers.h"
+#include "ofColor.h"
 #include "ofMain.h"
 #include "ofxButton.h"
 #include "ofxFontStash.h"
@@ -101,6 +103,7 @@ class ofApp : public ofBaseApp {
     void offsetChanged(float &d);
     void marginChanged(int &d);
     void characterSetChanged(int &d);
+    void colorThemeChanged(int &d) { colorCache.clear(); };
     void calculateGridSize();
     void drawTheme(int x, int y, int size);
     string getCharacter(size_t i);
@@ -239,4 +242,6 @@ class ofApp : public ofBaseApp {
     ofxPanel guiRenderer;
     noiseRenderer noise;
     vector<shared_ptr<BaseRenderer>> renderersVec;
+
+    ColorCache colorCache;
 };

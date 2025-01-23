@@ -78,6 +78,7 @@ void ofApp::setup() {
     maxInterval.addListener(this, &ofApp::flipEffectIntChanged);
     maxStickinessAscending.addListener(this, &ofApp::flipEffectChanged);
     maxStickinessDescending.addListener(this, &ofApp::flipEffectChanged);
+    currentTheme.addListener(this, &ofApp::colorThemeChanged);
 
     overlay.addListener(this, &ofApp::overlayBoolChanged);
     overlayBorder.addListener(this, &ofApp::overlayBoolChanged);
@@ -943,110 +944,185 @@ ColorThemes::colorThemes[currentTheme][i].b);
 */
 
 //--------------------------------------------------------------
+// size_t ofApp::findNearestColor(ofColor col) {
+//
+//     if (col.getBrightness() <= 8) {
+//         return ColorThemes::Color::foreground;
+//     }
+//
+//     if (col.getSaturation() <= 32) {
+//         return ColorThemes::Color::foreground;
+//     }
+//
+//     // col.r = ((int)(col.r/64.0))*64;
+//     // col.g = (col.g >> 3) << 3;
+//     // col.b = (col.b >> 3) << 3;
+//     // col = ofColor :: fromHsb(((int)col.getHue()>>4)<<4,
+//     // (((int)col.getSaturation()>>1)<<1), 255.0, 255.0);
+//     // col.setBrightness(255.0);
+//     ofVec3f sourceColor = ofVec3f(col.r, col.g, col.b);
+//     // ofVec4f sourceColor = ofVec4f(col.r, col.g, col.b, col.a);
+//     // ofVec3f sourceColor = ofVec3f(col.getHue(), col.getSaturation(),
+//     // col.getBrightness()); ofVec2f sourceColor = ofVec2f(col.getBrightness(),
+//     // col.getSaturation()); sourceColor.rotate(col.getHueAngle());
+//     // sourceColor.normalize();
+//     ofVec3f referenceColor;
+//     ofColor ref;
+//
+//     float dist;
+//     float satDist;
+//     float hueDist;
+//     float totalDist = 0;
+//
+//     struct colorEntry {
+//         size_t index;
+//         float dist;
+//         float satDist;
+//         float hueDist;
+//         float totalDist;
+//
+//         colorEntry(size_t i, float d, float s, float h, float t) {
+//             index = i;
+//             dist = d;
+//             satDist = s;
+//             hueDist = h;
+//             totalDist = t;
+//         }
+//
+//         //*
+//         bool operator<(const colorEntry &a) const {
+//             if (abs(hueDist - a.hueDist) <= 28.0) {
+//                 if (abs(satDist - a.satDist) <= 104.0)
+//                     return totalDist < a.totalDist;
+//                 else
+//                     return satDist < a.satDist;
+//             }
+//             return hueDist < a.hueDist;
+//         }
+//         //*/
+//
+//         /*
+//         bool operator<(const colorEntry& a) const {
+//             if (abs(hueDist - a.hueDist) <= hueDistWeight ) {
+//                 return satDist < a.satDist;
+//             }
+//             return hueDist < a.hueDist;
+//         }
+//         */
+//
+//         /*
+//         bool operator<(const colorEntry& a) const {
+//                 return totalDist < a.totalDist;
+//         }
+//         */
+//     };
+//
+//     vector<colorEntry> colorEntries;
+//
+//     for (size_t i = 1; i < ColorThemes::colorThemes[currentTheme].size(); i++) {
+//
+//         referenceColor = ofVec3f(ColorThemes::colorThemes[currentTheme][i].r,
+//                                  ColorThemes::colorThemes[currentTheme][i].g,
+//                                  ColorThemes::colorThemes[currentTheme][i].b);
+//
+//         ref = ColorThemes::colorThemes[currentTheme][i];
+//
+//         hueDist = col.getHueAngle() - ref.getHueAngle();
+//         if (hueDist < -180) {
+//             hueDist += 360;
+//         } else if (hueDist > 180) {
+//             hueDist -= 360;
+//         }
+//
+//         hueDist = abs(hueDist);
+//
+//         dist = referenceColor.distance(sourceColor);
+//         satDist = abs(col.getSaturation() - ref.getSaturation());
+//
+//         totalDist = hueDist + satDist + dist;
+//
+//         colorEntries.push_back(
+//             colorEntry(i, dist, satDist, hueDist, totalDist));
+//     }
+//
+//     sort(colorEntries.begin(), colorEntries.end());
+//
+//     return colorEntries.front().index;
+// }
+
+//--------------------------------------------------------------
 size_t ofApp::findNearestColor(ofColor col) {
-
-    if (col.getBrightness() <= 8) {
+    // Quick early-outs
+    if (col.getBrightness() <= 8 || col.getSaturation() <= 32) {
         return ColorThemes::Color::foreground;
     }
 
-    if (col.getSaturation() <= 32) {
-        return ColorThemes::Color::foreground;
+    // Check the cache
+    if (auto search = colorCache.get(col)) {
+        // ofLog() << "found cached color result";
+        return *search;
     }
 
-    // col.r = ((int)(col.r/64.0))*64;
-    // col.g = (col.g >> 3) << 3;
-    // col.b = (col.b >> 3) << 3;
-    // col = ofColor :: fromHsb(((int)col.getHue()>>4)<<4,
-    // (((int)col.getSaturation()>>1)<<1), 255.0, 255.0);
-    // col.setBrightness(255.0);
-    ofVec3f sourceColor = ofVec3f(col.r, col.g, col.b);
-    // ofVec4f sourceColor = ofVec4f(col.r, col.g, col.b, col.a);
-    // ofVec3f sourceColor = ofVec3f(col.getHue(), col.getSaturation(),
-    // col.getBrightness()); ofVec2f sourceColor = ofVec2f(col.getBrightness(),
-    // col.getSaturation()); sourceColor.rotate(col.getHueAngle());
-    // sourceColor.normalize();
-    ofVec3f referenceColor;
-    ofColor ref;
+    // Convert to a 3D vector
+    ofVec3f sourceColor(col.r, col.g, col.b);
 
-    float dist;
-    float satDist;
-    float hueDist;
-    float totalDist = 0;
+    // Track the best match
+    size_t bestIndex = ColorThemes::Color::foreground;
+    float bestHueDist = std::numeric_limits<float>::max();
+    float bestSatDist = std::numeric_limits<float>::max();
+    float bestTotalDist = std::numeric_limits<float>::max();
 
-    struct colorEntry {
-        size_t index;
-        float dist;
-        float satDist;
-        float hueDist;
-        float totalDist;
+    // Start at i=1 because you skip 'foreground' index?
+    auto const &themeColors = ColorThemes::colorThemes[currentTheme];
+    for (size_t i = 1; i < themeColors.size(); i++) {
+        const ofColor &ref = themeColors[i];
 
-        colorEntry(size_t i, float d, float s, float h, float t) {
-            index = i;
-            dist = d;
-            satDist = s;
-            hueDist = h;
-            totalDist = t;
-        }
-
-        //*
-        bool operator<(const colorEntry &a) const {
-            if (abs(hueDist - a.hueDist) <= 28.0) {
-                if (abs(satDist - a.satDist) <= 104.0)
-                    return totalDist < a.totalDist;
-                else
-                    return satDist < a.satDist;
-            }
-            return hueDist < a.hueDist;
-        }
-        //*/
-
-        /*
-        bool operator<(const colorEntry& a) const {
-            if (abs(hueDist - a.hueDist) <= hueDistWeight ) {
-                return satDist < a.satDist;
-            }
-            return hueDist < a.hueDist;
-        }
-        */
-
-        /*
-        bool operator<(const colorEntry& a) const {
-                return totalDist < a.totalDist;
-        }
-        */
-    };
-
-    vector<colorEntry> colorEntries;
-
-    for (size_t i = 1; i < ColorThemes::colorThemes[currentTheme].size(); i++) {
-
-        referenceColor = ofVec3f(ColorThemes::colorThemes[currentTheme][i].r,
-                                 ColorThemes::colorThemes[currentTheme][i].g,
-                                 ColorThemes::colorThemes[currentTheme][i].b);
-
-        ref = ColorThemes::colorThemes[currentTheme][i];
-
-        hueDist = col.getHueAngle() - ref.getHueAngle();
-        if (hueDist < -180) {
+        // 1) Hue distance
+        float hueDist = col.getHueAngle() - ref.getHueAngle();
+        if (hueDist < -180)
             hueDist += 360;
-        } else if (hueDist > 180) {
+        else if (hueDist > 180)
             hueDist -= 360;
+        hueDist = std::abs(hueDist);
+
+        // 2) Euclidean distance in RGB
+        ofVec3f referenceColor(ref.r, ref.g, ref.b);
+        float dist = referenceColor.distance(sourceColor);
+
+        // 3) Saturation difference
+        float satDist = std::abs(col.getSaturation() - ref.getSaturation());
+
+        // 4) Weighted or combined metric
+        float totalDist = hueDist + satDist + dist;
+
+        // Compare with the "operator<" logic
+        // (We replicate the same logic used in your operator<)
+        bool isBetter = false;
+
+        // If the difference in hueDist is small, check satDist
+        if (std::abs(hueDist - bestHueDist) <= 28.0f) {
+            if (std::abs(satDist - bestSatDist) <= 104.0f)
+                isBetter = (totalDist < bestTotalDist);
+            else
+                isBetter = (satDist < bestSatDist);
+        } else {
+            isBetter = (hueDist < bestHueDist);
         }
 
-        hueDist = abs(hueDist);
-
-        dist = referenceColor.distance(sourceColor);
-        satDist = abs(col.getSaturation() - ref.getSaturation());
-
-        totalDist = hueDist + satDist + dist;
-
-        colorEntries.push_back(
-            colorEntry(i, dist, satDist, hueDist, totalDist));
+        // If "better," update best
+        if (isBetter) {
+            bestIndex = i;
+            bestHueDist = hueDist;
+            bestSatDist = satDist;
+            bestTotalDist = totalDist;
+        }
     }
 
-    sort(colorEntries.begin(), colorEntries.end());
+    colorCache.update(col, bestIndex);
+    // ofLog() << "added value " << col << " to colorCache";
+    // colorCache.print();
 
-    return colorEntries.front().index;
+    return bestIndex;
 }
 
 //--------------------------------------------------------------
