@@ -112,6 +112,7 @@ class ofApp : public ofBaseApp {
     void calculateGridSize();
     void drawTheme(int x, int y, int size);
     string getCharacter(size_t i);
+    void buildCharacterSetCache();
     inline size_t findNearestColor(ofColor col);
     void sortCharacterSet(bool reverseOrder = false);
     void makeVideo();
@@ -134,6 +135,7 @@ class ofApp : public ofBaseApp {
 
     vector<string> characterSets;
     size_t characterSetSize;
+    vector<string> characterSetCache;
 
     vector<string> fontNames;
 

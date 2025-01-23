@@ -102,6 +102,7 @@ void ofApp::setup() {
     // useful to take out single UTF8 characters out of a string
 
     sortCharacterSet(false);
+    buildCharacterSetCache();
 
     guiRenderer.setup("draw parameters", "draw_params.xml",
                       fboWidth + fboCanvasWidth + 10, 10);
@@ -371,6 +372,7 @@ void ofApp::keyReleased(int key) {
         case 's':
         case 'S':
             sortCharacterSet();
+            buildCharacterSetCache();
             break;
         // change zoom
         case 'z':
@@ -467,6 +469,21 @@ void ofApp::offsetChanged(float &d) { recalculateGridSize = true; }
 //--------------------------------------------------------------
 void ofApp::characterSetChanged(int &d) {
     characterSetSize = ofUTF8Length(characterSets[currentCharacterSet]);
+    buildCharacterSetCache();
+}
+
+void ofApp::buildCharacterSetCache() {
+    ofLogNotice() << "building CharacterSetCache for " << characterSetSize;
+
+    // characterSetCache.reserve(characterSetSize);
+    characterSetCache.clear();
+
+    for (int i = 0; i < characterSetSize; i++) {
+        string ch = ofUTF8Substring(characterSets[currentCharacterSet], i, 1);
+        characterSetCache.push_back(ch);
+    }
+
+    ofLogNotice() << "actually built " << characterSetCache.size();
 }
 
 //--------------------------------------------------------------
