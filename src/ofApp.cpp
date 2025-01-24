@@ -4,6 +4,7 @@
 #include "ofLog.h"
 #include "ofMath.h"
 #include "ofUtils.h"
+#include "ofxTimeMeasurementsMacros.h"
 #include <omp.h>
 
 //--------------------------------------------------------------
@@ -264,7 +265,6 @@ void ofApp::draw() {
     // ofDisableAntiAliasing(); //to get precise lines
     //
     if (fullScreen) {
-        ofBackground(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::background]);
         ofPushMatrix();
         ofTranslate(ofGetWidth() / 2 - fboCanvasWidth, 0);
     }
@@ -394,10 +394,11 @@ void ofApp::keyReleased(int key) {
         case 'F':
             fullScreen = !fullScreen;
             if (fullScreen) {
-                // TODO: resize the fboBuffers to fill the screen
+                ofBackground(ColorThemes::colorThemes[currentTheme][ColorThemes::Color::background]);
                 ofHideCursor();
             } else {
                 ofShowCursor();
+                ofBackground(crustColor);
             }
             ofToggleFullscreen();
             break;
@@ -490,7 +491,7 @@ void ofApp::buildCharacterSetCache() {
     characterSetCache.clear();
     characterSetCache.reserve(characterSetSize);
 
-    for (int i = 0; i < characterSetSize; i++) {
+    for (size_t i = 0; i < characterSetSize; i++) {
         string ch = ofUTF8Substring(characterSets[currentCharacterSet], i, 1);
         characterSetCache.push_back(ch);
     }
@@ -728,7 +729,7 @@ void ofApp::allocateFbo() {
             << "x" << fboHeight;
 
     // loop through ring buffer and allocate each ofBufferObject
-    for (int i = 0; i < NUM_BUFFERS; i++) {
+    for (size_t i = 0; i < NUM_BUFFERS; i++) {
         ringBuffer[i].allocate(fboWidth * fboHeight * 3, GL_DYNAMIC_READ);
     }
 
@@ -763,33 +764,32 @@ void ofApp::convertFboToAscii() {
 
     size_t colorIndex;
 
-    fboAscii.begin();
+    size_t size = gridWidth * gridHeight;
+    size_t x = 0;
+    size_t y = 0;
 
-    // ofBackground(backgroundColor); // clear last buffer
+    float startX = marginOffsetH + charWidth * marginSize * 2;
+    float startY = marginOffsetV + ascenderH + charHeight * marginSize;
+
+    float cX = startX;
+    float cY = startY;
+
+    auto frameNum = ofGetFrameNum();
+    std::string finalChar;
+    ofColor drawColor;
+
+    fboAscii.begin();
     ofBackground(
         ColorThemes::colorThemes[currentTheme][ColorThemes::Color::background]);
 
     TSGL_START("loop");
     TS_START("loop");
-
-    size_t size = gridWidth * gridHeight;
-    size_t x = 0;
-    size_t y = 0;
-
-    auto frameNum = ofGetFrameNum();
-
-    if (debugGrid) { // draw debug test pattern
-        for (size_t i = 0; i < size; i++) {
-
-            x = i % (size_t)gridWidth;
-            y = i / (size_t)gridWidth;
-
-            cX = marginOffsetH + charWidth * marginSize * 2 +
-                 x * (charWidth + offsetH);
-            cY = marginOffsetV + ascenderH + charHeight * marginSize +
-                 y * (charHeight + offsetV);
-
+    for (size_t i = 0; i < size; i++) {
+        if (debugGrid) { // draw debug test pattern
             TS_START_ACC("debug");
+            finalChar = testGrid[i].character;
+            drawColor = ColorThemes::colorThemes[currentTheme]
+                                                [ColorThemes::Color::cyan];
 
             if ((mouseX / scalar >= cX) &&
                 (mouseX / scalar <= cX + charWidth) &&
@@ -810,110 +810,91 @@ void ofApp::convertFboToAscii() {
                 ofDrawLine(cX, 0, cX, fboHeight);
                 ofDrawLine(0, cY - ascenderH, fboWidth, cY - ascenderH);
             }
-
-            ofSetColor(ColorThemes::colorThemes[currentTheme]
-                                               [ColorThemes::Color::cyan]);
-            font.drawString(testGrid[i].character, cX, cY, currentFont);
-
             TS_STOP_ACC("debug");
-        }
-        // draw last gridline
-        if (debugLines) {
-            cX = marginOffsetH + charWidth * marginSize * 2 +
-                 gridWidth * (charWidth + offsetH);
-            cY = marginOffsetV + ascenderH + charHeight * marginSize +
-                 gridHeight * (charHeight + offsetV);
-            ofSetColor(ColorThemes::colorThemes[currentTheme]
-                                               [ColorThemes::Color::magenta]);
-            ofDrawLine(cX, 0, cX, fboHeight);
-            ofDrawLine(0, cY - ascenderH, fboWidth, cY - ascenderH);
-        }
-    } else if (overlay) { // draw overlay
-#pragma omp parallel for
-        for (size_t i = 0; i < size; i++) {
-
-            x = i % (size_t)gridWidth;
-            y = i / (size_t)gridWidth;
-
-            TS_START_ACC("character");
-
-            TS_START_ACC("coords");
-            cX = marginOffsetH + charWidth * marginSize * 2 +
-                 x * (charWidth + offsetH);
-            cY = marginOffsetV + ascenderH + charHeight * marginSize +
-                 y * (charHeight + offsetV);
-            TS_STOP_ACC("coords");
+        } else if (overlay) {
+            // Overlay mode
 
             TS_START_ACC("updateGridEntry");
             updateGridEntry(characterGrid[i], canvasPixels.getColor(x, y), frameNum);
             TS_STOP_ACC("updateGridEntry");
 
+            TS_START_ACC("overlay");
+            // Final char might come from overlayGrid if not empty
+            finalChar = (!overlayGrid[i].character.empty())
+                            ? overlayGrid[i].character
+                            : characterGrid[i].character;
+
+            // Color logic
             if (enableColors) {
-                TS_START_ACC("nearestColor");
-                colorIndex = findNearestColor(characterGrid[i].color);
-                ofSetColor(ColorThemes::colorThemes[currentTheme][colorIndex]);
-                TS_STOP_ACC("nearestColor");
+                if (!overlayGrid[i].character.empty()) {
+                    // overlay always gets foreground color
+                    drawColor = ColorThemes::colorThemes[currentTheme]
+                                                        [ColorThemes::Color::foreground];
+                } else {
+                    // normal char in overlay mode: find nearest color
+                    colorIndex = findNearestColor(characterGrid[i].color);
+                    drawColor = ColorThemes::colorThemes[currentTheme][colorIndex];
+                }
             } else {
-                TS_START_ACC("setColor");
-                ofSetColor(
-                    ColorThemes::colorThemes[currentTheme]
-                                            [ColorThemes::Color::foreground]);
-                TS_STOP_ACC("setColor");
+                // no color mode: just use foreground
+                drawColor = ColorThemes::colorThemes[currentTheme]
+                                                    [ColorThemes::Color::foreground];
             }
-
-            TS_START_ACC("drawStringOverlay");
-            if (overlayGrid[i].character.empty() == false) {
-                ofSetColor(
-                    ColorThemes::colorThemes[currentTheme]
-                                            [ColorThemes::Color::foreground]);
-                font.drawString(overlayGrid[i].character, cX, cY, currentFont);
-            } else {
-                font.drawString(characterGrid[i].character, cX, cY, currentFont);
-            }
-            TS_STOP_ACC("drawStringOverlay");
-        }
-        TS_STOP_ACC("character");
-    } else {
-        for (size_t i = 0; i < size; i++) {
-
-            x = i % (size_t)gridWidth;
-            y = i / (size_t)gridWidth;
-
-            TS_START_ACC("character");
-
-            TS_START_ACC("coords");
-            cX = marginOffsetH + charWidth * marginSize * 2 +
-                 x * (charWidth + offsetH);
-            cY = marginOffsetV + ascenderH + charHeight * marginSize +
-                 y * (charHeight + offsetV);
-            TS_STOP_ACC("coords");
+            TS_STOP_ACC("overlay");
+        } else {
 
             TS_START_ACC("updateGridEntry");
             updateGridEntry(characterGrid[i], canvasPixels.getColor(x, y), frameNum);
             TS_STOP_ACC("updateGridEntry");
 
-            if (enableColors) {
-                TS_START_ACC("nearestColor");
-                colorIndex = findNearestColor(characterGrid[i].color);
-                ofSetColor(ColorThemes::colorThemes[currentTheme][colorIndex]);
-                TS_STOP_ACC("nearestColor");
-            } else {
-                TS_START_ACC("setColor");
-                ofSetColor(
-                    ColorThemes::colorThemes[currentTheme]
-                                            [ColorThemes::Color::foreground]);
-                TS_STOP_ACC("setColor");
-            }
+            TS_START_ACC("character");
+            finalChar = characterGrid[i].character;
 
-            TS_START_ACC("drawString");
-            font.drawString(characterGrid[i].character, cX, cY, currentFont);
-            TS_STOP_ACC("drawString");
+            if (enableColors) {
+                size_t colorIndex = findNearestColor(characterGrid[i].color);
+                drawColor = ColorThemes::colorThemes[currentTheme][colorIndex];
+            } else {
+                drawColor = ColorThemes::colorThemes[currentTheme]
+                                                    [ColorThemes::Color::foreground];
+            }
+            TS_STOP_ACC("character");
         }
-        TS_STOP_ACC("character");
+
+        TS_START_ACC("setColor");
+        ofSetColor(drawColor);
+        TS_STOP_ACC("setColor");
+
+        TS_START_ACC("drawString");
+        font.drawString(finalChar, cX, cY, currentFont);
+        TS_STOP_ACC("drawString");
+
+        TS_START_ACC("coords");
+        x++;
+        cX += (charWidth + offsetH);
+
+        if (x == gridWidth) {
+            x = 0;
+            cX = startX;
+            y++;
+            cY += (charHeight + offsetV);
+        }
+        TS_STOP_ACC("coords");
     }
-
     TS_STOP("loop");
     TSGL_STOP("loop");
+
+    // draw last grid line
+    if (debugGrid && debugLines) {
+        float finalX = marginOffsetH + charWidth * marginSize * 2 +
+                       gridWidth * (charWidth + offsetH);
+        float finalY = marginOffsetV + ascenderH + charHeight * marginSize +
+                       gridHeight * (charHeight + offsetV);
+        ofSetColor(ColorThemes::colorThemes[currentTheme]
+                                           [ColorThemes::Color::magenta]);
+        ofDrawLine(finalX, 0, finalX, fboHeight);
+        ofDrawLine(0, finalY - ascenderH, fboWidth, finalY - ascenderH);
+    }
+
     fboAscii.end();
 }
 
@@ -1292,8 +1273,8 @@ void ofApp::saveTxtFrame() {
     gridFile.create();
     int i = 0;
 
-    for (int h = 0; h < gridHeight; h++) {
-        for (int w = 0; w < gridWidth; w++) {
+    for (size_t h = 0; h < gridHeight; h++) {
+        for (size_t w = 0; w < gridWidth; w++) {
             // Write each character
             if (debugGrid) {
                 gridFile << testGrid[i].character;
