@@ -1235,7 +1235,7 @@ void ofApp::saveDescription() {
     descriptionFile << "colors: " + ColorThemes::THEME_NAMES[currentTheme] << '\n';
     descriptionFile << "font: " + fontNames[currentFont] << '\n';
     descriptionFile << "char set: " + characterSets[currentCharacterSet] << '\n';
-    descriptionFile << "tags: #ascii #asciiart #petscii #petsciiart #creativecoding" << '\n';
+    descriptionFile << "tags: #ascii #asciiart #petscii #creativecoding #codeart #generative" << '\n';
     descriptionFile.close();
 }
 
