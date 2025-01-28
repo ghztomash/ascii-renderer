@@ -1,5 +1,6 @@
 #include "ofApp.h"
 #include "ColorTheme.h"
+#include "RendererFactory.h"
 #include "ofGraphics.h"
 #include "ofLog.h"
 #include "ofMath.h"
@@ -131,6 +132,7 @@ void ofApp::setup() {
     renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_N2_RENDERER));
     */
 
+    renderersVec.emplace_back(RendererFactory::newRenderer(PARTICLES_RENDERER));
     renderersVec.emplace_back(RendererFactory::newRenderer(CIRC_WAVES_RENDERER));
     renderersVec.emplace_back(RendererFactory::newRenderer(DOTYPE_N2_RENDERER));
 

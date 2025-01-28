@@ -2,6 +2,7 @@
 #include "DaysOfTypeRenderer.h"
 #include "ImplRenderer.h"
 #include "LuaRenderer.h"
+#include "ParticlesRenderer.h"
 #include <optional>
 #include <string>
 
@@ -19,12 +20,13 @@ enum rendererType {
     DOTYPE_N2_RENDERER,
     DOTYPE_N3_RENDERER,
     DOTYPE_N8_RENDERER,
+    PARTICLES_RENDERER,
 };
 
 const vector<std::string> RENDERER_NAMES = {"circmouse", "circwaves",
                                             "noise", "lua",
                                             "dotype-g", "dotype-h", "dotype-k", "dotype-l",
-                                            "dotype-n0", "dotype-n1", "dotype-n2", "dotype-n3", "dotype-n8"};
+                                            "dotype-n0", "dotype-n1", "dotype-n2", "dotype-n3", "dotype-n8", "particles"};
 
 /// Generic function that creates a renderer
 template <typename T>
@@ -72,6 +74,8 @@ class RendererFactory {
                 return createRenderer<doTypeN3Renderer>(customName);
             case DOTYPE_N8_RENDERER:
                 return createRenderer<doTypeN8Renderer>(customName);
+            case PARTICLES_RENDERER:
+                return createRenderer<particlesRenderer>(customName);
             default:
                 return createRenderer<BaseRenderer>(customName);
         }
