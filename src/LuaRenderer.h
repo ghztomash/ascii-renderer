@@ -6,9 +6,10 @@
 #include "ofxLua.h"
 #include "ofxWaveforms.h"
 
-// declare LUA module bindings for ofxWaveforms
+// declare LUA module bindings for ofxWaveforms and ofxEosParticles
 extern "C" {
 int luaopen_waveforms(lua_State *L);
+int luaopen_particles(lua_State *L);
 }
 
 // NOTE: LUA Renderer
@@ -20,7 +21,7 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         lighting = false;
         populateScripts();
 
-        parameters.add(particles.set("particles", 100, 1, 1000));
+        parameters.add(particle_count.set("particle count", 100, 1, 1000));
         parameters.add(open.set("browse script"));
         parameters.add(scriptPathParam.set("script path", "scripts/rect.lua"));
         scriptPathParam.addListener(this, &luaRenderer::scriptParamChanged);
@@ -95,8 +96,8 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
 
         if (lua.isNumber("resolution"))
             lua.setNumber("resolution", resolution);
-        if (lua.isNumber("particles"))
-            lua.setNumber("particles", particles);
+        if (lua.isNumber("particle_count"))
+            lua.setNumber("particle_count", particle_count);
 
         // update lua
         lua.scriptUpdate();
@@ -164,6 +165,7 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
                 lua.init();
                 // load additional bindings
                 luaopen_waveforms(lua);
+                luaopen_particles(lua);
                 // run script
                 lua.doScript(script, true);
                 // call script setup()
@@ -245,7 +247,7 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     string currentScriptPath;
     time_t lastModified = 0;
 
-    ofParameter<int> particles;
+    ofParameter<int> particle_count;
     ofParameter<void> open;
     ofParameter<string> scriptPathParam;
 
