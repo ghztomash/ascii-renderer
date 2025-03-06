@@ -2744,10 +2744,9 @@ SWIG_Lua_dostring(lua_State *L, const char *str) {
 #define SWIGTYPE_p_eosParticle swig_types[0]
 #define SWIGTYPE_p_eosParticleSystem swig_types[1]
 #define SWIGTYPE_p_ofVec2f swig_types[2]
-#define SWIGTYPE_p_shared_ptrT_eosParticle_t swig_types[3]
-#define SWIGTYPE_p_std__string swig_types[4]
-static swig_type_info *swig_types[6];
-static swig_module_info swig_module = {swig_types, 5, 0, 0, 0, 0};
+#define SWIGTYPE_p_std__string swig_types[3]
+static swig_type_info *swig_types[5];
+static swig_module_info swig_module = {swig_types, 4, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -2957,62 +2956,52 @@ static swig_lua_class *swig_string_bases[] = {0};
 static const char *swig_string_base_names[] = {0};
 static swig_lua_class _wrap_class_string = { "string", "string", &SWIGTYPE_p_std__string,_proxy__wrap_new_string, swig_delete_string, swig_string_methods, swig_string_attributes, &swig_string_Sf_SwigStatic, swig_string_meta, swig_string_bases, swig_string_base_names };
 
-static int _wrap_G_get(lua_State* L) { { int SWIG_arg = 0; double result; SWIG_check_num_args("G",0,0)
-    result = (double)(double)G; lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg; fail: SWIGUNUSED; } 
-  lua_error(L); return 0; }
-static int _wrap_new_eosParticle__SWIG_0(lua_State* L) { { int SWIG_arg = 0; ofVec2f arg1 ; float arg2 ; float arg3 ;
-    float arg4 ; size_t arg5 ; ofVec2f *argp1 ; eosParticle *result = 0 ; SWIG_check_num_args("eosParticle::eosParticle",5,5)
-    if(!lua_isuserdata(L,1)) SWIG_fail_arg("eosParticle::eosParticle",1,"ofVec2f");
+static int _wrap_G_get(lua_State* L) { { int SWIG_arg = 0; float result; SWIG_check_num_args("G",0,0) result = (float)(float)G;
+    lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
+static int _wrap_new_eosParticle__SWIG_0(lua_State* L) { { int SWIG_arg = 0; eosParticle *result = 0 ;
+    SWIG_check_num_args("eosParticle::eosParticle",0,0) result = (eosParticle *)new eosParticle();
+    SWIG_NewPointerObj(L,result,SWIGTYPE_p_eosParticle,1); SWIG_arg++;  return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L);
+  return 0; }
+static int _wrap_new_eosParticle__SWIG_1(lua_State* L) { { int SWIG_arg = 0; ofVec2f *arg1 = 0 ; float arg2 ; float arg3 ;
+    float arg4 ; eosParticle *result = 0 ; SWIG_check_num_args("eosParticle::eosParticle",4,4)
+    if(!lua_isuserdata(L,1)) SWIG_fail_arg("eosParticle::eosParticle",1,"ofVec2f const &");
     if(!lua_isnumber(L,2)) SWIG_fail_arg("eosParticle::eosParticle",2,"float");
     if(!lua_isnumber(L,3)) SWIG_fail_arg("eosParticle::eosParticle",3,"float");
     if(!lua_isnumber(L,4)) SWIG_fail_arg("eosParticle::eosParticle",4,"float");
-    if(!lua_isnumber(L,5)) SWIG_fail_arg("eosParticle::eosParticle",5,"size_t");
-    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&argp1,SWIGTYPE_p_ofVec2f,0))){
-      SWIG_fail_ptr("new_eosParticle",1,SWIGTYPE_p_ofVec2f); }  arg1 = *argp1; arg2 = (float)lua_tonumber(L, 2);
+    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ofVec2f,0))){
+      SWIG_fail_ptr("new_eosParticle",1,SWIGTYPE_p_ofVec2f); }  arg2 = (float)lua_tonumber(L, 2);
     arg3 = (float)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4);
-    SWIG_contract_assert((lua_tonumber(L,5)>=0),"number must not be negative"); arg5 = (size_t)lua_tonumber(L, 5);
-    result = (eosParticle *)new eosParticle(arg1,arg2,arg3,arg4,arg5);
+    result = (eosParticle *)new eosParticle((ofVec2f const &)*arg1,arg2,arg3,arg4);
     SWIG_NewPointerObj(L,result,SWIGTYPE_p_eosParticle,1); SWIG_arg++;  return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L);
   return 0; }
-static int _wrap_new_eosParticle__SWIG_1(lua_State* L) { { int SWIG_arg = 0; ofVec2f arg1 ; float arg2 ; float arg3 ;
-    float arg4 ; ofVec2f *argp1 ; eosParticle *result = 0 ; SWIG_check_num_args("eosParticle::eosParticle",4,4)
-    if(!lua_isuserdata(L,1)) SWIG_fail_arg("eosParticle::eosParticle",1,"ofVec2f");
+static int _wrap_new_eosParticle__SWIG_2(lua_State* L) { { int SWIG_arg = 0; ofVec2f *arg1 = 0 ; float arg2 ; float arg3 ;
+    eosParticle *result = 0 ; SWIG_check_num_args("eosParticle::eosParticle",3,3)
+    if(!lua_isuserdata(L,1)) SWIG_fail_arg("eosParticle::eosParticle",1,"ofVec2f const &");
     if(!lua_isnumber(L,2)) SWIG_fail_arg("eosParticle::eosParticle",2,"float");
     if(!lua_isnumber(L,3)) SWIG_fail_arg("eosParticle::eosParticle",3,"float");
-    if(!lua_isnumber(L,4)) SWIG_fail_arg("eosParticle::eosParticle",4,"float");
-    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&argp1,SWIGTYPE_p_ofVec2f,0))){
-      SWIG_fail_ptr("new_eosParticle",1,SWIGTYPE_p_ofVec2f); }  arg1 = *argp1; arg2 = (float)lua_tonumber(L, 2);
-    arg3 = (float)lua_tonumber(L, 3); arg4 = (float)lua_tonumber(L, 4);
-    result = (eosParticle *)new eosParticle(arg1,arg2,arg3,arg4);
+    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ofVec2f,0))){
+      SWIG_fail_ptr("new_eosParticle",1,SWIGTYPE_p_ofVec2f); }  arg2 = (float)lua_tonumber(L, 2);
+    arg3 = (float)lua_tonumber(L, 3); result = (eosParticle *)new eosParticle((ofVec2f const &)*arg1,arg2,arg3);
     SWIG_NewPointerObj(L,result,SWIGTYPE_p_eosParticle,1); SWIG_arg++;  return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L);
   return 0; }
-static int _wrap_new_eosParticle__SWIG_2(lua_State* L) { { int SWIG_arg = 0; ofVec2f arg1 ; float arg2 ; float arg3 ;
-    ofVec2f *argp1 ; eosParticle *result = 0 ; SWIG_check_num_args("eosParticle::eosParticle",3,3)
-    if(!lua_isuserdata(L,1)) SWIG_fail_arg("eosParticle::eosParticle",1,"ofVec2f");
-    if(!lua_isnumber(L,2)) SWIG_fail_arg("eosParticle::eosParticle",2,"float");
-    if(!lua_isnumber(L,3)) SWIG_fail_arg("eosParticle::eosParticle",3,"float");
-    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&argp1,SWIGTYPE_p_ofVec2f,0))){
-      SWIG_fail_ptr("new_eosParticle",1,SWIGTYPE_p_ofVec2f); }  arg1 = *argp1; arg2 = (float)lua_tonumber(L, 2);
-    arg3 = (float)lua_tonumber(L, 3); result = (eosParticle *)new eosParticle(arg1,arg2,arg3);
-    SWIG_NewPointerObj(L,result,SWIGTYPE_p_eosParticle,1); SWIG_arg++;  return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L);
-  return 0; }
-static int _wrap_new_eosParticle__SWIG_3(lua_State* L) { { int SWIG_arg = 0; ofVec2f arg1 ; float arg2 ; ofVec2f *argp1 ;
+static int _wrap_new_eosParticle__SWIG_3(lua_State* L) { { int SWIG_arg = 0; ofVec2f *arg1 = 0 ; float arg2 ;
     eosParticle *result = 0 ; SWIG_check_num_args("eosParticle::eosParticle",2,2)
-    if(!lua_isuserdata(L,1)) SWIG_fail_arg("eosParticle::eosParticle",1,"ofVec2f");
+    if(!lua_isuserdata(L,1)) SWIG_fail_arg("eosParticle::eosParticle",1,"ofVec2f const &");
     if(!lua_isnumber(L,2)) SWIG_fail_arg("eosParticle::eosParticle",2,"float");
-    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&argp1,SWIGTYPE_p_ofVec2f,0))){
-      SWIG_fail_ptr("new_eosParticle",1,SWIGTYPE_p_ofVec2f); }  arg1 = *argp1; arg2 = (float)lua_tonumber(L, 2);
-    result = (eosParticle *)new eosParticle(arg1,arg2); SWIG_NewPointerObj(L,result,SWIGTYPE_p_eosParticle,1); SWIG_arg++; 
-    return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
-static int _wrap_new_eosParticle__SWIG_4(lua_State* L) { { int SWIG_arg = 0; ofVec2f arg1 ; ofVec2f *argp1 ;
-    eosParticle *result = 0 ; SWIG_check_num_args("eosParticle::eosParticle",1,1)
-    if(!lua_isuserdata(L,1)) SWIG_fail_arg("eosParticle::eosParticle",1,"ofVec2f");
-    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&argp1,SWIGTYPE_p_ofVec2f,0))){
-      SWIG_fail_ptr("new_eosParticle",1,SWIGTYPE_p_ofVec2f); }  arg1 = *argp1; result = (eosParticle *)new eosParticle(arg1);
+    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ofVec2f,0))){
+      SWIG_fail_ptr("new_eosParticle",1,SWIGTYPE_p_ofVec2f); }  arg2 = (float)lua_tonumber(L, 2);
+    result = (eosParticle *)new eosParticle((ofVec2f const &)*arg1,arg2);
     SWIG_NewPointerObj(L,result,SWIGTYPE_p_eosParticle,1); SWIG_arg++;  return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L);
   return 0; }
-static int _wrap_new_eosParticle(lua_State* L) { int argc; int argv[6]={ 1,2,3,4,5,6} ; argc = lua_gettop(L); if (argc == 1) {
-    int _v = 0; { void *ptr;
+static int _wrap_new_eosParticle__SWIG_4(lua_State* L) { { int SWIG_arg = 0; ofVec2f *arg1 = 0 ; eosParticle *result = 0 ;
+    SWIG_check_num_args("eosParticle::eosParticle",1,1)
+    if(!lua_isuserdata(L,1)) SWIG_fail_arg("eosParticle::eosParticle",1,"ofVec2f const &");
+    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ofVec2f,0))){
+      SWIG_fail_ptr("new_eosParticle",1,SWIGTYPE_p_ofVec2f); }  result = (eosParticle *)new eosParticle((ofVec2f const &)*arg1);
+    SWIG_NewPointerObj(L,result,SWIGTYPE_p_eosParticle,1); SWIG_arg++;  return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L);
+  return 0; }
+static int _wrap_new_eosParticle(lua_State* L) { int argc; int argv[5]={ 1,2,3,4,5} ; argc = lua_gettop(L); if (argc == 0) {
+    return _wrap_new_eosParticle__SWIG_0(L);}  if (argc == 1) { int _v = 0; { void *ptr;
       if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_ofVec2f, SWIG_POINTER_NO_NULL)) {
         _v = 0; }  else { _v = 1; }  }  if (_v) { return _wrap_new_eosParticle__SWIG_4(L);}  }  if (argc == 2) { int _v = 0; {
       void *ptr;
@@ -3025,42 +3014,37 @@ static int _wrap_new_eosParticle(lua_State* L) { int argc; int argv[6]={ 1,2,3,4
       if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_ofVec2f, SWIG_POINTER_NO_NULL)) {
         _v = 0; }  else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }
          if (_v) { { _v = lua_isnumber(L,argv[3]); }  if (_v) { return _wrap_new_eosParticle__SWIG_1(L);}  }  }  }  } 
-  if (argc == 5) { int _v = 0; { void *ptr;
-      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_ofVec2f, SWIG_POINTER_NO_NULL)) {
-        _v = 0; }  else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) { { _v = lua_isnumber(L,argv[2]); }
-         if (_v) { { _v = lua_isnumber(L,argv[3]); }  if (_v) { { _v = lua_isnumber(L,argv[4]); }  if (_v) {
-              return _wrap_new_eosParticle__SWIG_0(L);}  }  }  }  }  } 
   SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'new_eosParticle'\n" "  Possible C/C++ prototypes are:\n"
-  "    eosParticle::eosParticle(ofVec2f,float,float,float,size_t)\n" "    eosParticle::eosParticle(ofVec2f,float,float,float)\n"
-  "    eosParticle::eosParticle(ofVec2f,float,float)\n" "    eosParticle::eosParticle(ofVec2f,float)\n"
-  "    eosParticle::eosParticle(ofVec2f)\n"); lua_error(L);return 0; }
+  "    eosParticle::eosParticle()\n" "    eosParticle::eosParticle(ofVec2f const &,float,float,float)\n"
+  "    eosParticle::eosParticle(ofVec2f const &,float,float)\n" "    eosParticle::eosParticle(ofVec2f const &,float)\n"
+  "    eosParticle::eosParticle(ofVec2f const &)\n"); lua_error(L);return 0; }
 static int _wrap_eosParticle_applyForce(lua_State* L) { { int SWIG_arg = 0; eosParticle *arg1 = (eosParticle *) 0 ;
-    ofVec2f arg2 ; ofVec2f *argp2 ; SWIG_check_num_args("eosParticle::applyForce",2,2)
+    ofVec2f *arg2 = 0 ; SWIG_check_num_args("eosParticle::applyForce",2,2)
     if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticle::applyForce",1,"eosParticle *");
-    if(!lua_isuserdata(L,2)) SWIG_fail_arg("eosParticle::applyForce",2,"ofVec2f");
+    if(!lua_isuserdata(L,2)) SWIG_fail_arg("eosParticle::applyForce",2,"ofVec2f const &");
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticle,0))){
       SWIG_fail_ptr("eosParticle_applyForce",1,SWIGTYPE_p_eosParticle); } 
-    if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_ofVec2f,0))){
-      SWIG_fail_ptr("eosParticle_applyForce",2,SWIGTYPE_p_ofVec2f); }  arg2 = *argp2; (arg1)->applyForce(arg2); return SWIG_arg;
-    fail: SWIGUNUSED; }  lua_error(L); return 0; }
+    if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_ofVec2f,0))){
+      SWIG_fail_ptr("eosParticle_applyForce",2,SWIGTYPE_p_ofVec2f); }  (arg1)->applyForce((ofVec2f const &)*arg2);
+    return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
 static int _wrap_eosParticle_attract(lua_State* L) { { int SWIG_arg = 0; eosParticle *arg1 = (eosParticle *) 0 ;
-    eosParticle *arg2 = (eosParticle *) 0 ; ofVec2f result; SWIG_check_num_args("eosParticle::attract",2,2)
+    eosParticle *arg2 = 0 ; ofVec2f result; SWIG_check_num_args("eosParticle::attract",2,2)
     if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticle::attract",1,"eosParticle *");
-    if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("eosParticle::attract",2,"eosParticle *");
+    if(!lua_isuserdata(L,2)) SWIG_fail_arg("eosParticle::attract",2,"eosParticle const &");
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticle,0))){
       SWIG_fail_ptr("eosParticle_attract",1,SWIGTYPE_p_eosParticle); } 
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_eosParticle,0))){
-      SWIG_fail_ptr("eosParticle_attract",2,SWIGTYPE_p_eosParticle); }  result = (arg1)->attract(arg2); {
+      SWIG_fail_ptr("eosParticle_attract",2,SWIGTYPE_p_eosParticle); }  result = (arg1)->attract((eosParticle const &)*arg2); {
       ofVec2f * resultptr = new ofVec2f(result); SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_ofVec2f,1); SWIG_arg++; } 
     return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
 static int _wrap_eosParticle_repel(lua_State* L) { { int SWIG_arg = 0; eosParticle *arg1 = (eosParticle *) 0 ;
-    eosParticle *arg2 = (eosParticle *) 0 ; ofVec2f result; SWIG_check_num_args("eosParticle::repel",2,2)
+    eosParticle *arg2 = 0 ; ofVec2f result; SWIG_check_num_args("eosParticle::repel",2,2)
     if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticle::repel",1,"eosParticle *");
-    if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("eosParticle::repel",2,"eosParticle *");
+    if(!lua_isuserdata(L,2)) SWIG_fail_arg("eosParticle::repel",2,"eosParticle const &");
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticle,0))){
       SWIG_fail_ptr("eosParticle_repel",1,SWIGTYPE_p_eosParticle); } 
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_eosParticle,0))){
-      SWIG_fail_ptr("eosParticle_repel",2,SWIGTYPE_p_eosParticle); }  result = (arg1)->repel(arg2); {
+      SWIG_fail_ptr("eosParticle_repel",2,SWIGTYPE_p_eosParticle); }  result = (arg1)->repel((eosParticle const &)*arg2); {
       ofVec2f * resultptr = new ofVec2f(result); SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_ofVec2f,1); SWIG_arg++; } 
     return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
 static int _wrap_eosParticle_setAging(lua_State* L) { { int SWIG_arg = 0; eosParticle *arg1 = (eosParticle *) 0 ; float arg2 ;
@@ -3078,9 +3062,9 @@ static int _wrap_eosParticle_update(lua_State* L) { { int SWIG_arg = 0; eosParti
   lua_error(L); return 0; }
 static int _wrap_eosParticle_isDead(lua_State* L) { { int SWIG_arg = 0; eosParticle *arg1 = (eosParticle *) 0 ; bool result;
     SWIG_check_num_args("eosParticle::isDead",1,1)
-    if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticle::isDead",1,"eosParticle *");
+    if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticle::isDead",1,"eosParticle const *");
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticle,0))){
-      SWIG_fail_ptr("eosParticle_isDead",1,SWIGTYPE_p_eosParticle); }  result = (bool)(arg1)->isDead();
+      SWIG_fail_ptr("eosParticle_isDead",1,SWIGTYPE_p_eosParticle); }  result = (bool)((eosParticle const *)arg1)->isDead();
     lua_pushboolean(L,(int)(result!=0)); SWIG_arg++; return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
 static int _wrap_eosParticle_location_set(lua_State* L) { { int SWIG_arg = 0; eosParticle *arg1 = (eosParticle *) 0 ;
     ofVec2f arg2 ; ofVec2f *argp2 ; SWIG_check_num_args("eosParticle::location",2,2)
@@ -3193,20 +3177,6 @@ static int _wrap_eosParticle_restitution_get(lua_State* L) { { int SWIG_arg = 0;
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticle,0))){
       SWIG_fail_ptr("eosParticle_restitution_get",1,SWIGTYPE_p_eosParticle); }  result = (float) ((arg1)->restitution);
     lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
-static int _wrap_eosParticle_universe_set(lua_State* L) { { int SWIG_arg = 0; eosParticle *arg1 = (eosParticle *) 0 ;
-    size_t arg2 ; SWIG_check_num_args("eosParticle::universe",2,2)
-    if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticle::universe",1,"eosParticle *");
-    if(!lua_isnumber(L,2)) SWIG_fail_arg("eosParticle::universe",2,"size_t");
-    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticle,0))){
-      SWIG_fail_ptr("eosParticle_universe_set",1,SWIGTYPE_p_eosParticle); } 
-    SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative"); arg2 = (size_t)lua_tonumber(L, 2);
-    if (arg1) (arg1)->universe = arg2; return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
-static int _wrap_eosParticle_universe_get(lua_State* L) { { int SWIG_arg = 0; eosParticle *arg1 = (eosParticle *) 0 ;
-    size_t result; SWIG_check_num_args("eosParticle::universe",1,1)
-    if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticle::universe",1,"eosParticle *");
-    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticle,0))){
-      SWIG_fail_ptr("eosParticle_universe_get",1,SWIGTYPE_p_eosParticle); }  result =  ((arg1)->universe);
-    lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
 static void swig_delete_eosParticle(void *obj) {
 eosParticle *arg1 = (eosParticle *) obj;
 delete arg1;
@@ -3228,7 +3198,6 @@ static swig_lua_attribute swig_eosParticle_attributes[] = {
     { "mass", _wrap_eosParticle_mass_get, _wrap_eosParticle_mass_set },
     { "radius", _wrap_eosParticle_radius_get, _wrap_eosParticle_radius_set },
     { "restitution", _wrap_eosParticle_restitution_get, _wrap_eosParticle_restitution_set },
-    { "universe", _wrap_eosParticle_universe_get, _wrap_eosParticle_universe_set },
     {0,0,0}
 };
 static swig_lua_method swig_eosParticle_methods[]= {
@@ -3286,45 +3255,33 @@ static int _wrap_eosParticleSystem_draw(lua_State* L) { { int SWIG_arg = 0; eosP
       SWIG_fail_ptr("eosParticleSystem_draw",1,SWIGTYPE_p_eosParticleSystem); }  (arg1)->draw(); return SWIG_arg;
     fail: SWIGUNUSED; }  lua_error(L); return 0; }
 static int _wrap_eosParticleSystem_addParticle__SWIG_0(lua_State* L) { { int SWIG_arg = 0;
-    eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; size_t arg2 ; SWIG_check_num_args("eosParticleSystem::addParticle",2,2)
-    if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticleSystem::addParticle",1,"eosParticleSystem *");
-    if(!lua_isnumber(L,2)) SWIG_fail_arg("eosParticleSystem::addParticle",2,"size_t");
-    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticleSystem,0))){
-      SWIG_fail_ptr("eosParticleSystem_addParticle",1,SWIGTYPE_p_eosParticleSystem); } 
-    SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative"); arg2 = (size_t)lua_tonumber(L, 2);
-    (arg1)->addParticle(arg2); return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
-static int _wrap_eosParticleSystem_addParticle__SWIG_1(lua_State* L) { { int SWIG_arg = 0;
     eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; SWIG_check_num_args("eosParticleSystem::addParticle",1,1)
     if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticleSystem::addParticle",1,"eosParticleSystem *");
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticleSystem,0))){
       SWIG_fail_ptr("eosParticleSystem_addParticle",1,SWIGTYPE_p_eosParticleSystem); }  (arg1)->addParticle(); return SWIG_arg;
     fail: SWIGUNUSED; }  lua_error(L); return 0; }
-static int _wrap_eosParticleSystem_addParticle__SWIG_2(lua_State* L) { { int SWIG_arg = 0;
-    eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; eosParticle *arg2 = (eosParticle *) 0 ;
+static int _wrap_eosParticleSystem_addParticle__SWIG_1(lua_State* L) { { int SWIG_arg = 0;
+    eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; eosParticle *arg2 = 0 ;
     SWIG_check_num_args("eosParticleSystem::addParticle",2,2)
     if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticleSystem::addParticle",1,"eosParticleSystem *");
-    if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("eosParticleSystem::addParticle",2,"eosParticle *");
+    if(!lua_isuserdata(L,2)) SWIG_fail_arg("eosParticleSystem::addParticle",2,"eosParticle const &");
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticleSystem,0))){
       SWIG_fail_ptr("eosParticleSystem_addParticle",1,SWIGTYPE_p_eosParticleSystem); } 
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_eosParticle,0))){
-      SWIG_fail_ptr("eosParticleSystem_addParticle",2,SWIGTYPE_p_eosParticle); }  (arg1)->addParticle(arg2); return SWIG_arg;
-    fail: SWIGUNUSED; }  lua_error(L); return 0; }
+      SWIG_fail_ptr("eosParticleSystem_addParticle",2,SWIGTYPE_p_eosParticle); } 
+    (arg1)->addParticle((eosParticle const &)*arg2); return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
 static int _wrap_eosParticleSystem_addParticle(lua_State* L) { int argc; int argv[3]={ 1,2,3} ; argc = lua_gettop(L);
   if (argc == 1) { int _v = 0; { void *ptr;
       if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_eosParticleSystem, 0)) {
-        _v = 0; }  else { _v = 1; }  }  if (_v) { return _wrap_eosParticleSystem_addParticle__SWIG_1(L);}  }  if (argc == 2) {
+        _v = 0; }  else { _v = 1; }  }  if (_v) { return _wrap_eosParticleSystem_addParticle__SWIG_0(L);}  }  if (argc == 2) {
     int _v = 0; { void *ptr;
       if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_eosParticleSystem, 0)) {
         _v = 0; }  else { _v = 1; }  }  if (_v) { { void *ptr;
-        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_eosParticle, 0)) { _v = 0; }
-         else { _v = 1; }  }  if (_v) { return _wrap_eosParticleSystem_addParticle__SWIG_2(L);}  }  }  if (argc == 2) {
-    int _v = 0; { void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_eosParticleSystem, 0)) {
-        _v = 0; }  else { _v = 1; }  }  if (_v) { { _v = lua_isnumber(L,argv[1]); }  if (_v) {
-        return _wrap_eosParticleSystem_addParticle__SWIG_0(L);}  }  } 
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_eosParticle, SWIG_POINTER_NO_NULL)) {
+          _v = 0; }  else { _v = 1; }  }  if (_v) { return _wrap_eosParticleSystem_addParticle__SWIG_1(L);}  }  } 
   SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'eosParticleSystem_addParticle'\n"
-  "  Possible C/C++ prototypes are:\n" "    eosParticleSystem::addParticle(size_t)\n" "    eosParticleSystem::addParticle()\n"
-  "    eosParticleSystem::addParticle(eosParticle *)\n"); lua_error(L);return 0; }
+  "  Possible C/C++ prototypes are:\n" "    eosParticleSystem::addParticle()\n"
+  "    eosParticleSystem::addParticle(eosParticle const &)\n"); lua_error(L);return 0; }
 static int _wrap_eosParticleSystem_setOrigin(lua_State* L) { { int SWIG_arg = 0;
     eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; ofVec2f arg2 ; ofVec2f *argp2 ;
     SWIG_check_num_args("eosParticleSystem::setOrigin",2,2)
@@ -3419,25 +3376,25 @@ static int _wrap_eosParticleSystem_setAging(lua_State* L) { { int SWIG_arg = 0;
       SWIG_fail_ptr("eosParticleSystem_setAging",1,SWIGTYPE_p_eosParticleSystem); }  arg2 = (float)lua_tonumber(L, 2);
     (arg1)->setAging(arg2); return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
 static int _wrap_eosParticleSystem_addAttractor(lua_State* L) { { int SWIG_arg = 0;
-    eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; eosParticle *arg2 = (eosParticle *) 0 ;
+    eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; eosParticle *arg2 = 0 ;
     SWIG_check_num_args("eosParticleSystem::addAttractor",2,2)
     if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticleSystem::addAttractor",1,"eosParticleSystem *");
-    if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("eosParticleSystem::addAttractor",2,"eosParticle *");
+    if(!lua_isuserdata(L,2)) SWIG_fail_arg("eosParticleSystem::addAttractor",2,"eosParticle const &");
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticleSystem,0))){
       SWIG_fail_ptr("eosParticleSystem_addAttractor",1,SWIGTYPE_p_eosParticleSystem); } 
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_eosParticle,0))){
-      SWIG_fail_ptr("eosParticleSystem_addAttractor",2,SWIGTYPE_p_eosParticle); }  (arg1)->addAttractor(arg2); return SWIG_arg;
-    fail: SWIGUNUSED; }  lua_error(L); return 0; }
+      SWIG_fail_ptr("eosParticleSystem_addAttractor",2,SWIGTYPE_p_eosParticle); } 
+    (arg1)->addAttractor((eosParticle const &)*arg2); return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
 static int _wrap_eosParticleSystem_addRepulsor(lua_State* L) { { int SWIG_arg = 0;
-    eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; eosParticle *arg2 = (eosParticle *) 0 ;
+    eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; eosParticle *arg2 = 0 ;
     SWIG_check_num_args("eosParticleSystem::addRepulsor",2,2)
     if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticleSystem::addRepulsor",1,"eosParticleSystem *");
-    if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("eosParticleSystem::addRepulsor",2,"eosParticle *");
+    if(!lua_isuserdata(L,2)) SWIG_fail_arg("eosParticleSystem::addRepulsor",2,"eosParticle const &");
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticleSystem,0))){
       SWIG_fail_ptr("eosParticleSystem_addRepulsor",1,SWIGTYPE_p_eosParticleSystem); } 
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_eosParticle,0))){
-      SWIG_fail_ptr("eosParticleSystem_addRepulsor",2,SWIGTYPE_p_eosParticle); }  (arg1)->addRepulsor(arg2); return SWIG_arg;
-    fail: SWIGUNUSED; }  lua_error(L); return 0; }
+      SWIG_fail_ptr("eosParticleSystem_addRepulsor",2,SWIGTYPE_p_eosParticle); } 
+    (arg1)->addRepulsor((eosParticle const &)*arg2); return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
 static int _wrap_eosParticleSystem_setKillStill(lua_State* L) { { int SWIG_arg = 0;
     eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; bool arg2 ; SWIG_check_num_args("eosParticleSystem::setKillStill",2,2)
     if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticleSystem::setKillStill",1,"eosParticleSystem *");
@@ -3515,15 +3472,6 @@ static int _wrap_eosParticleSystem_setKillCollisions(lua_State* L) { { int SWIG_
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticleSystem,0))){
       SWIG_fail_ptr("eosParticleSystem_setKillCollisions",1,SWIGTYPE_p_eosParticleSystem); }  arg2 = (lua_toboolean(L, 2)!=0);
     (arg1)->setKillCollisions(arg2); return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
-static int _wrap_eosParticleSystem_setUniverseInteraction(lua_State* L) { { int SWIG_arg = 0;
-    eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; bool arg2 ;
-    SWIG_check_num_args("eosParticleSystem::setUniverseInteraction",2,2)
-    if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticleSystem::setUniverseInteraction",1,"eosParticleSystem *");
-    if(!lua_isboolean(L,2)) SWIG_fail_arg("eosParticleSystem::setUniverseInteraction",2,"bool");
-    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticleSystem,0))){
-      SWIG_fail_ptr("eosParticleSystem_setUniverseInteraction",1,SWIGTYPE_p_eosParticleSystem); } 
-    arg2 = (lua_toboolean(L, 2)!=0); (arg1)->setUniverseInteraction(arg2); return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L);
-  return 0; }
 static int _wrap_eosParticleSystem_setParticleCollisions(lua_State* L) { { int SWIG_arg = 0;
     eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; bool arg2 ;
     SWIG_check_num_args("eosParticleSystem::setParticleCollisions",2,2)
@@ -3544,16 +3492,16 @@ static int _wrap_eosParticleSystem_setParticleWorldDimensions(lua_State* L) { { 
     arg2 = (float)lua_tonumber(L, 2); arg3 = (float)lua_tonumber(L, 3); (arg1)->setParticleWorldDimensions(arg2,arg3);
     return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L); return 0; }
 static int _wrap_eosParticleSystem_getParticle(lua_State* L) { { int SWIG_arg = 0;
-    eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; size_t arg2 ; SwigValueWrapper< shared_ptr< eosParticle > > result;
+    eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; size_t arg2 ; eosParticle *result = 0 ;
     SWIG_check_num_args("eosParticleSystem::getParticle",2,2)
-    if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticleSystem::getParticle",1,"eosParticleSystem *");
+    if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticleSystem::getParticle",1,"eosParticleSystem const *");
     if(!lua_isnumber(L,2)) SWIG_fail_arg("eosParticleSystem::getParticle",2,"size_t");
     if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticleSystem,0))){
       SWIG_fail_ptr("eosParticleSystem_getParticle",1,SWIGTYPE_p_eosParticleSystem); } 
     SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative"); arg2 = (size_t)lua_tonumber(L, 2);
-    result = (arg1)->getParticle(arg2); { shared_ptr< eosParticle > * resultptr = new shared_ptr< eosParticle >(result);
-      SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_shared_ptrT_eosParticle_t,1); SWIG_arg++; }  return SWIG_arg;
-    fail: SWIGUNUSED; }  lua_error(L); return 0; }
+    result = (eosParticle *) &((eosParticleSystem const *)arg1)->getParticle(arg2);
+    SWIG_NewPointerObj(L,result,SWIGTYPE_p_eosParticle,0); SWIG_arg++;  return SWIG_arg; fail: SWIGUNUSED; }  lua_error(L);
+  return 0; }
 static int _wrap_eosParticleSystem_getParticleLocation(lua_State* L) { { int SWIG_arg = 0;
     eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; size_t arg2 ; ofVec2f result;
     SWIG_check_num_args("eosParticleSystem::getParticleLocation",2,2)
@@ -3584,16 +3532,6 @@ static int _wrap_eosParticleSystem_getParticleRadius(lua_State* L) { { int SWIG_
       SWIG_fail_ptr("eosParticleSystem_getParticleRadius",1,SWIGTYPE_p_eosParticleSystem); } 
     SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative"); arg2 = (size_t)lua_tonumber(L, 2);
     result = (float)(arg1)->getParticleRadius(arg2); lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg;
-    fail: SWIGUNUSED; }  lua_error(L); return 0; }
-static int _wrap_eosParticleSystem_getParticleUniverse(lua_State* L) { { int SWIG_arg = 0;
-    eosParticleSystem *arg1 = (eosParticleSystem *) 0 ; size_t arg2 ; size_t result;
-    SWIG_check_num_args("eosParticleSystem::getParticleUniverse",2,2)
-    if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("eosParticleSystem::getParticleUniverse",1,"eosParticleSystem *");
-    if(!lua_isnumber(L,2)) SWIG_fail_arg("eosParticleSystem::getParticleUniverse",2,"size_t");
-    if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_eosParticleSystem,0))){
-      SWIG_fail_ptr("eosParticleSystem_getParticleUniverse",1,SWIGTYPE_p_eosParticleSystem); } 
-    SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative"); arg2 = (size_t)lua_tonumber(L, 2);
-    result = (arg1)->getParticleUniverse(arg2); lua_pushnumber(L, (lua_Number) result); SWIG_arg++; return SWIG_arg;
     fail: SWIGUNUSED; }  lua_error(L); return 0; }
 static int _wrap_eosParticleSystem_clear(lua_State* L) { { int SWIG_arg = 0; eosParticleSystem *arg1 = (eosParticleSystem *) 0 ;
     SWIG_check_num_args("eosParticleSystem::clear",1,1)
@@ -3648,14 +3586,12 @@ static swig_lua_method swig_eosParticleSystem_methods[]= {
     { "setMaxParticles", _wrap_eosParticleSystem_setMaxParticles},
     { "setMaxVelocity", _wrap_eosParticleSystem_setMaxVelocity},
     { "setKillCollisions", _wrap_eosParticleSystem_setKillCollisions},
-    { "setUniverseInteraction", _wrap_eosParticleSystem_setUniverseInteraction},
     { "setParticleCollisions", _wrap_eosParticleSystem_setParticleCollisions},
     { "setParticleWorldDimensions", _wrap_eosParticleSystem_setParticleWorldDimensions},
     { "getParticle", _wrap_eosParticleSystem_getParticle},
     { "getParticleLocation", _wrap_eosParticleSystem_getParticleLocation},
     { "getParticleAge", _wrap_eosParticleSystem_getParticleAge},
     { "getParticleRadius", _wrap_eosParticleSystem_getParticleRadius},
-    { "getParticleUniverse", _wrap_eosParticleSystem_getParticleUniverse},
     { "clear", _wrap_eosParticleSystem_clear},
     { "size", _wrap_eosParticleSystem_size},
     {0,0}
@@ -3726,28 +3662,24 @@ static swig_lua_namespace swig_SwigModule = {
 static swig_type_info _swigt__p_eosParticle = {"_p_eosParticle", "eosParticle *", 0, 0, (void*)&_wrap_class_eosParticle, 0};
 static swig_type_info _swigt__p_eosParticleSystem = {"_p_eosParticleSystem", "eosParticleSystem *", 0, 0, (void*)&_wrap_class_eosParticleSystem, 0};
 static swig_type_info _swigt__p_ofVec2f = {"_p_ofVec2f", "ofVec2f *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_shared_ptrT_eosParticle_t = {"_p_shared_ptrT_eosParticle_t", "shared_ptr< eosParticle > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__string = {"_p_std__string", "string *|std::string *", 0, 0, (void*)&_wrap_class_string, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_eosParticle,
   &_swigt__p_eosParticleSystem,
   &_swigt__p_ofVec2f,
-  &_swigt__p_shared_ptrT_eosParticle_t,
   &_swigt__p_std__string,
 };
 
 static swig_cast_info _swigc__p_eosParticle[] = {  {&_swigt__p_eosParticle, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_eosParticleSystem[] = {  {&_swigt__p_eosParticleSystem, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ofVec2f[] = {  {&_swigt__p_ofVec2f, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_shared_ptrT_eosParticle_t[] = {  {&_swigt__p_shared_ptrT_eosParticle_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_eosParticle,
   _swigc__p_eosParticleSystem,
   _swigc__p_ofVec2f,
-  _swigc__p_shared_ptrT_eosParticle_t,
   _swigc__p_std__string,
 };
 
