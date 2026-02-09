@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseRenderer.h"
-#include "eosParticles.h"
+#include "ofxEosParticles.h"
 #include "ofColor.h"
 #include "ofxWaveforms.h"
 

@@ -138,7 +138,9 @@ void ofApp::setup() {
 
     renderersVec.emplace_back(RendererFactory::newRenderer(LUA_RENDERER));
     renderersVec.emplace_back(RendererFactory::newRenderer(LUA_RENDERER, "lua_back"));
+    renderersVec.emplace_back(RendererFactory::newRenderer(LUA_RENDERER, "lua_back2"));
     renderersVec.emplace_back(RendererFactory::newRenderer(LUA_RENDERER, "lua_front"));
+    renderersVec.emplace_back(RendererFactory::newRenderer(LUA_RENDERER, "lua_front2"));
 
     // add all of the gui parameters to the gui renderer
     for (auto &r : renderersVec) {

@@ -1,7 +1,7 @@
 %module particles
 %{
     // include any needed headers here
-    #include "eosParticles.h"
+    #include "ofxEosParticles.h"
 %}
 
 // include support for some common C++ STL types you might be using,
@@ -18,4 +18,4 @@ typedef std::string string;
 // include custom code you want to be wrapped,
 // note the '%' instead of '#' as '%include' is a SWIG
 // command to wrap code in the given header
-%include "eosParticles.h"
+%include "ofxEosParticles.h"

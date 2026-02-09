@@ -2812,7 +2812,7 @@ typedef struct{} LANGUAGE_OBJ;
 
 
     // include any needed headers here
-    #include "eosParticles.h"
+    #include "ofxEosParticles.h"
 
 
 #include <typeinfo>
