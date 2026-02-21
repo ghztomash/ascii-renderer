@@ -120,9 +120,12 @@ class ofApp : public ofBaseApp {
     void saveDescription();
     void saveTxtFrame();
     void saveSvgFrame();
+    void saveProjectPreset();
+    void loadProjectPreset(string path);
     int secondsToFrames(float seconds);
     void loadCharacterSets(string filename);
     void loadStringFromFile(string filename, string &target);
+    void saveStringToFile(string filename, string content);
     string getFontFamily(string filename);
     void generateTestGrid();
     void generateOverlayGrid();

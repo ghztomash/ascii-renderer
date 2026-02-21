@@ -1,9 +1,11 @@
 #include "ofApp.h"
 #include "ColorTheme.h"
 #include "RendererFactory.h"
+#include "ofFileUtils.h"
 #include "ofGraphics.h"
 #include "ofLog.h"
 #include "ofMath.h"
+#include "ofSystemUtils.h"
 #include "ofUtils.h"
 #include "ofxTimeMeasurementsMacros.h"
 #include <omp.h>
@@ -40,7 +42,7 @@ void ofApp::setup() {
 
     // load character sets from data/charsets
     loadCharacterSets("charsets.txt");
-    loadStringFromFile("project.txt", projectName);
+    loadStringFromFile("last_project.txt", projectName);
     loadStringFromFile("overlay.txt", overlayText);
 
     // setup gui elements
@@ -158,19 +160,6 @@ void ofApp::setup() {
     debugCharHeight = font.getFontHeight(debugFontSize, currentFont);
 
     screenSize = ofGetWidth() < ofGetHeight() ? ofGetWidth() : ofGetHeight();
-
-#ifdef TARGET_LINUX
-    ofLog() << "OS: Linux";
-#endif
-#ifdef TARGET_OSX
-    ofLog() << "OS: Mac";
-#endif
-#ifdef TARGET_WIN32
-    ofLog() << "OS: Win";
-#endif
-#ifdef TARGET_ANDROID
-    ofLog() << "OS: Droid";
-#endif
 }
 
 //--------------------------------------------------------------
@@ -349,6 +338,7 @@ void ofApp::keyPressed(int key) {}
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
+    ofFileDialogResult dialog_result;
     switch (key) {
         // draw gui
         case 'g':
@@ -416,6 +406,20 @@ void ofApp::keyReleased(int key) {
             if (!recording) {
                 projectName = ofSystemTextBoxDialog("Project Name", projectName);
                 saverThread.changeProject(projectName);
+                saveStringToFile("last_project.txt", projectName);
+            }
+            break;
+        // save project presets
+        case 'w':
+        case 'W':
+            saveProjectPreset();
+            break;
+        // load project presets
+        case 'u':
+        case 'U':
+            dialog_result = ofSystemLoadDialog("load project", true, "projects/");
+            if (dialog_result.bSuccess == true) {
+                loadProjectPreset(dialog_result.getPath());
             }
             break;
         // change overlayText
@@ -423,6 +427,7 @@ void ofApp::keyReleased(int key) {
         case 'O':
             if (!recording) {
                 overlayText = ofSystemTextBoxDialog("Overlay text", overlayText);
+                generateOverlayGrid();
             }
             break;
         case '?':
@@ -438,6 +443,8 @@ void ofApp::keyReleased(int key) {
                 "z: change fit screen\n"
                 "f: toggle fullscreen\n"
                 "p: change projectName\n"
+                "w: save proect presets\n"
+                "u: load proect presets\n"
                 "o: change overlayText\n"
                 "?: show this help\n");
             break;
@@ -1246,7 +1253,6 @@ void ofApp::loadStringFromFile(string filename, string &target) {
     } else {
         ofLogError("ofApp::loadStringFromFile") << "empty file: " << filename;
     }
-    ofLog() << "loaded " << target << " string";
 }
 
 //--------------------------------------------------------------
@@ -1277,4 +1283,43 @@ string ofApp::getFontFamily(string fontFilePath) {
     ofLogNotice("getFontFamily") << result;
 
     return result;
+}
+
+//--------------------------------------------------------------
+void ofApp::saveStringToFile(string filename, string content) {
+    ofFile descriptionFile(filename, ofFile::WriteOnly, false);
+    descriptionFile.create();
+    descriptionFile << content << '\n';
+    descriptionFile.close();
+}
+
+//--------------------------------------------------------------
+void ofApp::saveProjectPreset() {
+    ofDirectory projectDir("projects/" + projectName);
+    if (!projectDir.exists()) {
+        projectDir.create(true);
+    }
+
+    saveStringToFile(projectDir.path() + "project.txt", projectName);
+    saveStringToFile(projectDir.path() + "overlay.txt", overlayText);
+    gui.saveToFile(projectDir.path() + "settings.xml");
+    guiRenderer.saveToFile(projectDir.path() + "draw_params.xml");
+
+    ofLogNotice() << "Project saved " << projectDir.path();
+}
+
+//--------------------------------------------------------------
+void ofApp::loadProjectPreset(string path) {
+    ofDirectory projectDir(path);
+    if (!projectDir.exists()) {
+        ofLogError("loadProject") << "Project path " << projectDir.path() << " does not exist";
+        return;
+    }
+
+    loadStringFromFile(projectDir.path() + "project.txt", projectName);
+    loadStringFromFile(projectDir.path() + "overlay.txt", overlayText);
+    gui.loadFromFile(projectDir.path() + "settings.xml");
+    guiRenderer.loadFromFile(projectDir.path() + "draw_params.xml");
+
+    ofLogNotice() << "Project loaded " << projectDir.path();
 }
