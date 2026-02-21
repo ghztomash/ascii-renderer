@@ -350,11 +350,6 @@ void ofApp::keyReleased(int key) {
         case 'D':
             debugGrid = !debugGrid;
             break;
-        // draw grid lines
-        case 'l':
-        case 'L':
-            debugLines = !debugLines;
-            break;
         // draw buffer preview
         case 'b':
         case 'B':
@@ -415,8 +410,8 @@ void ofApp::keyReleased(int key) {
             saveProjectPreset();
             break;
         // load project presets
-        case 'u':
-        case 'U':
+        case 'l':
+        case 'L':
             dialog_result = ofSystemLoadDialog("load project", true, "projects/");
             if (dialog_result.bSuccess == true) {
                 loadProjectPreset(dialog_result.getPath());
@@ -434,7 +429,6 @@ void ofApp::keyReleased(int key) {
             ofSystemAlertDialog(
                 "g: draw gui\n"
                 "d: draw test pattern\n"
-                "l: draw grid lines\n"
                 "b: draw buffer preview\n"
                 "r: record fbo frames\n"
                 "t: save txt frame\n"
@@ -444,7 +438,7 @@ void ofApp::keyReleased(int key) {
                 "f: toggle fullscreen\n"
                 "p: change projectName\n"
                 "w: save proect presets\n"
-                "u: load proect presets\n"
+                "l: load proect presets\n"
                 "o: change overlayText\n"
                 "?: show this help\n");
             break;
