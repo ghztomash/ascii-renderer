@@ -147,7 +147,7 @@ void ofApp::setup() {
         guiRenderer.add(r->parameters);
     }
 
-    // guiRenderer.minimizeAll();
+    guiRenderer.minimizeAll();
 
     // noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");
     // noise.setup(20, 20, "noiseSphere");
@@ -313,23 +313,27 @@ void ofApp::draw() {
                                     screenSize / 2.0);
         }
 
-        // font.draw(ofToString(mouseX) + "x" + ofToString(mouseY), 28, mouseX,
-        // mouseY, currentFont);
-
+        font.draw(
+            " project: " + ofToString(projectName) +
+                (recording ? (" ☺ REC: " + ofToString(recordedFramesCount) +
+                              "/" + ofToString(recordFramesNumber))
+                           : " "),
+            debugFontSize, 0, ofGetHeight() + debugDescenderH - debugCharHeight * 3,
+            currentFont);
         font.draw(
             " grid: " + ofToString(gridWidth) + "x" + ofToString(gridHeight) +
                 " font: " + ofToString(charHeight) + "x" +
                 ofToString(charWidth) +
-                " fps: " + ofToString((int)ofGetFrameRate()) +
-                (recording ? (" ☺ REC: " + ofToString(recordedFramesCount) +
-                              "/" + ofToString(recordFramesNumber))
-                           : " "),
-            debugFontSize, 0, ofGetHeight() + debugDescenderH - debugCharHeight,
+                " fps: " + ofToString((int)ofGetFrameRate()),
+            debugFontSize, 0, ofGetHeight() + debugDescenderH - debugCharHeight * 2,
             currentFont);
-        font.draw(" colors: " + ColorThemes::THEME_NAMES[currentTheme] + " font: " + fontNames[currentFont] +
-                      " chars: " + characterSets[currentCharacterSet],
-                  debugFontSize, 0, ofGetHeight() + debugDescenderH,
+        font.draw(" colors: " + ColorThemes::THEME_NAMES[currentTheme] + " font: " + fontNames[currentFont],
+                  debugFontSize, 0, ofGetHeight() + debugDescenderH - debugCharHeight,
                   currentFont);
+        font.draw(
+            " chars: " + characterSets[currentCharacterSet],
+            debugFontSize, 0, ofGetHeight() + debugDescenderH,
+            currentFont);
     }
     TS_STOP("debugStuff");
 
@@ -929,153 +933,6 @@ void ofApp::drawTheme(int x, int y, int size) {
     }
     ofPopMatrix();
 }
-
-//--------------------------------------------------------------
-/*
-size_t ofApp::findNearestColor(ofColor col) {
-
-    if (col.getSaturation() <= 64) {
-        return ColorThemes::Color::foreground;
-    }
-
-    if (col.getBrightness() <= 127) {
-        return ColorThemes::Color::background;
-    }
-
-    ofVec3f sourceColor = ofVec3f(col.r, col.g, col.b);
-    ofVec3f referenceColor;
-    float minDistance = 9999.0;
-    float dist;
-    size_t index = 0;
-
-    for (size_t i = 0; i < ColorThemes::colorThemes[currentTheme].size(); i++) {
-
-        referenceColor = ofVec3f(ColorThemes::colorThemes[currentTheme][i].r,
-ColorThemes::colorThemes[currentTheme][i].g,
-ColorThemes::colorThemes[currentTheme][i].b);
-
-        dist = referenceColor.distance(sourceColor);
-
-
-        if (dist <= minDistance) {
-            minDistance = dist;
-            index = i;
-        }
-    }
-
-    if(index == ColorThemes::Color::background)
-        return ColorThemes::Color::foreground;
-
-    return index;
-}
-*/
-
-//--------------------------------------------------------------
-// size_t ofApp::findNearestColor(ofColor col) {
-//
-//     if (col.getBrightness() <= 8) {
-//         return ColorThemes::Color::foreground;
-//     }
-//
-//     if (col.getSaturation() <= 32) {
-//         return ColorThemes::Color::foreground;
-//     }
-//
-//     // col.r = ((int)(col.r/64.0))*64;
-//     // col.g = (col.g >> 3) << 3;
-//     // col.b = (col.b >> 3) << 3;
-//     // col = ofColor :: fromHsb(((int)col.getHue()>>4)<<4,
-//     // (((int)col.getSaturation()>>1)<<1), 255.0, 255.0);
-//     // col.setBrightness(255.0);
-//     ofVec3f sourceColor = ofVec3f(col.r, col.g, col.b);
-//     // ofVec4f sourceColor = ofVec4f(col.r, col.g, col.b, col.a);
-//     // ofVec3f sourceColor = ofVec3f(col.getHue(), col.getSaturation(),
-//     // col.getBrightness()); ofVec2f sourceColor = ofVec2f(col.getBrightness(),
-//     // col.getSaturation()); sourceColor.rotate(col.getHueAngle());
-//     // sourceColor.normalize();
-//     ofVec3f referenceColor;
-//     ofColor ref;
-//
-//     float dist;
-//     float satDist;
-//     float hueDist;
-//     float totalDist = 0;
-//
-//     struct colorEntry {
-//         size_t index;
-//         float dist;
-//         float satDist;
-//         float hueDist;
-//         float totalDist;
-//
-//         colorEntry(size_t i, float d, float s, float h, float t) {
-//             index = i;
-//             dist = d;
-//             satDist = s;
-//             hueDist = h;
-//             totalDist = t;
-//         }
-//
-//         //*
-//         bool operator<(const colorEntry &a) const {
-//             if (abs(hueDist - a.hueDist) <= 28.0) {
-//                 if (abs(satDist - a.satDist) <= 104.0)
-//                     return totalDist < a.totalDist;
-//                 else
-//                     return satDist < a.satDist;
-//             }
-//             return hueDist < a.hueDist;
-//         }
-//         //*/
-//
-//         /*
-//         bool operator<(const colorEntry& a) const {
-//             if (abs(hueDist - a.hueDist) <= hueDistWeight ) {
-//                 return satDist < a.satDist;
-//             }
-//             return hueDist < a.hueDist;
-//         }
-//         */
-//
-//         /*
-//         bool operator<(const colorEntry& a) const {
-//                 return totalDist < a.totalDist;
-//         }
-//         */
-//     };
-//
-//     vector<colorEntry> colorEntries;
-//
-//     for (size_t i = 1; i < ColorThemes::colorThemes[currentTheme].size(); i++) {
-//
-//         referenceColor = ofVec3f(ColorThemes::colorThemes[currentTheme][i].r,
-//                                  ColorThemes::colorThemes[currentTheme][i].g,
-//                                  ColorThemes::colorThemes[currentTheme][i].b);
-//
-//         ref = ColorThemes::colorThemes[currentTheme][i];
-//
-//         hueDist = col.getHueAngle() - ref.getHueAngle();
-//         if (hueDist < -180) {
-//             hueDist += 360;
-//         } else if (hueDist > 180) {
-//             hueDist -= 360;
-//         }
-//
-//         hueDist = abs(hueDist);
-//
-//         dist = referenceColor.distance(sourceColor);
-//         satDist = abs(col.getSaturation() - ref.getSaturation());
-//
-//         totalDist = hueDist + satDist + dist;
-//
-//         colorEntries.push_back(
-//             colorEntry(i, dist, satDist, hueDist, totalDist));
-//     }
-//
-//     sort(colorEntries.begin(), colorEntries.end());
-//
-//     return colorEntries.front().index;
-// }
 
 //--------------------------------------------------------------
 inline size_t ofApp::findNearestColor(ofColor col) {
