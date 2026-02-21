@@ -10,8 +10,8 @@
 
 class BaseRenderer {
     public:
-    BaseRenderer(){};
-    ~BaseRenderer(){};
+    BaseRenderer() {};
+    ~BaseRenderer() {};
 
     void setup(string name = "base") {
         moduleName = name;
@@ -40,11 +40,48 @@ class BaseRenderer {
         enabled = false;
     }
 
-    virtual void update(ofFbo &fbo){};
+    ofJson toJson() {
+        ofJson json;
+        ofJson jParameters;
+        ofJson jPar;
 
-    virtual void reset(){};
+        json["name"] = moduleName;
 
-    virtual void draw(float x, float y, float h, float w){};
+        for (size_t i = 0; i < parameters.size(); i++) {
+            jPar = parameters[i].toString();
+            jParameters.push_back(jPar);
+            jPar.clear();
+        }
+        json["parameters"] = jParameters;
+
+        return json;
+    };
+
+    bool fromJson(ofJson json) {
+        if ((json["parameters"] == nullptr) || (json["name"] == nullptr)) {
+            ofLogError("BaseRenderer::fromJson") << "Incomplete renderer json";
+            return false;
+        }
+
+        moduleName = json["name"];
+        ofJson jParameters = json["parameters"];
+        if (jParameters.size() != parameters.size()) {
+            ofLogError("BaseRenderer::fromJson") << "Incomplete parameters list";
+            return false;
+        }
+
+        for (size_t i = 0; i < jParameters.size(); i++) {
+            parameters[i].fromString(jParameters[i]);
+        }
+
+        return true;
+    };
+
+    virtual void update(ofFbo &fbo) {};
+
+    virtual void reset() {};
+
+    virtual void draw(float x, float y, float h, float w) {};
 
     void loadTexture(string path) {
         ofLoadImage(texture, path);
