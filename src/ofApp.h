@@ -50,7 +50,7 @@ class ofApp : public ofBaseApp {
     };
 
     // 30ms
-    inline void updateGridEntry(GridEntry &e, ofColor c, uint64_t frameNum) {
+    inline void updateGridEntry(GridEntry &e, const ofColor &c, uint64_t frameNum) {
         float brightness = c.getBrightness();
         float factor = (characterSetSize - 1) * kInvMaxBrightness;
         float targetIndex = brightness * factor;
@@ -186,6 +186,8 @@ class ofApp : public ofBaseApp {
     vector<GridEntry> testGrid;
     vector<GridEntry> characterGrid;
     vector<GridEntry> overlayGrid;
+    vector<float> cellPosX;
+    vector<float> cellPosY;
 
     ofFbo fboCharacterBuffer;
 

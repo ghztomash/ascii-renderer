@@ -151,10 +151,6 @@ void ofApp::setup() {
 
     guiRenderer.minimizeAll();
 
-    // noise.setup(fboCanvasWidth/8, fboCanvasHeight/8, "noiseSphere");
-    // noise.setup(20, 20, "noiseSphere");
-    // guiRenderer.add(noise.parameters);
-
     // character dimensions for debug print
     debugDescenderH = font.getFontDescender(debugFontSize, currentFont);
     debugCharHeight = font.getFontHeight(debugFontSize, currentFont);
@@ -193,12 +189,6 @@ void ofApp::update() {
 
     noise.update(fboNoiseTexture);
 
-    // test live parameter update
-    // cube.dimensions.set(glm::vec3((float)ofGetMouseX()/ofGetWidth(),
-    // (float)ofGetMouseY()/ofGetHeight(), 1.0));
-
-    // sphere.setTexture(fboNoiseTexture.getTexture());
-
     TSGL_START("renderersUpdate");
     TS_START("renderersUpdate");
     for (size_t i = 0; i < renderersVec.size(); i++) {
@@ -231,13 +221,6 @@ void ofApp::update() {
         saverThread.save(p);
         lastRingBufferIndex = ringBufferIndex;
         ringBufferIndex = (ringBufferIndex + 1) % NUM_BUFFERS;
-
-        // folder per capture
-        // ofSaveImage(fboAsciiPixels, "capture_"+ projectName +"/"+
-        // ofToString(st) +"/fbo_"+ ofToString(recordedFramesCount) +".png");
-        // folder per project
-        // ofSaveImage(fboAsciiPixels, "capture_"+ projectName +"/fbo_"+
-        // ofToString(recordedFramesCount) +".png");
 
         recordedFramesCount++;
 
@@ -577,6 +560,24 @@ void ofApp::calculateGridSize() {
     generateTestGrid();
     overlayGrid.resize(gridWidth * gridHeight);
     generateOverlayGrid();
+
+    canvasPixels.allocate(gridWidth, gridHeight, OF_PIXELS_RGBA);
+
+    const size_t gridSize = static_cast<size_t>(gridWidth) * static_cast<size_t>(gridHeight);
+    cellPosX.resize(gridSize);
+    cellPosY.resize(gridSize);
+
+    const float startX = marginOffsetH + charWidth * marginSize * 2;
+    const float startY = marginOffsetV + ascenderH + charHeight * marginSize;
+    const float stepX = charWidth + offsetH;
+    const float stepY = charHeight + offsetV;
+
+    for (size_t i = 0; i < gridSize; ++i) {
+        const size_t x = i % static_cast<size_t>(gridWidth);
+        const size_t y = i / static_cast<size_t>(gridWidth);
+        cellPosX[i] = startX + static_cast<float>(x) * stepX;
+        cellPosY[i] = startY + static_cast<float>(y) * stepY;
+    }
 }
 
 //--------------------------------------------------------------
@@ -766,140 +767,170 @@ void ofApp::allocateFbo() {
 // draw the ascii characters into the fbo
 void ofApp::convertFboToAscii() {
 
+    bool resized = false;
     TS_START("resize");
-    canvasPixels = canvasLastFrame;
-    canvasPixels.resize(gridWidth, gridHeight, OF_INTERPOLATE_NEAREST_NEIGHBOR);
+    resized = canvasLastFrame.resizeTo(canvasPixels, OF_INTERPOLATE_NEAREST_NEIGHBOR);
     TS_STOP("resize");
 
-    size_t colorIndex;
+    if (!resized) {
+        return;
+    }
 
-    size_t size = gridWidth * gridHeight;
-    size_t x = 0;
-    size_t y = 0;
+    const size_t size = static_cast<size_t>(gridWidth) * static_cast<size_t>(gridHeight);
+    const auto frameNum = static_cast<uint64_t>(ofGetFrameNum());
+    const auto &themeColors = ColorThemes::colorThemes[currentTheme];
+    const ofColor &backgroundColor = themeColors[ColorThemes::Color::background];
+    const ofColor &foregroundColor = themeColors[ColorThemes::Color::foreground];
+    const ofColor &cyanColor = themeColors[ColorThemes::Color::cyan];
+    const ofColor &magentaColor = themeColors[ColorThemes::Color::magenta];
+    const ofColor &yellowColor = themeColors[ColorThemes::Color::yellow];
+    const unsigned char *pixelPtr = canvasPixels.getData();
+    const size_t channels = static_cast<size_t>(canvasPixels.getNumChannels());
+    const bool hasAlpha = channels > 3;
 
-    float startX = marginOffsetH + charWidth * marginSize * 2;
-    float startY = marginOffsetV + ascenderH + charHeight * marginSize;
+    if (pixelPtr == nullptr || channels < 3 || cellPosX.size() != size || cellPosY.size() != size) {
+        return;
+    }
 
-    float cX = startX;
-    float cY = startY;
-
-    auto frameNum = ofGetFrameNum();
-    std::string finalChar;
-    ofColor drawColor;
+    bool hasLastDrawColor = false;
+    ofColor lastDrawColor;
+    auto drawGlyph = [&](const string &glyph, const ofColor &color, size_t i) {
+        if (!hasLastDrawColor || color != lastDrawColor) {
+            ofSetColor(color);
+            lastDrawColor = color;
+            hasLastDrawColor = true;
+        }
+        font.drawString(glyph, cellPosX[i], cellPosY[i], currentFont);
+    };
 
     fboAscii.begin();
-    ofBackground(
-        ColorThemes::colorThemes[currentTheme][ColorThemes::Color::background]);
+    ofBackground(backgroundColor);
 
     TSGL_START("loop");
     TS_START("loop");
-    for (size_t i = 0; i < size; i++) {
-        if (debugGrid) { // draw debug test pattern
-            TS_START_ACC("debug");
-            finalChar = testGrid[i].character;
-            drawColor = ColorThemes::colorThemes[currentTheme]
-                                                [ColorThemes::Color::cyan];
+    if (debugGrid) {
+        const float scaledMouseX = static_cast<float>(mouseX) / scalar;
+        const float scaledMouseY = static_cast<float>(mouseY) / scalar;
+        const float lineWidth = charWidth + offsetH;
+        const float lineHeight = charHeight + offsetV;
 
-            if ((mouseX / scalar >= cX) &&
-                (mouseX / scalar <= cX + charWidth) &&
-                (mouseY / scalar <= cY - descenderH) &&
-                (mouseY / scalar >= cY - ascenderH)) {
-                ofSetColor(
-                    ColorThemes::colorThemes[currentTheme]
-                                            [ColorThemes::Color::yellow]);
-                ofDrawRectangle(cX, cY - ascenderH, charWidth + offsetH,
-                                charHeight + offsetV);
+        for (size_t i = 0; i < size; ++i) {
+            const float x = cellPosX[i];
+            const float y = cellPosY[i];
+
+            if ((scaledMouseX >= x) &&
+                (scaledMouseX <= x + charWidth) &&
+                (scaledMouseY <= y - descenderH) &&
+                (scaledMouseY >= y - ascenderH)) {
+                ofSetColor(yellowColor);
+                ofDrawRectangle(x, y - ascenderH, lineWidth, lineHeight);
+                hasLastDrawColor = false;
             }
 
-            // draw gridlines
             if (debugLines) {
-                ofSetColor(
-                    ColorThemes::colorThemes[currentTheme]
-                                            [ColorThemes::Color::magenta]);
-                ofDrawLine(cX, 0, cX, fboHeight);
-                ofDrawLine(0, cY - ascenderH, fboWidth, cY - ascenderH);
+                ofSetColor(magentaColor);
+                ofDrawLine(x, 0, x, fboHeight);
+                ofDrawLine(0, y - ascenderH, fboWidth, y - ascenderH);
+                hasLastDrawColor = false;
             }
-            TS_STOP_ACC("debug");
-        } else if (overlay) {
-            // Overlay mode
 
-            TS_START_ACC("updateGridEntry");
-            updateGridEntry(characterGrid[i], canvasPixels.getColor(x, y), frameNum);
-            TS_STOP_ACC("updateGridEntry");
+            drawGlyph(testGrid[i].character, cyanColor, i);
+        }
+    } else if (overlay) {
+        if (enableColors) {
+            bool hasLastLookup = false;
+            ofColor lastLookupColor;
+            size_t lastLookupIndex = ColorThemes::Color::foreground;
+            ofColor sampledColor;
 
-            TS_START_ACC("overlay");
-            // Final char might come from overlayGrid if not empty
-            finalChar = (!overlayGrid[i].character.empty())
-                            ? overlayGrid[i].character
-                            : characterGrid[i].character;
+            for (size_t i = 0; i < size; ++i, pixelPtr += channels) {
+                sampledColor.r = pixelPtr[0];
+                sampledColor.g = pixelPtr[1];
+                sampledColor.b = pixelPtr[2];
+                sampledColor.a = hasAlpha ? pixelPtr[3] : 255;
 
-            // Color logic
-            if (enableColors) {
-                if (!overlayGrid[i].character.empty()) {
-                    // overlay always gets foreground color
-                    drawColor = ColorThemes::colorThemes[currentTheme]
-                                                        [ColorThemes::Color::foreground];
-                } else {
-                    // normal char in overlay mode: find nearest color
-                    colorIndex = findNearestColor(characterGrid[i].color);
-                    drawColor = ColorThemes::colorThemes[currentTheme][colorIndex];
+                updateGridEntry(characterGrid[i], sampledColor, frameNum);
+
+                const bool hasOverlayChar = !overlayGrid[i].character.empty();
+                const string &glyph = hasOverlayChar ? overlayGrid[i].character : characterGrid[i].character;
+
+                if (hasOverlayChar) {
+                    drawGlyph(glyph, foregroundColor, i);
+                    continue;
                 }
-            } else {
-                // no color mode: just use foreground
-                drawColor = ColorThemes::colorThemes[currentTheme]
-                                                    [ColorThemes::Color::foreground];
+
+                size_t colorIndex = ColorThemes::Color::foreground;
+                if (hasLastLookup && characterGrid[i].color == lastLookupColor) {
+                    colorIndex = lastLookupIndex;
+                } else {
+                    colorIndex = findNearestColor(characterGrid[i].color);
+                    lastLookupColor = characterGrid[i].color;
+                    lastLookupIndex = colorIndex;
+                    hasLastLookup = true;
+                }
+                drawGlyph(glyph, themeColors[colorIndex], i);
             }
-            TS_STOP_ACC("overlay");
         } else {
+            ofColor sampledColor;
+            for (size_t i = 0; i < size; ++i, pixelPtr += channels) {
+                sampledColor.r = pixelPtr[0];
+                sampledColor.g = pixelPtr[1];
+                sampledColor.b = pixelPtr[2];
+                sampledColor.a = hasAlpha ? pixelPtr[3] : 255;
 
-            TS_START_ACC("updateGridEntry");
-            updateGridEntry(characterGrid[i], canvasPixels.getColor(x, y), frameNum);
-            TS_STOP_ACC("updateGridEntry");
-
-            TS_START_ACC("character");
-            finalChar = characterGrid[i].character;
-
-            if (enableColors) {
-                size_t colorIndex = findNearestColor(characterGrid[i].color);
-                drawColor = ColorThemes::colorThemes[currentTheme][colorIndex];
-            } else {
-                drawColor = ColorThemes::colorThemes[currentTheme]
-                                                    [ColorThemes::Color::foreground];
+                updateGridEntry(characterGrid[i], sampledColor, frameNum);
+                const string &glyph = overlayGrid[i].character.empty() ? characterGrid[i].character : overlayGrid[i].character;
+                drawGlyph(glyph, foregroundColor, i);
             }
-            TS_STOP_ACC("character");
         }
+    } else {
+        if (enableColors) {
+            bool hasLastLookup = false;
+            ofColor lastLookupColor;
+            size_t lastLookupIndex = ColorThemes::Color::foreground;
+            ofColor sampledColor;
 
-        TS_START_ACC("setColor");
-        ofSetColor(drawColor);
-        TS_STOP_ACC("setColor");
+            for (size_t i = 0; i < size; ++i, pixelPtr += channels) {
+                sampledColor.r = pixelPtr[0];
+                sampledColor.g = pixelPtr[1];
+                sampledColor.b = pixelPtr[2];
+                sampledColor.a = hasAlpha ? pixelPtr[3] : 255;
 
-        TS_START_ACC("drawString");
-        font.drawString(finalChar, cX, cY, currentFont);
-        TS_STOP_ACC("drawString");
+                updateGridEntry(characterGrid[i], sampledColor, frameNum);
 
-        TS_START_ACC("coords");
-        x++;
-        cX += (charWidth + offsetH);
+                size_t colorIndex = ColorThemes::Color::foreground;
+                if (hasLastLookup && characterGrid[i].color == lastLookupColor) {
+                    colorIndex = lastLookupIndex;
+                } else {
+                    colorIndex = findNearestColor(characterGrid[i].color);
+                    lastLookupColor = characterGrid[i].color;
+                    lastLookupIndex = colorIndex;
+                    hasLastLookup = true;
+                }
 
-        if (x == gridWidth) {
-            x = 0;
-            cX = startX;
-            y++;
-            cY += (charHeight + offsetV);
+                drawGlyph(characterGrid[i].character, themeColors[colorIndex], i);
+            }
+        } else {
+            ofColor sampledColor;
+            for (size_t i = 0; i < size; ++i, pixelPtr += channels) {
+                sampledColor.r = pixelPtr[0];
+                sampledColor.g = pixelPtr[1];
+                sampledColor.b = pixelPtr[2];
+                sampledColor.a = hasAlpha ? pixelPtr[3] : 255;
+
+                updateGridEntry(characterGrid[i], sampledColor, frameNum);
+                drawGlyph(characterGrid[i].character, foregroundColor, i);
+            }
         }
-        TS_STOP_ACC("coords");
     }
     TS_STOP("loop");
     TSGL_STOP("loop");
 
     // draw last grid line
     if (debugGrid && debugLines) {
-        float finalX = marginOffsetH + charWidth * marginSize * 2 +
-                       gridWidth * (charWidth + offsetH);
-        float finalY = marginOffsetV + ascenderH + charHeight * marginSize +
-                       gridHeight * (charHeight + offsetV);
-        ofSetColor(ColorThemes::colorThemes[currentTheme]
-                                           [ColorThemes::Color::magenta]);
+        const float finalX = cellPosX.back() + (charWidth + offsetH);
+        const float finalY = cellPosY.back() + (charHeight + offsetV);
+        ofSetColor(magentaColor);
         ofDrawLine(finalX, 0, finalX, fboHeight);
         ofDrawLine(0, finalY - ascenderH, fboWidth, finalY - ascenderH);
     }
@@ -981,7 +1012,6 @@ inline size_t ofApp::findNearestColor(ofColor col) {
         float totalDist = hueDist + satDist + dist;
 
         // Compare with the "operator<" logic
-        // (We replicate the same logic used in your operator<)
         bool isBetter = false;
 
         // If the difference in hueDist is small, check satDist
