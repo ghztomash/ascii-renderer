@@ -30,7 +30,8 @@ const vector<std::string> RENDERER_NAMES = {"circmouse", "circwaves",
 
 /// Generic function that creates a renderer
 template <typename T>
-std::shared_ptr<BaseRenderer> createRenderer(std::optional<std::string> customName = std::nullopt) {
+std::shared_ptr<BaseRenderer> createRenderer(const std::string &typeName,
+                                             std::optional<std::string> customName = std::nullopt) {
     auto obj = std::make_shared<T>();
 
     if (customName) {
@@ -38,6 +39,7 @@ std::shared_ptr<BaseRenderer> createRenderer(std::optional<std::string> customNa
     } else {
         obj->setup();
     }
+    obj->setRendererTypeName(typeName);
 
     return obj;
 }
@@ -49,35 +51,35 @@ class RendererFactory {
 
         switch (type) {
             case CIRC_MOUSE_RENDERER:
-                return createRenderer<circMouseRenderer>(customName);
+                return createRenderer<circMouseRenderer>(RENDERER_NAMES[CIRC_MOUSE_RENDERER], customName);
             case CIRC_WAVES_RENDERER:
-                return createRenderer<circWavesRenderer>(customName);
+                return createRenderer<circWavesRenderer>(RENDERER_NAMES[CIRC_WAVES_RENDERER], customName);
             case NOISE_RENDERER:
-                return createRenderer<noiseRenderer>(customName);
+                return createRenderer<noiseRenderer>(RENDERER_NAMES[NOISE_RENDERER], customName);
             case LUA_RENDERER:
-                return createRenderer<luaRenderer>(customName);
+                return createRenderer<luaRenderer>(RENDERER_NAMES[LUA_RENDERER], customName);
             case DOTYPE_G_RENDERER:
-                return createRenderer<doTypeGRenderer>(customName);
+                return createRenderer<doTypeGRenderer>(RENDERER_NAMES[DOTYPE_G_RENDERER], customName);
             case DOTYPE_H_RENDERER:
-                return createRenderer<doTypeHRenderer>(customName);
+                return createRenderer<doTypeHRenderer>(RENDERER_NAMES[DOTYPE_H_RENDERER], customName);
             case DOTYPE_K_RENDERER:
-                return createRenderer<doTypeKRenderer>(customName);
+                return createRenderer<doTypeKRenderer>(RENDERER_NAMES[DOTYPE_K_RENDERER], customName);
             case DOTYPE_L_RENDERER:
-                return createRenderer<doTypeLRenderer>(customName);
+                return createRenderer<doTypeLRenderer>(RENDERER_NAMES[DOTYPE_L_RENDERER], customName);
             case DOTYPE_N0_RENDERER:
-                return createRenderer<doTypeN0Renderer>(customName);
+                return createRenderer<doTypeN0Renderer>(RENDERER_NAMES[DOTYPE_N0_RENDERER], customName);
             case DOTYPE_N1_RENDERER:
-                return createRenderer<doTypeN1Renderer>(customName);
+                return createRenderer<doTypeN1Renderer>(RENDERER_NAMES[DOTYPE_N1_RENDERER], customName);
             case DOTYPE_N2_RENDERER:
-                return createRenderer<doTypeN2Renderer>(customName);
+                return createRenderer<doTypeN2Renderer>(RENDERER_NAMES[DOTYPE_N2_RENDERER], customName);
             case DOTYPE_N3_RENDERER:
-                return createRenderer<doTypeN3Renderer>(customName);
+                return createRenderer<doTypeN3Renderer>(RENDERER_NAMES[DOTYPE_N3_RENDERER], customName);
             case DOTYPE_N8_RENDERER:
-                return createRenderer<doTypeN8Renderer>(customName);
+                return createRenderer<doTypeN8Renderer>(RENDERER_NAMES[DOTYPE_N8_RENDERER], customName);
             case PARTICLES_RENDERER:
-                return createRenderer<particlesRenderer>(customName);
+                return createRenderer<particlesRenderer>(RENDERER_NAMES[PARTICLES_RENDERER], customName);
             default:
-                return createRenderer<BaseRenderer>(customName);
+                return createRenderer<BaseRenderer>("base", customName);
         }
     };
 };

@@ -1402,6 +1402,88 @@ void ofApp::saveStringToFile(string filename, string content) {
 }
 
 //--------------------------------------------------------------
+void ofApp::saveRendererTopology(string filename) {
+    ofJson topology;
+    topology["version"] = 1;
+    topology["renderers"] = ofJson::array();
+
+    for (auto &renderer : renderersVec) {
+        const string rendererTypeName = renderer->getRendererTypeName();
+        if (rendererTypeName.empty()) {
+            ofLogWarning("ofApp::saveRendererTopology") << "Skipping renderer with unknown type: " << *(renderer->getName());
+            continue;
+        }
+
+        ofJson entry;
+        entry["type"] = rendererTypeName;
+        entry["name"] = *(renderer->getName());
+        topology["renderers"].push_back(entry);
+    }
+
+    if (!ofSavePrettyJson(filename, topology)) {
+        ofLogError("ofApp::saveRendererTopology") << "Failed to save renderer topology: " << filename;
+    }
+}
+
+//--------------------------------------------------------------
+bool ofApp::loadRendererTopology(string filename) {
+    ofFile topologyFile(filename);
+    if (!topologyFile.exists()) {
+        ofLogWarning("ofApp::loadRendererTopology") << "Renderer topology file missing: " << filename;
+        return false;
+    }
+
+    ofJson topology = ofLoadJson(filename);
+    if (!topology.is_object() || !topology.contains("renderers") || !topology["renderers"].is_array()) {
+        ofLogError("ofApp::loadRendererTopology") << "Invalid renderer topology format: " << filename;
+        return false;
+    }
+
+    vector<shared_ptr<BaseRenderer>> loadedRenderers;
+    const auto &entries = topology["renderers"];
+    loadedRenderers.reserve(entries.size());
+
+    for (const auto &entry : entries) {
+        if (!entry.is_object() || !entry.contains("type") || !entry.contains("name") ||
+            !entry["type"].is_string() || !entry["name"].is_string()) {
+            ofLogWarning("ofApp::loadRendererTopology") << "Skipping malformed renderer entry";
+            continue;
+        }
+
+        const string typeName = entry["type"];
+        const string rendererName = entry["name"];
+
+        bool typeFound = false;
+        rendererType type = LUA_RENDERER;
+        for (size_t i = 0; i < RENDERER_NAMES.size(); ++i) {
+            if (RENDERER_NAMES[i] == typeName) {
+                type = static_cast<rendererType>(i);
+                typeFound = true;
+                break;
+            }
+        }
+
+        if (!typeFound) {
+            ofLogWarning("ofApp::loadRendererTopology") << "Skipping unknown renderer type: " << typeName;
+            continue;
+        }
+
+        loadedRenderers.emplace_back(RendererFactory::newRenderer(type, rendererName));
+    }
+
+    // valid file with empty renderer list is allowed
+    if (!entries.empty() && loadedRenderers.empty()) {
+        ofLogError("ofApp::loadRendererTopology") << "No valid renderers loaded from: " << filename;
+        return false;
+    }
+
+    renderersVec = std::move(loadedRenderers);
+    rebuildRendererGui();
+
+    return true;
+}
+
+//--------------------------------------------------------------
 void ofApp::saveProjectPreset() {
     ofDirectory projectDir("projects/" + projectName);
     if (!projectDir.exists()) {
@@ -1410,6 +1492,7 @@ void ofApp::saveProjectPreset() {
 
     saveStringToFile(projectDir.path() + "project.txt", projectName);
     saveStringToFile(projectDir.path() + "overlay.txt", overlayText);
+    saveRendererTopology(projectDir.path() + "renderers.json");
     gui.saveToFile(projectDir.path() + "settings.xml");
     guiRenderer.saveToFile(projectDir.path() + "draw_params.xml");
 
@@ -1427,6 +1510,7 @@ void ofApp::loadProjectPreset(string path) {
     loadStringFromFile(projectDir.path() + "project.txt", projectName);
     loadStringFromFile(projectDir.path() + "overlay.txt", overlayText);
     gui.loadFromFile(projectDir.path() + "settings.xml");
+    loadRendererTopology(projectDir.path() + "renderers.json");
     guiRenderer.loadFromFile(projectDir.path() + "draw_params.xml");
 
     ofLogNotice() << "Project loaded " << projectDir.path();

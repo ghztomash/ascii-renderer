@@ -107,6 +107,14 @@ class BaseRenderer {
         return &moduleName;
     }
 
+    void setRendererTypeName(const string &typeName) {
+        rendererTypeName = typeName;
+    }
+
+    const string &getRendererTypeName() const {
+        return rendererTypeName;
+    }
+
     ofParameterGroup parameters;
     ofParameter<bool> enabled;
     ofParameter<ofColor> color;
@@ -180,6 +188,7 @@ class BaseRenderer {
     };
 
     string moduleName = "base";
+    string rendererTypeName = "base";
     ofLight light;
     ofEasyCam cam;
     ofTexture texture;

@@ -122,6 +122,8 @@ class ofApp : public ofBaseApp {
     void saveSvgFrame();
     void saveProjectPreset();
     void loadProjectPreset(string path);
+    void saveRendererTopology(string filename);
+    bool loadRendererTopology(string filename);
     void addRenderer(rendererType type);
     void removeLastRenderer();
     void rebuildRendererGui();
