@@ -320,9 +320,73 @@ void ofApp::draw() {
 void ofApp::keyPressed(int key) {}
 
 //--------------------------------------------------------------
+string ofApp::makeUniqueRendererName(const string &baseName) const {
+    size_t suffix = 0;
+    while (true) {
+        string candidate = baseName + "_" + ofToString(suffix++);
+        bool exists = false;
+        for (const auto &renderer : renderersVec) {
+            if (*(renderer->getName()) == candidate) {
+                exists = true;
+                break;
+            }
+        }
+        if (!exists) {
+            return candidate;
+        }
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::addRenderer(rendererType type) {
+    const size_t typeIndex = static_cast<size_t>(type);
+    const string baseName = (typeIndex < RENDERER_NAMES.size()) ? RENDERER_NAMES[typeIndex] : "renderer";
+    const string rendererName = makeUniqueRendererName(baseName);
+
+    auto renderer = RendererFactory::newRenderer(type, rendererName);
+    renderersVec.emplace_back(renderer);
+    guiRenderer.add(renderer->parameters);
+    guiRenderer.minimizeAll();
+
+    ofLogNotice("ofApp::addRenderer") << "Added renderer: " << rendererName;
+}
+
+//--------------------------------------------------------------
+void ofApp::rebuildRendererGui() {
+    guiRenderer.clear();
+    for (auto &renderer : renderersVec) {
+        guiRenderer.add(renderer->parameters);
+    }
+    guiRenderer.minimizeAll();
+}
+
+//--------------------------------------------------------------
+void ofApp::removeLastRenderer() {
+    if (renderersVec.empty()) {
+        ofLogWarning("ofApp::removeLastRenderer") << "No renderers to remove";
+        return;
+    }
+
+    const string removedName = *(renderersVec.back()->getName());
+    renderersVec.pop_back();
+    rebuildRendererGui();
+
+    ofLogNotice("ofApp::removeLastRenderer") << "Removed renderer: " << removedName;
+}
+
+//--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
     ofFileDialogResult dialog_result;
     switch (key) {
+        // add runtime renderer
+        case '+':
+        case '=':
+            addRenderer(LUA_RENDERER);
+            break;
+        case '-':
+        case '_':
+            removeLastRenderer();
+            break;
         // draw gui
         case 'g':
         case 'G':
@@ -423,6 +487,8 @@ void ofApp::keyReleased(int key) {
                 "w: save proect presets\n"
                 "l: load proect presets\n"
                 "o: change overlayText\n"
+                "+/=: add lua renderer\n"
+                "-/_: remove last renderer\n"
                 "?: show this help\n");
             break;
         default:

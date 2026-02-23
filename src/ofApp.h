@@ -122,6 +122,10 @@ class ofApp : public ofBaseApp {
     void saveSvgFrame();
     void saveProjectPreset();
     void loadProjectPreset(string path);
+    void addRenderer(rendererType type);
+    void removeLastRenderer();
+    void rebuildRendererGui();
+    string makeUniqueRendererName(const string &baseName) const;
     int secondsToFrames(float seconds);
     void loadCharacterSets(string filename);
     void loadStringFromFile(string filename, string &target);
