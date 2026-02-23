@@ -794,12 +794,25 @@ void ofApp::convertFboToAscii() {
 
     bool hasLastDrawColor = false;
     ofColor lastDrawColor;
+
+    const bool enableTextBatching = !debugGrid;
+    bool batchActive = false;
     auto drawGlyph = [&](const string &glyph, const ofColor &color, size_t i) {
         if (!hasLastDrawColor || color != lastDrawColor) {
+            if (enableTextBatching && batchActive) {
+                font.endBatch();
+                batchActive = false;
+            }
             ofSetColor(color);
             lastDrawColor = color;
             hasLastDrawColor = true;
         }
+
+        if (enableTextBatching && !batchActive) {
+            font.beginBatch();
+            batchActive = true;
+        }
+
         font.drawString(glyph, cellPosX[i], cellPosY[i], currentFont);
     };
 
@@ -925,6 +938,11 @@ void ofApp::convertFboToAscii() {
     }
     TS_STOP("loop");
     TSGL_STOP("loop");
+
+    if (batchActive) {
+        font.endBatch();
+        batchActive = false;
+    }
 
     // draw last grid line
     if (debugGrid && debugLines) {
