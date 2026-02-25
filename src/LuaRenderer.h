@@ -244,6 +244,20 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         ofLogError("luaRenderer::circuitBreaker") << lastLoadError;
     }
 
+    int watchdogBudgetForPhase(LuaExecutionPhase phase) const {
+        switch (phase) {
+        case LuaExecutionPhase::Staging:
+            return watchdogStagingBudgetMs;
+        case LuaExecutionPhase::RuntimeUpdate:
+            return watchdogRuntimeUpdateBudgetMs;
+        case LuaExecutionPhase::RuntimeDraw:
+            return watchdogRuntimeDrawBudgetMs;
+        case LuaExecutionPhase::Idle:
+        default:
+            return watchdogRuntimeUpdateBudgetMs;
+        }
+    }
+
     void armWatchdog(ofxLua &lua) {
         if (!watchdogEnabled) {
             return;
@@ -254,6 +268,7 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
             return;
         }
 
+        currentWatchdogBudgetMs = watchdogBudgetForPhase(executionPhase);
         watchdogOwner = this;
         watchdogStart = std::chrono::steady_clock::now();
         lua_sethook(state, &luaRenderer::watchdogHook, LUA_MASKCOUNT, watchdogInstructionStep);
@@ -279,7 +294,7 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         const auto elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(
                                    std::chrono::steady_clock::now() - watchdogStart)
                                    .count();
-        if (elapsedMs <= owner->watchdogBudgetMs) {
+        if (elapsedMs <= owner->currentWatchdogBudgetMs) {
             return;
         }
 
@@ -573,7 +588,10 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     int consecutiveRuntimeFailures = 0;
     int maxConsecutiveRuntimeFailures = 3;
     bool watchdogEnabled = true;
-    int watchdogBudgetMs = 8;
+    int watchdogStagingBudgetMs = 1000;
+    int watchdogRuntimeUpdateBudgetMs = 50;
+    int watchdogRuntimeDrawBudgetMs = 100;
+    int currentWatchdogBudgetMs = 50;
     int watchdogInstructionStep = 10000;
 
     inline static luaRenderer *watchdogOwner = nullptr;
