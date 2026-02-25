@@ -5,6 +5,10 @@
 #include "ofUtils.h"
 #include "ofxLua.h"
 #include "ofxWaveforms.h"
+#include <chrono>
+#include <filesystem>
+#include <string>
+#include <vector>
 
 // declare LUA module bindings for ofxWaveforms and ofxEosParticles
 extern "C" {
@@ -15,6 +19,21 @@ int luaopen_particles(lua_State *L);
 // NOTE: LUA Renderer
 class luaRenderer : public BaseRenderer, ofxLuaListener {
     public:
+    ~luaRenderer() {
+        scriptPathParam.removeListener(this, &luaRenderer::scriptParamChanged);
+        open.removeListener(this, &luaRenderer::browseScript);
+
+        activeLua->removeListener(this);
+        stagingLua->removeListener(this);
+
+        if (activeLua->isValid()) {
+            activeLua->scriptExit();
+        }
+        if (stagingLua->isValid()) {
+            stagingLua->scriptExit();
+        }
+    }
+
     void setup(string name = "lua") {
         ofSetLogLevel("ofxLua", OF_LOG_VERBOSE);
         BaseRenderer::setup(name);
@@ -35,7 +54,8 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         sequence.addStep(1, SIN, 4.0, 1);
 
         // listen to error events
-        lua.addListener(this);
+        activeLua->addListener(this);
+        stagingLua->addListener(this);
 
         reloadCurrentScript();
     }
@@ -48,49 +68,43 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         sequence.update();
         wave.update();
 
-        // update lua variables
-        if (lua.isTable("canvasSize")) {
-            if (lua.pushTable("canvasSize")) {
-                if (lua.isNumber("w"))
-                    lua.setNumber("w", fbo.getWidth());
-                if (lua.isNumber("h"))
-                    lua.setNumber("h", fbo.getHeight());
-                lua.popTable();
-            }
-        }
-        if (lua.isTable("dimensions")) {
-            if (lua.pushTable("dimensions")) {
-                if (lua.isNumber("x"))
-                    lua.setNumber("x", dimensions.get().x * fbo.getWidth());
-                if (lua.isNumber("y"))
-                    lua.setNumber("y", dimensions.get().y * fbo.getHeight());
-                if (lua.isNumber("z"))
-                    lua.setNumber("z", dimensions.get().z * fbo.getWidth());
-                lua.popTable();
-            }
-        }
-        if (lua.isTable("color")) {
-            if (lua.pushTable("color")) {
-                if (lua.isNumber("r"))
-                    lua.setNumber("r", color.get().r);
-                if (lua.isNumber("g"))
-                    lua.setNumber("g", color.get().g);
-                if (lua.isNumber("b"))
-                    lua.setNumber("b", color.get().b);
-                if (lua.isNumber("a"))
-                    lua.setNumber("a", color.get().a);
-                lua.popTable();
-            }
+        if (!hasActiveScript || !activeLua->isValid()) {
+            return;
         }
 
-        // TODO: optimize this
-        // convert from vector<float> to vector<lua_Number>
-        if (!sequence.getValues().empty()) {
-            modulation.clear();
-            modulation.reserve(sequence.getValues().size());
-            for (int i = 0; i < sequence.getValues().size(); i++) {
-                modulation.push_back(sequence.getValues()[i]);
-            }
+        auto &lua = *activeLua;
+
+        // update lua variables
+        updateLuaTable(lua, "canvasSize", [&]() {
+            if (lua.isNumber("w"))
+                lua.setNumber("w", fbo.getWidth());
+            if (lua.isNumber("h"))
+                lua.setNumber("h", fbo.getHeight());
+        });
+
+        updateLuaTable(lua, "dimensions", [&]() {
+            if (lua.isNumber("x"))
+                lua.setNumber("x", dimensions.get().x * fbo.getWidth());
+            if (lua.isNumber("y"))
+                lua.setNumber("y", dimensions.get().y * fbo.getHeight());
+            if (lua.isNumber("z"))
+                lua.setNumber("z", dimensions.get().z * fbo.getWidth());
+        });
+
+        updateLuaTable(lua, "color", [&]() {
+            if (lua.isNumber("r"))
+                lua.setNumber("r", color.get().r);
+            if (lua.isNumber("g"))
+                lua.setNumber("g", color.get().g);
+            if (lua.isNumber("b"))
+                lua.setNumber("b", color.get().b);
+            if (lua.isNumber("a"))
+                lua.setNumber("a", color.get().a);
+        });
+
+        const vector<float> sequenceValues = sequence.getValues();
+        if (!sequenceValues.empty()) {
+            modulation.assign(sequenceValues.begin(), sequenceValues.end());
             lua.setNumberVector("modulation", modulation);
         }
 
@@ -102,17 +116,19 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         // update lua
         lua.scriptUpdate();
 
-        BaseRenderer::preUpdate(fbo);
-        ofSetRectMode(OF_RECTMODE_CENTER);
-        // draw lua
-        lua.scriptDraw();
-        ofSetRectMode(OF_RECTMODE_CORNER);
-        BaseRenderer::postUpdate(fbo);
+        if (fbo.isAllocated() && enabled) {
+            BaseRenderer::preUpdate(fbo);
+            ofSetRectMode(OF_RECTMODE_CENTER);
+            // draw lua
+            lua.scriptDraw();
+            ofSetRectMode(OF_RECTMODE_CORNER);
+            BaseRenderer::postUpdate(fbo);
+        }
     }
 
     // script control
     void loadScript(size_t script) {
-        if ((script >= scripts.size()) || (script < 0)) {
+        if (script >= scripts.size()) {
             ofLogError("luaRenderer::loadScript") << "script index out of bounds";
             return;
         }
@@ -120,62 +136,128 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     }
 
     void reloadCurrentScript() {
-        if (currentScriptPath != "") {
+        if (!currentScriptPath.empty()) {
             loadScript(currentScriptPath);
-        } else {
+        } else if (!scripts.empty()) {
             loadScript(0);
+        } else {
+            ofLogWarning("luaRenderer::reloadCurrentScript") << "No scripts available to load";
         }
     }
 
     protected:
     private:
+    template <typename Fn>
+    void updateLuaTable(ofxLua &lua, const std::string &tableName, Fn &&updater) {
+        if (!lua.isTable(tableName)) {
+            return;
+        }
+        if (!lua.pushTable(tableName)) {
+            return;
+        }
+        updater();
+        lua.popTable();
+    }
+
     void populateScripts() {
-        ofDirectory dir("scripts/");
+        scripts.clear();
+
+        ofDirectory dir(ofToDataPath("scripts/", true));
         dir.allowExt("lua");
         dir.listDir();
         dir.sort();
         if (dir.size() <= 0) {
-            ofLogError("luaRenderer::populateScripts") << "No scripts found in in bin/data/scripts/ directory";
-            std::exit(-1);
+            ofLogWarning("luaRenderer::populateScripts") << "No scripts found in bin/data/scripts/ directory";
+            return;
         }
 
         for (size_t i = 0; i < dir.size(); i++) {
             ofLogNotice("luaRenderer") << "adding script: " << dir.getName(i);
-            scripts.push_back(dir.getPath(i));
+            scripts.push_back(ofFilePath::join("scripts", dir.getName(i)));
         }
 
         dir.close();
     }
 
-    void loadScript(std::string &script) {
-        ofFile file(script);
+    bool prepareLuaState(ofxLua &lua) {
+        lua.clear();
+        if (!lua.init()) {
+            ofLogError("luaRenderer::prepareLuaState") << "Failed to initialize Lua state";
+            return false;
+        }
+
+        // load additional bindings
+        luaopen_waveforms(lua);
+        luaopen_particles(lua);
+        return true;
+    }
+
+    bool stageScript(const std::string &script) {
+        if (!prepareLuaState(*stagingLua)) {
+            return false;
+        }
+
+        std::error_code cwdError;
+        const auto previousCwd = std::filesystem::current_path(cwdError);
+        const bool restoreCwdOnFailure = !cwdError;
+
+        if (!stagingLua->doScript(script, true)) {
+            if (restoreCwdOnFailure) {
+                std::filesystem::current_path(previousCwd, cwdError);
+            }
+            return false;
+        }
+
+        stagingLua->scriptSetup();
+        if (!stagingLua->getErrorMessage().empty()) {
+            if (restoreCwdOnFailure) {
+                std::filesystem::current_path(previousCwd, cwdError);
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    void loadScript(const std::string &script) {
+        const string scriptPath = ofFilePath::makeRelative(ofToDataPath("", true), ofToDataPath(script, true));
+        ofFile file(ofToDataPath(scriptPath, true));
 
         if (file.exists()) {
             string fileExtension = ofToLower(file.getExtension());
 
             if (fileExtension == "lua") {
-                ofLogNotice("luaRenderer::loadScript") << "Loading script: " << script;
-                currentScriptPath = script;
-                scriptPathParam = script;
-                lastModified = getLastModified(script);
+                if (!stageScript(scriptPath)) {
+                    ofLogError("luaRenderer::loadScript") << "Failed to load script, keeping current state: " << scriptPath;
+                    if (!hasActiveScript) {
+                        // remember the path and retry only after file changes
+                        currentScriptPath = scriptPath;
+                        lastModified = getLastModified(scriptPath);
+                    }
+                    if (!currentScriptPath.empty()) {
+                        scriptPathParam = currentScriptPath;
+                    }
+                    return;
+                }
 
-                // close the lua state
-                lua.scriptExit();
-                // init the lua state
-                lua.init();
-                // load additional bindings
-                luaopen_waveforms(lua);
-                luaopen_particles(lua);
-                // run script
-                lua.doScript(script, true);
-                // call script setup()
-                lua.scriptSetup();
+                if (hasActiveScript && activeLua->isValid()) {
+                    activeLua->scriptExit();
+                }
+
+                std::swap(activeLua, stagingLua);
+                hasActiveScript = true;
+
+                ofLogNotice("luaRenderer::loadScript") << "Loaded script: " << scriptPath;
+                currentScriptPath = scriptPath;
+                scriptPathParam = scriptPath;
+                lastModified = getLastModified(scriptPath);
+                loggedMissingScript = false;
             } else {
-                ofLogError("luaRenderer::loadScript") << "selected script is not lua: " << script;
+                ofLogError("luaRenderer::loadScript") << "selected script is not lua: " << scriptPath;
                 scriptPathParam = currentScriptPath;
             }
         } else {
-            ofLogError("luaRenderer::loadScript") << "file doesn't exist: " << script;
+            ofLogError("luaRenderer::loadScript") << "file doesn't exist: " << scriptPath;
             scriptPathParam = currentScriptPath;
         }
     }
@@ -212,40 +294,66 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     }
 
     /// get last modified time of a script
-    time_t getLastModified(std::string &path) {
-        try {
-            ofFile file(path);
-            if (!file.exists() || !file.canRead()) {
-                ofLogError("luaRenderer::getLastModified") << "file not accessible: " << path;
-                return 0;
-            }
-
-            auto ftime = std::filesystem::last_write_time(ofToDataPath(path, true));
-            auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
-                ftime - std::filesystem::file_time_type::clock::now() +
-                std::chrono::system_clock::now());
-            return std::chrono::system_clock::to_time_t(sctp);
-        } catch (const std::filesystem::filesystem_error &e) {
-            ofLogError("LuaRenderer::getLastModified") << "Filesystem error: " << e.what();
-            return 0;
-        } catch (const std::exception &e) {
-            ofLogError("LuaRenderer::getLastModified") << "Unexpected error: " << e.what();
+    time_t getLastModified(const std::string &path) {
+        const std::string absolutePath = ofToDataPath(path, true);
+        std::error_code error;
+        const auto ftime = std::filesystem::last_write_time(absolutePath, error);
+        if (error) {
             return 0;
         }
+
+        const auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+            ftime - std::filesystem::file_time_type::clock::now() +
+            std::chrono::system_clock::now());
+        return std::chrono::system_clock::to_time_t(sctp);
     }
 
     void reloadScriptIfChanged() {
-        if (lastModified == getLastModified(currentScriptPath))
+        if (currentScriptPath.empty()) {
             return;
+        }
+
+        const uint64_t nowMillis = ofGetElapsedTimeMillis();
+        if (nowMillis - lastWatchCheckMillis < scriptWatchIntervalMillis) {
+            return;
+        }
+        lastWatchCheckMillis = nowMillis;
+
+        const time_t modified = getLastModified(currentScriptPath);
+        if (modified == 0) {
+            if (!loggedMissingScript) {
+                ofLogWarning("luaRenderer::reloadScriptIfChanged") << "Cannot read script timestamp: " << currentScriptPath;
+                loggedMissingScript = true;
+            }
+            return;
+        }
+        loggedMissingScript = false;
+
+        if (lastModified == modified) {
+            return;
+        }
         ofLogNotice("luaRenderer::reloadScriptIfChanged") << "Reloading changed script: " << currentScriptPath;
 
         reloadCurrentScript();
+
+        // avoid repeatedly reloading if the changed file is still invalid
+        if (lastModified != modified) {
+            lastModified = modified;
+        }
     }
 
-    ofxLua lua;
+    ofxLua luaPrimary;
+    ofxLua luaSecondary;
+    ofxLua *activeLua = &luaPrimary;
+    ofxLua *stagingLua = &luaSecondary;
+    bool hasActiveScript = false;
+
     vector<std::string> scripts;
     string currentScriptPath;
     time_t lastModified = 0;
+    uint64_t lastWatchCheckMillis = 0;
+    uint64_t scriptWatchIntervalMillis = 250;
+    bool loggedMissingScript = false;
 
     ofParameter<int> particle_count;
     ofParameter<void> open;
