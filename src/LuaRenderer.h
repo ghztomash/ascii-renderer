@@ -105,42 +105,42 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         auto &lua = *activeLua;
 
         // update lua variables
-        updateLuaTable(lua, "canvasSize", [&]() {
-            if (lua.isNumber("w"))
+        applyCachedTableUpdates(lua, "canvasSize", updateFieldCache.canvasSizeTable, [&]() {
+            if (updateFieldCache.canvasSizeW)
                 lua.setNumber("w", fbo.getWidth());
-            if (lua.isNumber("h"))
+            if (updateFieldCache.canvasSizeH)
                 lua.setNumber("h", fbo.getHeight());
         });
 
-        updateLuaTable(lua, "dimensions", [&]() {
-            if (lua.isNumber("x"))
+        applyCachedTableUpdates(lua, "dimensions", updateFieldCache.dimensionsTable, [&]() {
+            if (updateFieldCache.dimensionsX)
                 lua.setNumber("x", dimensions.get().x * fbo.getWidth());
-            if (lua.isNumber("y"))
+            if (updateFieldCache.dimensionsY)
                 lua.setNumber("y", dimensions.get().y * fbo.getHeight());
-            if (lua.isNumber("z"))
+            if (updateFieldCache.dimensionsZ)
                 lua.setNumber("z", dimensions.get().z * fbo.getWidth());
         });
 
-        updateLuaTable(lua, "color", [&]() {
-            if (lua.isNumber("r"))
+        applyCachedTableUpdates(lua, "color", updateFieldCache.colorTable, [&]() {
+            if (updateFieldCache.colorR)
                 lua.setNumber("r", color.get().r);
-            if (lua.isNumber("g"))
+            if (updateFieldCache.colorG)
                 lua.setNumber("g", color.get().g);
-            if (lua.isNumber("b"))
+            if (updateFieldCache.colorB)
                 lua.setNumber("b", color.get().b);
-            if (lua.isNumber("a"))
+            if (updateFieldCache.colorA)
                 lua.setNumber("a", color.get().a);
         });
 
         const vector<float> sequenceValues = sequence.getValues();
-        if (!sequenceValues.empty()) {
+        if (updateFieldCache.modulationTable && !sequenceValues.empty()) {
             modulation.assign(sequenceValues.begin(), sequenceValues.end());
             lua.setNumberVector("modulation", modulation);
         }
 
-        if (lua.isNumber("resolution"))
+        if (updateFieldCache.resolutionNumber)
             lua.setNumber("resolution", resolution);
-        if (lua.isNumber("particle_count"))
+        if (updateFieldCache.particleCountNumber)
             lua.setNumber("particle_count", particle_count);
 
         // update lua
@@ -194,6 +194,27 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         Staging,
         RuntimeUpdate,
         RuntimeDraw,
+    };
+
+    struct LuaUpdateFieldCache {
+        bool canvasSizeTable = false;
+        bool canvasSizeW = false;
+        bool canvasSizeH = false;
+
+        bool dimensionsTable = false;
+        bool dimensionsX = false;
+        bool dimensionsY = false;
+        bool dimensionsZ = false;
+
+        bool colorTable = false;
+        bool colorR = false;
+        bool colorG = false;
+        bool colorB = false;
+        bool colorA = false;
+
+        bool modulationTable = false;
+        bool resolutionNumber = false;
+        bool particleCountNumber = false;
     };
 
     template <typename Fn>
@@ -268,15 +289,54 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     }
 
     template <typename Fn>
-    void updateLuaTable(ofxLua &lua, const std::string &tableName, Fn &&updater) {
-        if (!lua.isTable(tableName)) {
+    void applyCachedTableUpdates(ofxLua &lua, const std::string &tableName, bool &tableCached, Fn &&updater) {
+        if (!tableCached) {
             return;
         }
         if (!lua.pushTable(tableName)) {
+            tableCached = false;
             return;
         }
         updater();
         lua.popTable();
+    }
+
+    void rebuildUpdateFieldCache(ofxLua &lua) {
+        updateFieldCache = LuaUpdateFieldCache();
+
+        updateFieldCache.canvasSizeTable = lua.isTable("canvasSize");
+        if (updateFieldCache.canvasSizeTable && lua.pushTable("canvasSize")) {
+            updateFieldCache.canvasSizeW = lua.isNumber("w");
+            updateFieldCache.canvasSizeH = lua.isNumber("h");
+            lua.popTable();
+        } else {
+            updateFieldCache.canvasSizeTable = false;
+        }
+
+        updateFieldCache.dimensionsTable = lua.isTable("dimensions");
+        if (updateFieldCache.dimensionsTable && lua.pushTable("dimensions")) {
+            updateFieldCache.dimensionsX = lua.isNumber("x");
+            updateFieldCache.dimensionsY = lua.isNumber("y");
+            updateFieldCache.dimensionsZ = lua.isNumber("z");
+            lua.popTable();
+        } else {
+            updateFieldCache.dimensionsTable = false;
+        }
+
+        updateFieldCache.colorTable = lua.isTable("color");
+        if (updateFieldCache.colorTable && lua.pushTable("color")) {
+            updateFieldCache.colorR = lua.isNumber("r");
+            updateFieldCache.colorG = lua.isNumber("g");
+            updateFieldCache.colorB = lua.isNumber("b");
+            updateFieldCache.colorA = lua.isNumber("a");
+            lua.popTable();
+        } else {
+            updateFieldCache.colorTable = false;
+        }
+
+        updateFieldCache.modulationTable = lua.isTable("modulation");
+        updateFieldCache.resolutionNumber = lua.isNumber("resolution");
+        updateFieldCache.particleCountNumber = lua.isNumber("particle_count");
     }
 
     void populateScripts() {
@@ -388,6 +448,7 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
                 runtimeErrorMessage.clear();
                 lastRuntimeError.clear();
                 lastLoadError.clear();
+                rebuildUpdateFieldCache(*activeLua);
             } else {
                 lastLoadError = "selected script is not lua: " + scriptPath;
                 ofLogError("luaRenderer::loadScript") << lastLoadError;
@@ -504,6 +565,7 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     bool runtimeErrorThisFrame = false;
     bool watchdogTimeoutTriggered = false;
     LuaExecutionPhase executionPhase = LuaExecutionPhase::Idle;
+    LuaUpdateFieldCache updateFieldCache;
     int consecutiveRuntimeFailures = 0;
     int maxConsecutiveRuntimeFailures = 3;
     bool watchdogEnabled = true;
