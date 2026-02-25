@@ -374,10 +374,7 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     }
 
     bool stageScript(const std::string &script) {
-        executionPhase = LuaExecutionPhase::Staging;
-
         if (!prepareLuaState(*stagingLua)) {
-            executionPhase = LuaExecutionPhase::Idle;
             return false;
         }
 
@@ -385,24 +382,31 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         const auto previousCwd = std::filesystem::current_path(cwdError);
         const bool restoreCwdOnFailure = !cwdError;
 
-        if (!stagingLua->doScript(script, true)) {
+        watchdogTimeoutTriggered = false;
+        bool staged = false;
+        executeLuaPhase(*stagingLua, LuaExecutionPhase::Staging, [&]() {
+            staged = stagingLua->doScript(script, true);
+        });
+
+        if (!staged || watchdogTimeoutTriggered) {
             if (restoreCwdOnFailure) {
                 std::filesystem::current_path(previousCwd, cwdError);
             }
-            executionPhase = LuaExecutionPhase::Idle;
             return false;
         }
 
-        stagingLua->scriptSetup();
-        if (!stagingLua->getErrorMessage().empty()) {
+        watchdogTimeoutTriggered = false;
+        executeLuaPhase(*stagingLua, LuaExecutionPhase::Staging, [&]() {
+            stagingLua->scriptSetup();
+        });
+
+        if (watchdogTimeoutTriggered || !stagingLua->getErrorMessage().empty()) {
             if (restoreCwdOnFailure) {
                 std::filesystem::current_path(previousCwd, cwdError);
             }
-            executionPhase = LuaExecutionPhase::Idle;
             return false;
         }
 
-        executionPhase = LuaExecutionPhase::Idle;
         return true;
     }
 
