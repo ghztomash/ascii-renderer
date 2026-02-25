@@ -321,31 +321,26 @@ void ofApp::draw() {
 
 //--------------------------------------------------------------
 void ofApp::drawLuaStatusFlags() {
-    constexpr int kX = 8;
-    constexpr int kStartY = 16;
-    constexpr int kLineHeight = 16;
-    constexpr size_t kMaxErrorChars = 120;
+    int kX = 8 + (zoom ? screenSize : fboWidth) + screenSize / 2;
+    int kStartY = 8 + screenSize / 2;
+    int kLineHeight = debugCharHeight / 2;
+    constexpr size_t kMaxErrorChars = 180;
 
     int y = kStartY;
-    size_t luaIndex = 0;
 
     for (const auto &renderer : renderersVec) {
         auto lua = std::dynamic_pointer_cast<luaRenderer>(renderer);
-        if (!lua) {
+        if (!lua || !lua->enabled) {
             continue;
         }
 
-        const bool active = lua->isScriptActive();
+        const bool loaded = lua->isScriptActive();
         const std::string line = ofToString(*lua->getName()) + ": " +
-                                 (active ? "OK " : "ERR ") +
+                                 (loaded ? "OK " : "ERR ") +
                                  lua->getActiveScriptName();
 
-        ofDrawBitmapStringHighlight(
-            line,
-            kX,
-            y,
-            ofColor::white,
-            active ? ofColor(0, 96, 0, 180) : ofColor(140, 24, 24, 200));
+        ofSetColor(loaded ? ofColor::white : ColorThemes::colorThemes[currentTheme][1]);
+        font.draw(line, debugFontSize / 2.0, kX, y, currentFont);
         y += kLineHeight;
 
         const std::string &lastError = lua->getLastLoadError();
@@ -353,18 +348,13 @@ void ofApp::drawLuaStatusFlags() {
             continue;
         }
 
-        std::string truncated = lastError;
-        if (truncated.size() > kMaxErrorChars) {
-            truncated.resize(kMaxErrorChars - 3);
-            truncated += "...";
+        std::string truncatedError = lastError;
+        if (truncatedError.size() > kMaxErrorChars) {
+            truncatedError.resize(kMaxErrorChars);
         }
 
-        ofDrawBitmapStringHighlight(
-            "  " + truncated,
-            kX,
-            y,
-            ofColor(255, 230, 230),
-            ofColor(100, 0, 0, 180));
+        ofSetColor(ColorThemes::colorThemes[currentTheme][8]);
+        font.draw(truncatedError, debugFontSize / 2.0, kX, y, currentFont);
         y += kLineHeight;
     }
 }
