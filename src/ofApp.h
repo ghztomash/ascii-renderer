@@ -140,6 +140,7 @@ class ofApp : public ofBaseApp {
     void startRecording();
     void allocateFbo();
     void convertFboToAscii();
+    void drawLuaStatusFlags();
 
     bool drawGui = true;
 

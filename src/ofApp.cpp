@@ -8,6 +8,7 @@
 #include "ofSystemUtils.h"
 #include "ofUtils.h"
 #include "ofxTimeMeasurementsMacros.h"
+#include <memory>
 #include <omp.h>
 
 //--------------------------------------------------------------
@@ -306,6 +307,8 @@ void ofApp::draw() {
             " chars: " + characterSets[currentCharacterSet],
             debugFontSize, 0, ofGetHeight() + debugDescenderH,
             currentFont);
+
+        drawLuaStatusFlags();
     }
     TS_STOP("debugStuff");
 
@@ -314,6 +317,56 @@ void ofApp::draw() {
         guiRenderer.draw();
     }
     // ofEnableAntiAliasing(); //to get precise lines
+}
+
+//--------------------------------------------------------------
+void ofApp::drawLuaStatusFlags() {
+    constexpr int kX = 8;
+    constexpr int kStartY = 16;
+    constexpr int kLineHeight = 16;
+    constexpr size_t kMaxErrorChars = 120;
+
+    int y = kStartY;
+    size_t luaIndex = 0;
+
+    for (const auto &renderer : renderersVec) {
+        auto lua = std::dynamic_pointer_cast<luaRenderer>(renderer);
+        if (!lua) {
+            continue;
+        }
+
+        const bool active = lua->isScriptActive();
+        const std::string line = ofToString(*lua->getName()) + ": " +
+                                 (active ? "OK " : "ERR ") +
+                                 lua->getActiveScriptName();
+
+        ofDrawBitmapStringHighlight(
+            line,
+            kX,
+            y,
+            ofColor::white,
+            active ? ofColor(0, 96, 0, 180) : ofColor(140, 24, 24, 200));
+        y += kLineHeight;
+
+        const std::string &lastError = lua->getLastLoadError();
+        if (lastError.empty()) {
+            continue;
+        }
+
+        std::string truncated = lastError;
+        if (truncated.size() > kMaxErrorChars) {
+            truncated.resize(kMaxErrorChars - 3);
+            truncated += "...";
+        }
+
+        ofDrawBitmapStringHighlight(
+            "  " + truncated,
+            kX,
+            y,
+            ofColor(255, 230, 230),
+            ofColor(100, 0, 0, 180));
+        y += kLineHeight;
+    }
 }
 
 //--------------------------------------------------------------

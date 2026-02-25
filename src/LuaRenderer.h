@@ -32,6 +32,9 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         if (stagingLua->isValid()) {
             stagingLua->scriptExit();
         }
+        if (watchdogOwner == this) {
+            watchdogOwner = nullptr;
+        }
     }
 
     void setup(string name = "lua") {
@@ -60,6 +63,29 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         reloadCurrentScript();
     }
 
+    bool isScriptActive() const {
+        return hasActiveScript && activeLua->isValid() && !circuitBreakerOpen;
+    }
+
+    bool isCircuitBreakerOpen() const {
+        return circuitBreakerOpen;
+    }
+
+    const std::string &getLastLoadError() const {
+        return lastLoadError;
+    }
+
+    const std::string &getLastRuntimeError() const {
+        return lastRuntimeError;
+    }
+
+    std::string getActiveScriptName() const {
+        if (currentScriptPath.empty()) {
+            return "<none>";
+        }
+        return ofFilePath::getFileName(currentScriptPath);
+    }
+
     void update(ofFbo &fbo) {
         // reload script if it has changed
         reloadScriptIfChanged();
@@ -68,9 +94,13 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         sequence.update();
         wave.update();
 
-        if (!hasActiveScript || !activeLua->isValid()) {
+        if (!hasActiveScript || !activeLua->isValid() || circuitBreakerOpen) {
             return;
         }
+
+        runtimeErrorThisFrame = false;
+        runtimeErrorMessage.clear();
+        watchdogTimeoutTriggered = false;
 
         auto &lua = *activeLua;
 
@@ -114,22 +144,33 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
             lua.setNumber("particle_count", particle_count);
 
         // update lua
-        lua.scriptUpdate();
+        executeLuaPhase(lua, LuaExecutionPhase::RuntimeUpdate, [&]() {
+            lua.scriptUpdate();
+        });
 
-        if (fbo.isAllocated() && enabled) {
+        if (!runtimeErrorThisFrame && fbo.isAllocated() && enabled) {
             BaseRenderer::preUpdate(fbo);
             ofSetRectMode(OF_RECTMODE_CENTER);
             // draw lua
-            lua.scriptDraw();
+            executeLuaPhase(lua, LuaExecutionPhase::RuntimeDraw, [&]() {
+                lua.scriptDraw();
+            });
             ofSetRectMode(OF_RECTMODE_CORNER);
             BaseRenderer::postUpdate(fbo);
+        }
+
+        if (runtimeErrorThisFrame) {
+            registerRuntimeFailure();
+        } else {
+            consecutiveRuntimeFailures = 0;
         }
     }
 
     // script control
     void loadScript(size_t script) {
         if (script >= scripts.size()) {
-            ofLogError("luaRenderer::loadScript") << "script index out of bounds";
+            lastLoadError = "script index out of bounds";
+            ofLogError("luaRenderer::loadScript") << lastLoadError;
             return;
         }
         loadScript(scripts[script]);
@@ -141,12 +182,91 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         } else if (!scripts.empty()) {
             loadScript(0);
         } else {
-            ofLogWarning("luaRenderer::reloadCurrentScript") << "No scripts available to load";
+            lastLoadError = "No scripts available to load";
+            ofLogWarning("luaRenderer::reloadCurrentScript") << lastLoadError;
         }
     }
 
     protected:
     private:
+    enum class LuaExecutionPhase {
+        Idle,
+        Staging,
+        RuntimeUpdate,
+        RuntimeDraw,
+    };
+
+    template <typename Fn>
+    void executeLuaPhase(ofxLua &lua, LuaExecutionPhase phase, Fn &&fn) {
+        executionPhase = phase;
+        armWatchdog(lua);
+        fn();
+        disarmWatchdog(lua);
+        executionPhase = LuaExecutionPhase::Idle;
+    }
+
+    void registerRuntimeFailure() {
+        if (runtimeErrorMessage.empty()) {
+            runtimeErrorMessage = watchdogTimeoutTriggered ? "watchdog timeout" : "runtime Lua error";
+        }
+
+        lastRuntimeError = runtimeErrorMessage;
+        consecutiveRuntimeFailures++;
+
+        if (consecutiveRuntimeFailures < maxConsecutiveRuntimeFailures) {
+            return;
+        }
+
+        circuitBreakerOpen = true;
+        lastLoadError = ofToString(maxConsecutiveRuntimeFailures) +
+                        " runtime failures: " + lastRuntimeError;
+        ofLogError("luaRenderer::circuitBreaker") << lastLoadError;
+    }
+
+    void armWatchdog(ofxLua &lua) {
+        if (!watchdogEnabled) {
+            return;
+        }
+
+        lua_State *state = lua;
+        if (state == nullptr) {
+            return;
+        }
+
+        watchdogOwner = this;
+        watchdogStart = std::chrono::steady_clock::now();
+        lua_sethook(state, &luaRenderer::watchdogHook, LUA_MASKCOUNT, watchdogInstructionStep);
+    }
+
+    void disarmWatchdog(ofxLua &lua) {
+        lua_State *state = lua;
+        if (state != nullptr) {
+            lua_sethook(state, nullptr, 0, 0);
+        }
+        if (watchdogOwner == this) {
+            watchdogOwner = nullptr;
+        }
+    }
+
+    static void watchdogHook(lua_State *state, lua_Debug *debug) {
+        (void)debug;
+        luaRenderer *owner = watchdogOwner;
+        if (owner == nullptr) {
+            return;
+        }
+
+        const auto elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+                                   std::chrono::steady_clock::now() - watchdogStart)
+                                   .count();
+        if (elapsedMs <= owner->watchdogBudgetMs) {
+            return;
+        }
+
+        owner->watchdogTimeoutTriggered = true;
+        lua_sethook(state, nullptr, 0, 0);
+        luaL_error(state, "watchdog timeout");
+    }
+
     template <typename Fn>
     void updateLuaTable(ofxLua &lua, const std::string &tableName, Fn &&updater) {
         if (!lua.isTable(tableName)) {
@@ -167,7 +287,8 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
         dir.listDir();
         dir.sort();
         if (dir.size() <= 0) {
-            ofLogWarning("luaRenderer::populateScripts") << "No scripts found in bin/data/scripts/ directory";
+            lastLoadError = "No scripts found in bin/data/scripts/";
+            ofLogWarning("luaRenderer::populateScripts") << lastLoadError;
             return;
         }
 
@@ -193,7 +314,10 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     }
 
     bool stageScript(const std::string &script) {
+        executionPhase = LuaExecutionPhase::Staging;
+
         if (!prepareLuaState(*stagingLua)) {
+            executionPhase = LuaExecutionPhase::Idle;
             return false;
         }
 
@@ -205,6 +329,7 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
             if (restoreCwdOnFailure) {
                 std::filesystem::current_path(previousCwd, cwdError);
             }
+            executionPhase = LuaExecutionPhase::Idle;
             return false;
         }
 
@@ -213,9 +338,11 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
             if (restoreCwdOnFailure) {
                 std::filesystem::current_path(previousCwd, cwdError);
             }
+            executionPhase = LuaExecutionPhase::Idle;
             return false;
         }
 
+        executionPhase = LuaExecutionPhase::Idle;
         return true;
     }
 
@@ -228,7 +355,11 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
 
             if (fileExtension == "lua") {
                 if (!stageScript(scriptPath)) {
-                    ofLogError("luaRenderer::loadScript") << "Failed to load script, keeping current state: " << scriptPath;
+                    const std::string stageError = stagingLua->getErrorMessage();
+                    lastLoadError = stageError.empty()
+                                        ? "Failed to load script: " + scriptPath
+                                        : "Failed to load script: " + stageError;
+                    ofLogError("luaRenderer::loadScript") << lastLoadError;
                     if (!hasActiveScript) {
                         // remember the path and retry only after file changes
                         currentScriptPath = scriptPath;
@@ -252,12 +383,19 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
                 scriptPathParam = scriptPath;
                 lastModified = getLastModified(scriptPath);
                 loggedMissingScript = false;
+                circuitBreakerOpen = false;
+                consecutiveRuntimeFailures = 0;
+                runtimeErrorMessage.clear();
+                lastRuntimeError.clear();
+                lastLoadError.clear();
             } else {
-                ofLogError("luaRenderer::loadScript") << "selected script is not lua: " << scriptPath;
+                lastLoadError = "selected script is not lua: " + scriptPath;
+                ofLogError("luaRenderer::loadScript") << lastLoadError;
                 scriptPathParam = currentScriptPath;
             }
         } else {
-            ofLogError("luaRenderer::loadScript") << "file doesn't exist: " << scriptPath;
+            lastLoadError = "file doesn't exist: " + scriptPath;
+            ofLogError("luaRenderer::loadScript") << lastLoadError;
             scriptPathParam = currentScriptPath;
         }
     }
@@ -267,6 +405,11 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     void errorReceived(std::string &msg) {
         ofLogError("luaRenderer") << "script error:\n"
                                   << msg;
+
+        if (executionPhase == LuaExecutionPhase::RuntimeUpdate || executionPhase == LuaExecutionPhase::RuntimeDraw) {
+            runtimeErrorThisFrame = true;
+            runtimeErrorMessage = msg;
+        }
     }
 
     void scriptParamChanged(std::string &script) {
@@ -347,13 +490,28 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     ofxLua *activeLua = &luaPrimary;
     ofxLua *stagingLua = &luaSecondary;
     bool hasActiveScript = false;
+    bool circuitBreakerOpen = false;
 
     vector<std::string> scripts;
     string currentScriptPath;
+    string lastLoadError;
+    string lastRuntimeError;
+    string runtimeErrorMessage;
     time_t lastModified = 0;
     uint64_t lastWatchCheckMillis = 0;
     uint64_t scriptWatchIntervalMillis = 250;
     bool loggedMissingScript = false;
+    bool runtimeErrorThisFrame = false;
+    bool watchdogTimeoutTriggered = false;
+    LuaExecutionPhase executionPhase = LuaExecutionPhase::Idle;
+    int consecutiveRuntimeFailures = 0;
+    int maxConsecutiveRuntimeFailures = 3;
+    bool watchdogEnabled = true;
+    int watchdogBudgetMs = 8;
+    int watchdogInstructionStep = 10000;
+
+    inline static luaRenderer *watchdogOwner = nullptr;
+    inline static std::chrono::steady_clock::time_point watchdogStart = std::chrono::steady_clock::now();
 
     ofParameter<int> particle_count;
     ofParameter<void> open;
