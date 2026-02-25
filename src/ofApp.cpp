@@ -782,9 +782,12 @@ void ofApp::generateTestGrid() {
             }
         } else if ((x == 0) || (x == gridWidth - 1)) {
             testGrid[i].character = "║";
+        } else if ((y == 1) || (y == gridHeight - 2)) {
+            testGrid[i].character = "█";
+        } else if ((x == 1) || (x == gridWidth - 2)) {
+            testGrid[i].character = "█";
         } else {
             testGrid[i].character = "▒";
-            // testGrid[i].character = ofToString((int)(ofNoise(x*0.05, y*0.05, ofGetElapsedTimef() * 0.1) * 9.0));
         }
     }
 }
@@ -905,14 +908,17 @@ void ofApp::convertFboToAscii() {
     bool hasLastDrawColor = false;
     ofColor lastDrawColor;
 
-    const bool enableTextBatching = !debugGrid;
+    const bool enableTextBatching = true;
     bool batchActive = false;
+    auto flushTextBatch = [&]() {
+        if (enableTextBatching && batchActive) {
+            font.endBatch();
+            batchActive = false;
+        }
+    };
     auto drawGlyph = [&](const string &glyph, const ofColor &color, size_t i) {
         if (!hasLastDrawColor || color != lastDrawColor) {
-            if (enableTextBatching && batchActive) {
-                font.endBatch();
-                batchActive = false;
-            }
+            flushTextBatch();
             ofSetColor(color);
             lastDrawColor = color;
             hasLastDrawColor = true;
@@ -945,12 +951,14 @@ void ofApp::convertFboToAscii() {
                 (scaledMouseX <= x + charWidth) &&
                 (scaledMouseY <= y - descenderH) &&
                 (scaledMouseY >= y - ascenderH)) {
+                flushTextBatch();
                 ofSetColor(yellowColor);
                 ofDrawRectangle(x, y - ascenderH, lineWidth, lineHeight);
                 hasLastDrawColor = false;
             }
 
             if (debugLines) {
+                flushTextBatch();
                 ofSetColor(magentaColor);
                 ofDrawLine(x, 0, x, fboHeight);
                 ofDrawLine(0, y - ascenderH, fboWidth, y - ascenderH);
@@ -1049,10 +1057,7 @@ void ofApp::convertFboToAscii() {
     TS_STOP("loop");
     TSGL_STOP("loop");
 
-    if (batchActive) {
-        font.endBatch();
-        batchActive = false;
-    }
+    flushTextBatch();
 
     // draw last grid line
     if (debugGrid && debugLines) {
