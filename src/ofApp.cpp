@@ -3,6 +3,7 @@
 #include "RendererFactory.h"
 #include "ofFileUtils.h"
 #include "ofGraphics.h"
+#include "ofJson.h"
 #include "ofLog.h"
 #include "ofMath.h"
 #include "ofSystemUtils.h"
@@ -47,7 +48,7 @@ void ofApp::setup() {
     loadStringFromFile("overlay.txt", overlayText);
 
     // setup gui elements
-    gui.setup();
+    gui.setup("settings", "settings.json");
     gui.add(size.setup("size", 48, 10, 450));
     gui.add(
         currentCharacterSet.setup("char set", 0, 0, characterSets.size() - 1));
@@ -110,7 +111,7 @@ void ofApp::setup() {
     sortCharacterSet(false);
     buildCharacterSetCache();
 
-    guiRenderer.setup("draw parameters", "draw_params.xml",
+    guiRenderer.setup("renderer parameters", "renderer_params.json",
                       fboWidth + fboCanvasWidth + 10, 10);
 
     /*
@@ -1533,11 +1534,17 @@ void ofApp::saveProjectPreset() {
         projectDir.create(true);
     }
 
-    saveStringToFile(projectDir.path() + "project.txt", projectName);
-    saveStringToFile(projectDir.path() + "overlay.txt", overlayText);
+    ofJson json;
+    json["name"] = projectName;
+    json["overlay"] = overlayText;
+
+    if (!ofSavePrettyJson(projectDir.path() + "project.json", json)) {
+        ofLogError() << "Failed saving project JSON";
+    }
+
     saveRendererTopology(projectDir.path() + "renderers.json");
-    gui.saveToFile(projectDir.path() + "settings.xml");
-    guiRenderer.saveToFile(projectDir.path() + "draw_params.xml");
+    gui.saveToFile(projectDir.path() + "settings.json");
+    guiRenderer.saveToFile(projectDir.path() + "renderer_params.json");
 
     ofLogNotice() << "Project saved " << projectDir.path();
 }
@@ -1550,11 +1557,14 @@ void ofApp::loadProjectPreset(string path) {
         return;
     }
 
-    loadStringFromFile(projectDir.path() + "project.txt", projectName);
-    loadStringFromFile(projectDir.path() + "overlay.txt", overlayText);
-    gui.loadFromFile(projectDir.path() + "settings.xml");
+    ofJson projectFile = ofLoadJson(projectDir.path() + "project.json");
+    if (!projectFile.is_object() || !projectFile.contains("name") || !!projectFile.contains("overlay")) {
+        ofLogError() << "Invalid project file format";
+    }
+
+    gui.loadFromFile(projectDir.path() + "settings.json");
     loadRendererTopology(projectDir.path() + "renderers.json");
-    guiRenderer.loadFromFile(projectDir.path() + "draw_params.xml");
+    guiRenderer.loadFromFile(projectDir.path() + "renderer_params.json");
 
     ofLogNotice() << "Project loaded " << projectDir.path();
 }
