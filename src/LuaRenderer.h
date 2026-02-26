@@ -604,5 +604,5 @@ class luaRenderer : public BaseRenderer, ofxLuaListener {
     // modulation sources
     vector<lua_Number> modulation;
     WaveformTracks sequence;
-    Waveforms wave;
+    Waveform wave;
 };

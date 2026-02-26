@@ -174,7 +174,7 @@ class doTypeKRenderer : public BaseRenderer {
     private:
     float scale;
     WaveformTracks sequence;
-    Waveforms wave;
+    Waveform wave;
     ofParameter<glm::vec2> waveformTimes;
     ofParameter<bool> drawPoints;
     ofParameter<ofColor> color2;
@@ -249,8 +249,8 @@ class doTypeLRenderer : public BaseRenderer {
     private:
     float scale;
     WaveformTracks sequence;
-    Waveforms wave;
-    Waveforms wave2;
+    Waveform wave;
+    Waveform wave2;
     ofParameter<glm::vec2> waveformTimes;
     ofParameter<bool> drawPoints;
     ofParameter<ofColor> color2;
@@ -350,10 +350,10 @@ class doTypeN0Renderer : public BaseRenderer {
     ofxFontStash font2;
     float scale;
     WaveformTracks sequence;
-    Waveforms wave;
-    Waveforms wave2;
-    Waveforms noise1;
-    Waveforms noise2;
+    Waveform wave;
+    Waveform wave2;
+    Waveform noise1;
+    Waveform noise2;
     ofParameter<glm::vec2> waveformTimes;
     ofParameter<bool> drawPoints;
     ofParameter<ofColor> color2;
@@ -446,10 +446,10 @@ class doTypeN1Renderer : public BaseRenderer {
     ofxFontStash font2;
     float scale;
     WaveformTracks sequence;
-    Waveforms wave;
-    Waveforms wave2;
-    Waveforms noise1;
-    Waveforms noise2;
+    Waveform wave;
+    Waveform wave2;
+    Waveform noise1;
+    Waveform noise2;
     ofParameter<glm::vec2> waveformTimes;
     ofParameter<bool> drawPoints;
     ofParameter<ofColor> color2;
@@ -538,10 +538,10 @@ class doTypeN2Renderer : public BaseRenderer {
     private:
     float scale;
     WaveformTracks sequence;
-    Waveforms wave;
-    Waveforms wave2;
-    Waveforms noise1;
-    Waveforms noise2;
+    Waveform wave;
+    Waveform wave2;
+    Waveform noise1;
+    Waveform noise2;
     ofParameter<glm::vec2> waveformTimes;
     ofParameter<bool> drawPoints;
     ofParameter<ofColor> color2;
@@ -633,10 +633,10 @@ class doTypeN3Renderer : public BaseRenderer {
     private:
     float scale;
     WaveformTracks sequence;
-    Waveforms wave;
-    Waveforms wave2;
-    Waveforms noise1;
-    Waveforms noise2;
+    Waveform wave;
+    Waveform wave2;
+    Waveform noise1;
+    Waveform noise2;
     ofParameter<glm::vec2> waveformTimes;
     ofParameter<bool> drawPoints;
     ofParameter<ofColor> color2;
@@ -727,11 +727,11 @@ class doTypeN8Renderer : public BaseRenderer {
     float scale;
     float radius;
     // WaveformTracks sequence;
-    Waveforms lfo;
-    Waveforms wave;
-    Waveforms wave2;
-    Waveforms noise1;
-    Waveforms noise2;
+    Waveform lfo;
+    Waveform wave;
+    Waveform wave2;
+    Waveform noise1;
+    Waveform noise2;
     ofParameter<glm::vec2> waveformTimes;
     ofParameter<bool> drawPoints;
     ofParameter<ofColor> color2;

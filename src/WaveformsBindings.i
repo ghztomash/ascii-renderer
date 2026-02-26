@@ -1,7 +1,7 @@
 %module waveforms
 %{
     // include any needed headers here
-    #include "Waveforms.h"
+    #include "Waveform.h"
     #include "WaveformSequence.h"
     #include "WaveformTracks.h"
 %}
@@ -20,6 +20,6 @@ typedef std::string string;
 // include custom code you want to be wrapped,
 // note the '%' instead of '#' as '%include' is a SWIG
 // command to wrap code in the given header
-%include "Waveforms.h"
+%include "Waveform.h"
 %include "WaveformSequence.h"
 %include "WaveformTracks.h"
