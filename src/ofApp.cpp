@@ -183,14 +183,6 @@ void ofApp::update() {
     fboCanvas.end();
     TS_STOP("prepareCanvas");
 
-    TS_START("noiseTexture");
-    fboNoiseTexture.begin();
-    ofClear(0, 0);
-    fboNoiseTexture.end();
-    TS_STOP("noiseTexture");
-
-    noise.update(fboNoiseTexture);
-
     TSGL_START("renderersUpdate");
     TS_START("renderersUpdate");
     for (size_t i = 0; i < renderersVec.size(); i++) {
@@ -867,11 +859,6 @@ void ofApp::allocateFbo() {
     fboCanvas.begin();
     ofClear(0, 255);
     fboCanvas.end();
-
-    fboNoiseTexture.allocate(fboCanvasWidth, fboCanvasHeight);
-    fboNoiseTexture.begin();
-    ofClear(0, 0);
-    fboNoiseTexture.end();
 
     saverThread.start(fboWidth, fboHeight, projectName);
 }

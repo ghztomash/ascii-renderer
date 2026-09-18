@@ -186,7 +186,6 @@ class ofApp : public ofBaseApp {
     ofPixels canvasPixels;
     ofPixels canvasLastFrame;
     ofImage bufferLastFrame;
-    ofFbo fboNoiseTexture;
     ofFbo fboGrid;
 
     // store the index of the character in the character set derived from the buffer
@@ -258,7 +257,6 @@ class ofApp : public ofBaseApp {
     int gridWidth, gridHeight;
 
     ofxPanel guiRenderer;
-    noiseRenderer noise;
     vector<shared_ptr<BaseRenderer>> renderersVec;
 
     ColorCache colorCache;
