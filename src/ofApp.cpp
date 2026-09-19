@@ -1406,13 +1406,14 @@ void ofApp::saveSvgFrame() {
     for (size_t i = 0; i < size; i++) {
         x = i % (size_t)gridWidth;
         y = i / (size_t)gridWidth;
+        const bool hasOverlayChar = overlay && !overlayGrid[i].character.empty();
 
         // Calculate the position of the character
         cX = marginOffsetH + charWidth * marginSize * 2 + x * (charWidth + offsetH);
         cY = marginOffsetV + ascenderH + charHeight * marginSize + y * (charHeight + offsetV);
 
         // Determine color in hex format
-        if (enableColors) {
+        if (enableColors && !hasOverlayChar) {
             size_t colorIndex = findNearestColor(characterGrid[i].color);
             auto color = ColorThemes::colorThemes[currentTheme][colorIndex];
             colorHex = "#" + ofToHex(color.r) + ofToHex(color.g) + ofToHex(color.b);
@@ -1432,7 +1433,7 @@ void ofApp::saveSvgFrame() {
         // textElement.setAttribute("alignment-baseline", "left");
 
         // Set the character as the content of the <text> element
-        textElement.set(characterGrid[i].character);
+        textElement.set(hasOverlayChar ? overlayGrid[i].character : characterGrid[i].character);
     }
 
     // Save the SVG file
