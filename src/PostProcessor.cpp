@@ -9,7 +9,7 @@ bool PostProcessor::setup(int width, int height) {
         return false;
     }
 
-    return loadShader("shaders/post.frag");
+    return loadShader("shaders/post/post.frag");
 }
 
 bool PostProcessor::loadShader(const std::string &fragmentPath) {
@@ -34,7 +34,7 @@ bool PostProcessor::loadShader(const std::string &fragmentPath) {
     ofShader candidate;
     if (!candidate.load(absoluteVertex, absoluteFragment)) {
         ofLogError("PostProcessor") << "Could not load shader: "
-                                      << fragmentPath;
+                                    << fragmentPath;
         return false;
     }
 

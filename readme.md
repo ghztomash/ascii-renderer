@@ -68,7 +68,7 @@ cd src
 
 ## Post-processing
 
-The `post effect` GUI group applies `bin/data/shaders/post.vert` and
+The `post effect` GUI group applies `bin/data/shaders/post/post.vert` and
 `post.frag` to the renderer canvas before it is downscaled and converted to
 ASCII. Use `intensity` to blend the shader output, `distortion` to control the
 wave displacement, and `speed` to control its animation rate.
@@ -89,7 +89,7 @@ Fragment shaders can receive `time`, `canvasSize`, `dimensions`, `color`,
 `position`, `rotation`, `modulation`, `modulation_count`, `resolution`, and
 `particle_count` uniforms. The example shader uses position XY, dimensions XY,
 rotation Z, and particle count as 2D procedural controls. See
-`bin/data/shaders/generative.frag` for an example.
+`bin/data/shaders/render/generative.frag` for an example.
 
 ## Notes
 

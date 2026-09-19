@@ -80,7 +80,7 @@ void ofApp::setup() {
     postEffectParameters.add(postEffectEnabled.set("enable", false));
     postEffectParameters.add(postEffectBrowse.set("browse shader"));
     postEffectParameters.add(
-        postEffectShaderPath.set("shader path", "shaders/post.frag"));
+        postEffectShaderPath.set("shader path", "shaders/post/post.frag"));
     postEffectParameters.add(postEffectIntensity.set("intensity", 1.0, 0.0, 1.0));
     postEffectParameters.add(postEffectDistortion.set("distortion", 0.015, 0.0, 0.1));
     postEffectParameters.add(postEffectSpeed.set("speed", 1.0, 0.0, 5.0));
@@ -981,7 +981,7 @@ void ofApp::allocateFbo() {
 
     const std::string configuredShaderPath = postEffectShaderPath;
     if (postProcessor.setup(fboCanvasWidth, fboCanvasHeight)) {
-        activePostEffectShaderPath = "shaders/post.frag";
+        activePostEffectShaderPath = "shaders/post/post.frag";
     }
     if (configuredShaderPath != activePostEffectShaderPath) {
         loadPostEffectShader(configuredShaderPath);
@@ -1016,7 +1016,7 @@ void ofApp::postEffectShaderPathChanged(std::string &path) {
 //--------------------------------------------------------------
 void ofApp::browsePostEffectShader() {
     ofFileDialogResult result =
-        ofSystemLoadDialog("open fragment shader", false, "shaders");
+        ofSystemLoadDialog("open fragment shader", false, "shaders/post/");
     if (!result.bSuccess) {
         ofLogWarning("ofApp::browsePostEffectShader") << "canceled";
         return;

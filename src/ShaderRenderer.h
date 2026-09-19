@@ -25,7 +25,7 @@ class ShaderRenderer : public BaseRenderer {
 
         parameters.add(particleCount.set("particle count", 100, 1, 1000));
         parameters.add(open.set("browse shader"));
-        parameters.add(shaderPathParam.set("shader path", "shaders/generative.frag"));
+        parameters.add(shaderPathParam.set("shader path", "shaders/render/generative.frag"));
         shaderPathParam.addListener(this, &ShaderRenderer::shaderPathChanged);
         open.addListener(this, &ShaderRenderer::browseShader);
 
@@ -207,7 +207,7 @@ void main() {
 
     void browseShader() {
         ofFileDialogResult result =
-            ofSystemLoadDialog("open fragment shader", false, "shaders");
+            ofSystemLoadDialog("open fragment shader", false, "shaders/render/");
         if (!result.bSuccess) {
             ofLogWarning("ShaderRenderer::browseShader") << "canceled";
             return;
