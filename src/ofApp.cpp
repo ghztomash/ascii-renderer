@@ -1424,11 +1424,11 @@ void ofApp::saveSvgFrame() {
 
         // Create a <text> element for the character
         ofXml textElement = tag.appendChild("text");
-        textElement.setAttribute("x", (size_t)cX);
-        textElement.setAttribute("y", (size_t)cY);
+        textElement.setAttribute("x", cX);
+        textElement.setAttribute("y", cY);
         textElement.setAttribute("fill", colorHex);
         textElement.setAttribute("font-family", fontFamily); // Monospaced font
-        textElement.setAttribute("font-size", charWidth);
+        textElement.setAttribute("font-size", fontSize);
         // textElement.setAttribute("text-anchor", "left");
         // textElement.setAttribute("alignment-baseline", "left");
 
