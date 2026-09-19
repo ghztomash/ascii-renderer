@@ -3,6 +3,7 @@
 #include "ColorCache.h"
 #include "ColorTheme.h"
 #include "ImageSaverThread.h"
+#include "PostProcessor.h"
 #include "Renderers.h"
 #include "ofColor.h"
 #include "ofMain.h"
@@ -141,6 +142,9 @@ class ofApp : public ofBaseApp {
     void allocateFbo();
     void convertFboToAscii();
     void drawLuaStatusFlags();
+    void browsePostEffectShader();
+    void postEffectShaderPathChanged(std::string &path);
+    bool loadPostEffectShader(const std::string &path);
 
     bool drawGui = true;
 
@@ -183,6 +187,8 @@ class ofApp : public ofBaseApp {
     float fboCanvasHeight = fboHeight / 2.0;
 
     ofFbo fboCanvas;
+    PostProcessor postProcessor;
+    ofFbo *canvasOutput = nullptr;
     ofPixels canvasPixels;
     ofPixels canvasLastFrame;
     ofImage bufferLastFrame;
@@ -212,6 +218,15 @@ class ofApp : public ofBaseApp {
     ofxToggle debugBuffer;
     ofxToggle blur;
     ofxIntSlider fadeAmmount;
+    ofParameterGroup postEffectParameters;
+    ofParameter<bool> postEffectEnabled;
+    ofParameter<void> postEffectBrowse;
+    ofParameter<std::string> postEffectShaderPath;
+    ofParameter<float> postEffectIntensity;
+    ofParameter<float> postEffectDistortion;
+    ofParameter<float> postEffectSpeed;
+    std::string activePostEffectShaderPath;
+    bool updatingPostEffectShaderPath = false;
 
     ofParameterGroup overlayParameters;
     string overlayText = "ascii";

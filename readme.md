@@ -16,6 +16,7 @@ It combines multiple renderer modules (including Lua-driven renderers), applies 
 - Lua renderer with script hot-reload and runtime error handling.
 - Character set + font based ASCII conversion.
 - Overlay/grid/flip effects and theme support.
+- Optional shader post-processing before ASCII conversion.
 - Frame capture and recording helpers.
 
 ## Repository Layout
@@ -63,6 +64,16 @@ If openFrameworks root is not in the default location, set `OF_ROOT` in `config.
 cd src
 ./generate_bindings.sh
 ```
+
+## Post-processing
+
+The `post effect` GUI group applies `bin/data/shaders/post.vert` and
+`post.frag` to the renderer canvas before it is downscaled and converted to
+ASCII. Use `intensity` to blend the shader output, `distortion` to control the
+wave displacement, and `speed` to control its animation rate.
+
+If the shader cannot be loaded, the app logs an error and converts the original
+canvas instead.
 
 ## Notes
 

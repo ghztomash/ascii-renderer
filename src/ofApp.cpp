@@ -68,6 +68,16 @@ void ofApp::setup() {
     gui.add(recordSeconds.setup("rec dur", 2, 0, 240));
     gui.add(record.setup("record frames"));
 
+    postEffectParameters.setName("post effect");
+    postEffectParameters.add(postEffectEnabled.set("enable", false));
+    postEffectParameters.add(postEffectBrowse.set("browse shader"));
+    postEffectParameters.add(
+        postEffectShaderPath.set("shader path", "shaders/post.frag"));
+    postEffectParameters.add(postEffectIntensity.set("intensity", 1.0, 0.0, 1.0));
+    postEffectParameters.add(postEffectDistortion.set("distortion", 0.015, 0.0, 0.1));
+    postEffectParameters.add(postEffectSpeed.set("speed", 1.0, 0.0, 5.0));
+    gui.add(postEffectParameters);
+
     overlayParameters.setName("overlay");
     overlayParameters.add(overlay.set("enable", true));
     overlayParameters.add(overlayBorder.set("border", true));
@@ -104,6 +114,10 @@ void ofApp::setup() {
 
     calculateGridSize();
     allocateFbo();
+
+    postEffectShaderPath.addListener(
+        this, &ofApp::postEffectShaderPathChanged);
+    postEffectBrowse.addListener(this, &ofApp::browsePostEffectShader);
 
     characterSetSize = ofUTF8Length(characterSets[currentCharacterSet]);
     // useful to take out single UTF8 characters out of a string
@@ -167,8 +181,8 @@ void ofApp::update() {
     }
 
     TS_START("lastFrame");
-    fboCanvas.readToPixels(canvasLastFrame);
     if (blur) {
+        fboCanvas.readToPixels(canvasLastFrame);
         bufferLastFrame = canvasLastFrame;
     }
     TS_STOP("lastFrame");
@@ -190,6 +204,13 @@ void ofApp::update() {
     }
     TS_STOP("renderersUpdate");
     TSGL_STOP("renderersUpdate");
+
+    TS_START("postProcess");
+    canvasOutput = &postProcessor.process(
+        fboCanvas, postEffectEnabled, postEffectIntensity,
+        postEffectDistortion, postEffectSpeed);
+    canvasOutput->readToPixels(canvasLastFrame);
+    TS_STOP("postProcess");
 
     // TSGL_START("convertFboToAscii");
     TS_START("convertFboToAscii");
@@ -258,11 +279,12 @@ void ofApp::draw() {
 
     TS_START("debugBuffer");
     // draw debug buffer
-    if (fboCanvas.isAllocated() && debugBuffer && !fullScreen) {
+    if (canvasOutput != nullptr && canvasOutput->isAllocated() && debugBuffer &&
+        !fullScreen) {
         ofSetColor(ofColor::white);
 
-        fboCanvas.draw(zoom ? screenSize : fboWidth, 0, screenSize / 2.0,
-                       screenSize / 2.0);
+        canvasOutput->draw(zoom ? screenSize : fboWidth, 0,
+                           screenSize / 2.0, screenSize / 2.0);
         bufferPreview = canvasPixels;
         bufferPreview.draw(zoom ? screenSize : fboWidth, screenSize / 2.0,
                            screenSize / 2.0, screenSize / 2.0);
@@ -859,8 +881,54 @@ void ofApp::allocateFbo() {
     fboCanvas.begin();
     ofClear(0, 255);
     fboCanvas.end();
+    canvasOutput = &fboCanvas;
+
+    const std::string configuredShaderPath = postEffectShaderPath;
+    if (postProcessor.setup(fboCanvasWidth, fboCanvasHeight)) {
+        activePostEffectShaderPath = "shaders/post.frag";
+    }
+    if (configuredShaderPath != activePostEffectShaderPath) {
+        loadPostEffectShader(configuredShaderPath);
+    }
 
     saverThread.start(fboWidth, fboHeight, projectName);
+}
+
+//--------------------------------------------------------------
+bool ofApp::loadPostEffectShader(const std::string &path) {
+    if (postProcessor.loadShader(path)) {
+        activePostEffectShaderPath = path;
+        updatingPostEffectShaderPath = true;
+        postEffectShaderPath = path;
+        updatingPostEffectShaderPath = false;
+        return true;
+    }
+
+    updatingPostEffectShaderPath = true;
+    postEffectShaderPath = activePostEffectShaderPath;
+    updatingPostEffectShaderPath = false;
+    return false;
+}
+
+//--------------------------------------------------------------
+void ofApp::postEffectShaderPathChanged(std::string &path) {
+    if (!updatingPostEffectShaderPath && path != activePostEffectShaderPath) {
+        loadPostEffectShader(path);
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::browsePostEffectShader() {
+    ofFileDialogResult result =
+        ofSystemLoadDialog("open fragment shader", false, "shaders");
+    if (!result.bSuccess) {
+        ofLogWarning("ofApp::browsePostEffectShader") << "canceled";
+        return;
+    }
+
+    const std::string path = ofFilePath::makeRelative(
+        ofToDataPath("", true), result.getPath());
+    loadPostEffectShader(path);
 }
 
 //--------------------------------------------------------------
