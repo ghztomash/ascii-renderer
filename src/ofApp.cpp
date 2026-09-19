@@ -1399,41 +1399,69 @@ void ofApp::saveSvgFrame() {
     rect.setAttribute("height", fboHeight);
     rect.setAttribute("fill", colorHex);
 
-    // add text elements for each character
-    size_t size = gridWidth * gridHeight;
-    size_t x, y;
-    float cX, cY;
-    for (size_t i = 0; i < size; i++) {
-        x = i % (size_t)gridWidth;
-        y = i / (size_t)gridWidth;
-        const bool hasOverlayChar = overlay && !overlayGrid[i].character.empty();
+    auto textElement = tag.appendChild("text");
+    textElement.setAttribute("font-family", fontFamily);
+    textElement.setAttribute("font-size", fontSize);
+    textElement.setAttribute("font-kerning", "none");
+    textElement.setAttribute("font-variant-ligatures", "none");
+    textElement.setAttribute("letter-spacing", offsetH.getParameter().cast<float>().get());
 
-        // Calculate the position of the character
-        cX = marginOffsetH + charWidth * marginSize * 2 + x * (charWidth + offsetH);
-        cY = marginOffsetV + ascenderH + charHeight * marginSize + y * (charHeight + offsetV);
+    const size_t width = static_cast<size_t>(gridWidth);
+    const size_t height = static_cast<size_t>(gridHeight);
+    const float startX = marginOffsetH + charWidth * marginSize * 2;
+    const float startY = marginOffsetV + ascenderH + charHeight * marginSize;
+    const float stepX = charWidth + offsetH;
+    const float stepY = charHeight + offsetV;
 
-        // Determine color in hex format
-        if (enableColors && !hasOverlayChar) {
-            size_t colorIndex = findNearestColor(characterGrid[i].color);
-            auto color = ColorThemes::colorThemes[currentTheme][colorIndex];
-            colorHex = "#" + ofToHex(color.r) + ofToHex(color.g) + ofToHex(color.b);
-        } else {
-            auto color = ColorThemes::colorThemes[currentTheme][ColorThemes::Color::foreground];
-            colorHex = "#" + ofToHex(color.r) + ofToHex(color.g) + ofToHex(color.b);
+    for (size_t y = 0; y < height; ++y) {
+        auto rowElement = textElement.appendChild("tspan");
+        rowElement.setAttribute("x", startX);
+        rowElement.setAttribute("y", startY + static_cast<float>(y) * stepY);
+
+        string run;
+        string runColorHex;
+        float runX = startX;
+
+        auto appendRun = [&]() {
+            if (run.empty()) {
+                return;
+            }
+
+            auto runElement = rowElement.appendChild("tspan");
+            runElement.setAttribute("x", runX);
+            runElement.setAttribute("fill", runColorHex);
+            runElement.set(run);
+            run.clear();
+        };
+
+        for (size_t x = 0; x < width; ++x) {
+            const size_t i = y * width + x;
+            const bool hasOverlayChar = overlay && !overlayGrid[i].character.empty();
+            const string &glyph = hasOverlayChar ? overlayGrid[i].character : characterGrid[i].character;
+
+            string glyphColorHex;
+            if (enableColors && !hasOverlayChar) {
+                const size_t colorIndex = findNearestColor(characterGrid[i].color);
+                const auto color = ColorThemes::colorThemes[currentTheme][colorIndex];
+                glyphColorHex = "#" + ofToHex(color.r) + ofToHex(color.g) + ofToHex(color.b);
+            } else {
+                const auto color = ColorThemes::colorThemes[currentTheme][ColorThemes::Color::foreground];
+                glyphColorHex = "#" + ofToHex(color.r) + ofToHex(color.g) + ofToHex(color.b);
+            }
+
+            if (run.empty()) {
+                runColorHex = glyphColorHex;
+                runX = startX + static_cast<float>(x) * stepX;
+            } else if (glyphColorHex != runColorHex) {
+                appendRun();
+                runColorHex = glyphColorHex;
+                runX = startX + static_cast<float>(x) * stepX;
+            }
+
+            run += glyph == " " ? "\u00A0" : glyph;
         }
 
-        // Create a <text> element for the character
-        ofXml textElement = tag.appendChild("text");
-        textElement.setAttribute("x", cX);
-        textElement.setAttribute("y", cY);
-        textElement.setAttribute("fill", colorHex);
-        textElement.setAttribute("font-family", fontFamily); // Monospaced font
-        textElement.setAttribute("font-size", fontSize);
-        // textElement.setAttribute("text-anchor", "left");
-        // textElement.setAttribute("alignment-baseline", "left");
-
-        // Set the character as the content of the <text> element
-        textElement.set(hasOverlayChar ? overlayGrid[i].character : characterGrid[i].character);
+        appendRun();
     }
 
     // Save the SVG file
