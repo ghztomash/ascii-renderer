@@ -14,6 +14,7 @@ It combines multiple renderer modules (including Lua-driven renderers), applies 
 
 - Renderer stack architecture (`BaseRenderer`, factory-based renderer creation).
 - Lua renderer with script hot-reload and runtime error handling.
+- Procedural shader renderer with transactional GLSL hot-reload.
 - Character set + font based ASCII conversion.
 - Overlay/grid/flip effects and theme support.
 - Optional shader post-processing before ASCII conversion.
@@ -74,6 +75,21 @@ wave displacement, and `speed` to control its animation rate.
 
 If the shader cannot be loaded, the app logs an error and converts the original
 canvas instead.
+
+## Shader Renderer
+
+Press `/` to add a shader renderer. Its `shader path` parameter and `browse
+shader` button select a `.frag` file under `bin/data/`; a same-basename `.vert`
+file is used when present, otherwise a built-in pass-through vertex shader is
+used. Changes to either file are detected automatically. A shader is activated
+only after it compiles and links successfully, so an invalid edit leaves the
+last valid shader running.
+
+Fragment shaders can receive `time`, `canvasSize`, `dimensions`, `color`,
+`position`, `rotation`, `modulation`, `modulation_count`, `resolution`, and
+`particle_count` uniforms. The example shader uses position XY, dimensions XY,
+rotation Z, and particle count as 2D procedural controls. See
+`bin/data/shaders/generative.frag` for an example.
 
 ## Notes
 

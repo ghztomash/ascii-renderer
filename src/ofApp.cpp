@@ -445,6 +445,9 @@ void ofApp::keyReleased(int key) {
         case '_':
             removeLastRenderer();
             break;
+        case '/':
+            addRenderer(SHADER_RENDERER);
+            break;
         // draw gui
         case 'g':
         case 'G':
@@ -546,6 +549,7 @@ void ofApp::keyReleased(int key) {
                 "l: load proect presets\n"
                 "o: change overlayText\n"
                 "+/=: add lua renderer\n"
+                "/: add shader renderer\n"
                 "-/_: remove last renderer\n"
                 "?: show this help\n");
             break;

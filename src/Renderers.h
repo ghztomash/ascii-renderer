@@ -4,4 +4,5 @@
 #include "ImplRenderer.h"
 #include "RendererFactory.h"
 #include "LuaRenderer.h"
+#include "ShaderRenderer.h"
 #include "DaysOfTypeRenderer.h"
