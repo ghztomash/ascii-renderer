@@ -12,6 +12,14 @@
 #include <memory>
 #include <omp.h>
 
+namespace {
+constexpr int kRendererMenuColumns = 3;
+constexpr float kRendererMenuCellWidth = 140.0f;
+constexpr float kRendererMenuCellHeight = 30.0f;
+constexpr float kRendererMenuPadding = 10.0f;
+constexpr float kRendererMenuFontSize = 16.0f;
+} // namespace
+
 //--------------------------------------------------------------
 void ofApp::setup() {
 
@@ -331,7 +339,77 @@ void ofApp::draw() {
         gui.draw();
         guiRenderer.draw();
     }
+
+    if (addRendererMenuOpen) {
+        drawAddRendererMenu();
+    }
     // ofEnableAntiAliasing(); //to get precise lines
+}
+
+//--------------------------------------------------------------
+ofRectangle ofApp::getAddRendererMenuBounds() const {
+    const size_t rows = (RENDERER_NAMES.size() + kRendererMenuColumns - 1) /
+                        kRendererMenuColumns;
+    const float width = kRendererMenuColumns * kRendererMenuCellWidth +
+                        kRendererMenuPadding * 2.0f;
+    const float height = rows * kRendererMenuCellHeight +
+                         kRendererMenuPadding * 2.0f;
+    return {(ofGetWidth() - width) / 2.0f, (ofGetHeight() - height) / 2.0f,
+            width, height};
+}
+
+//--------------------------------------------------------------
+ofRectangle ofApp::getAddRendererItemBounds(size_t index) const {
+    const ofRectangle menu = getAddRendererMenuBounds();
+    const size_t rows = (RENDERER_NAMES.size() + kRendererMenuColumns - 1) /
+                        kRendererMenuColumns;
+    const size_t column = index / rows;
+    const size_t row = index % rows;
+    return {menu.x + kRendererMenuPadding + column * kRendererMenuCellWidth,
+            menu.y + kRendererMenuPadding + row * kRendererMenuCellHeight,
+            kRendererMenuCellWidth, kRendererMenuCellHeight};
+}
+
+//--------------------------------------------------------------
+int ofApp::getAddRendererItemAt(int x, int y) const {
+    for (size_t i = 0; i < RENDERER_NAMES.size(); ++i) {
+        if (getAddRendererItemBounds(i).inside(x, y)) {
+            return static_cast<int>(i);
+        }
+    }
+    return -1;
+}
+
+//--------------------------------------------------------------
+void ofApp::drawAddRendererMenu() {
+    const auto &theme = ColorThemes::colorThemes[currentTheme];
+    const ofRectangle menu = getAddRendererMenuBounds();
+
+    ofPushStyle();
+    ofSetColor(theme[ColorThemes::Color::background], 245);
+    ofDrawRectangle(menu);
+    ofNoFill();
+    ofSetColor(theme[ColorThemes::Color::foreground]);
+    ofSetLineWidth(1.0f);
+    ofDrawRectangle(menu);
+    ofFill();
+
+    for (size_t i = 0; i < RENDERER_NAMES.size(); ++i) {
+        const ofRectangle item = getAddRendererItemBounds(i);
+        if (static_cast<int>(i) == hoveredRendererType) {
+            ofSetColor(theme[ColorThemes::Color::blue]);
+            ofDrawRectangle(item);
+        }
+
+        ofSetColor(theme[ColorThemes::Color::foreground]);
+        const float baseline = item.y + item.height * 0.5f +
+                               font.getFontHeight(kRendererMenuFontSize,
+                                                  currentFont) *
+                                   0.35f;
+        font.draw(RENDERER_NAMES[i], kRendererMenuFontSize,
+                  item.x + 8.0f, baseline, currentFont);
+    }
+    ofPopStyle();
 }
 
 //--------------------------------------------------------------
@@ -439,14 +517,13 @@ void ofApp::keyReleased(int key) {
         // add runtime renderer
         case '+':
         case '=':
-            addRenderer(LUA_RENDERER);
+            addRendererMenuOpen = true;
+            hoveredRendererType =
+                getAddRendererItemAt(ofGetMouseX(), ofGetMouseY());
             break;
         case '-':
         case '_':
             removeLastRenderer();
-            break;
-        case '/':
-            addRenderer(SHADER_RENDERER);
             break;
         // draw gui
         case 'g':
@@ -548,8 +625,7 @@ void ofApp::keyReleased(int key) {
                 "w: save proect presets\n"
                 "l: load proect presets\n"
                 "o: change overlayText\n"
-                "+/=: add lua renderer\n"
-                "/: add shader renderer\n"
+                "+/=: add renderer\n"
                 "-/_: remove last renderer\n"
                 "?: show this help\n");
             break;
@@ -559,13 +635,29 @@ void ofApp::keyReleased(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y) {}
+void ofApp::mouseMoved(int x, int y) {
+    if (addRendererMenuOpen) {
+        hoveredRendererType = getAddRendererItemAt(x, y);
+    }
+}
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button) {}
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button) {}
+void ofApp::mousePressed(int x, int y, int button) {
+    if (!addRendererMenuOpen) {
+        return;
+    }
+
+    const int rendererIndex = getAddRendererItemAt(x, y);
+    addRendererMenuOpen = false;
+    hoveredRendererType = -1;
+
+    if (rendererIndex >= 0) {
+        addRenderer(static_cast<rendererType>(rendererIndex));
+    }
+}
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button) {}

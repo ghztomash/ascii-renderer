@@ -275,4 +275,13 @@ class ofApp : public ofBaseApp {
     vector<shared_ptr<BaseRenderer>> renderersVec;
 
     ColorCache colorCache;
+
+    private:
+    void drawAddRendererMenu();
+    ofRectangle getAddRendererMenuBounds() const;
+    ofRectangle getAddRendererItemBounds(size_t index) const;
+    int getAddRendererItemAt(int x, int y) const;
+
+    bool addRendererMenuOpen = false;
+    int hoveredRendererType = -1;
 };
